@@ -111,13 +111,13 @@ export default function ModelHealthPage() {
               <p className="text-caption">Language Model</p>
               <p className="text-subsection mt-0.5">Ollama (Local)</p>
             </div>
-            {health?.llm && (
-              <StatusPill status={(health.llm as Record<string, string>).status === "connected" ? "HEALTHY" : "DEGRADED"} />
+            {Boolean(health?.llm) && (
+              <StatusPill status={String((health?.llm as Record<string, string | number | boolean>)?.status) === "connected" ? "HEALTHY" : "DEGRADED"} />
             )}
           </div>
-          {health?.llm && (
+          {Boolean(health?.llm) && (
             <div>
-              {Object.entries(health.llm as Record<string, unknown>).slice(0, 5).map(([k, v]) => (
+              {Object.entries((health?.llm as Record<string, string | number | boolean>) || {}).slice(0, 5).map(([k, v]) => (
                 <StatRow key={k} label={k.replace(/_/g, " ")} value={String(v || "—")} />
               ))}
             </div>

@@ -202,29 +202,31 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
             </div>
 
             {/* Extracted Safety Entities */}
-            <div className="pt-4 border-t border-slate-100 space-y-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
-                Key Extracted Factors
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {report.entities.map((e, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedSpan(e.text_span === selectedSpan ? null : e.text_span)}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition border ${
-                      selectedSpan === e.text_span
-                        ? "bg-slate-900 text-white border-slate-900 shadow-xs"
-                        : "bg-slate-50 text-slate-800 border-slate-200 hover:bg-slate-100"
-                    }`}
-                  >
-                    <span className="font-mono text-sky-600 font-bold uppercase text-[10px]">
-                      {e.entity_type}
-                    </span>
-                    <span>{e.value}</span>
-                  </button>
-                ))}
+            {report.entities && report.entities.length > 0 && (
+              <div className="pt-4 border-t border-slate-100 space-y-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
+                  Key Extracted Factors
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {report.entities.map((e, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedSpan(e.text_span === selectedSpan ? null : (e.text_span || null))}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition border ${
+                        selectedSpan === e.text_span
+                          ? "bg-slate-900 text-white border-slate-900 shadow-xs"
+                          : "bg-slate-50 text-slate-800 border-slate-200 hover:bg-slate-100"
+                      }`}
+                    >
+                      <span className="font-mono text-sky-600 font-bold uppercase text-[10px]">
+                        {e.entity_type}
+                      </span>
+                      <span>{e.value}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Metadata Badges */}
             <div className="pt-4 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
@@ -269,27 +271,29 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
           </div>
 
           {/* Life-Saving Rules */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
-              Life-Saving Rules Mapping
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {report.lsr_predictions.map((lsr) => (
-                <div
-                  key={lsr.lsr_id}
-                  className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5 flex items-center justify-between"
-                >
-                  <div>
-                    <span className="font-bold text-xs text-slate-900 block">{lsr.name}</span>
-                    <span className="text-[10px] text-slate-400 font-mono font-bold block">{lsr.code}</span>
+          {report.lsr_predictions && report.lsr_predictions.length > 0 && (
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
+                Life-Saving Rules Mapping
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {report.lsr_predictions.map((lsr) => (
+                  <div
+                    key={lsr.lsr_id}
+                    className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5 flex items-center justify-between"
+                  >
+                    <div>
+                      <span className="font-bold text-xs text-slate-900 block">{lsr.name}</span>
+                      <span className="text-[10px] text-slate-400 font-mono font-bold block">{lsr.code}</span>
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-md bg-white border border-slate-200 font-bold text-xs text-slate-900">
+                      {(lsr.confidence * 100).toFixed(0)}%
+                    </span>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-md bg-white border border-slate-200 font-bold text-xs text-slate-900">
-                    {(lsr.confidence * 100).toFixed(0)}%
-                  </span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* RIGHT COLUMN: Review Action, SHAP, Similar Cases */}

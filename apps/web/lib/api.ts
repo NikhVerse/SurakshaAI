@@ -150,6 +150,20 @@ export interface ReportListItem {
   data_origin?: string;
 }
 
+export interface ReportEntity {
+  entity_type: string;
+  value: string;
+  text_span?: string;
+  confidence?: number;
+}
+
+export interface SimilarReport {
+  report_id: string;
+  report_uid: string;
+  similarity_score: number;
+  narrative_snippet: string;
+}
+
 export interface ReportDetail extends ReportListItem {
   narrative: string;
   actual_outcome?: string;
@@ -157,10 +171,10 @@ export interface ReportDetail extends ReportListItem {
   equipment?: string;
   location?: string;
   contractor_internal?: string;
-  entities?: unknown[];
+  entities?: ReportEntity[];
   psif_prediction?: PSIFPrediction;
   lsr_predictions?: LSRPrediction[];
-  similar_reports?: unknown[];
+  similar_reports?: SimilarReport[];
   created_at?: string;
 }
 
@@ -261,7 +275,7 @@ export interface ModelHealth {
   psif: { model: string; version: string; calibration_method: string; is_calibrated: boolean; calibration_percentage: number; pr_auc: number; f2_score: number; total_evaluated_records: number; status: string };
   lsr: { model: string; supported_rules: number; macro_f1: number; micro_f1: number; status: string };
   clustering: { method: string; cluster_count: number; coherence_score_avg: number; status: string };
-  llm: unknown;
+  llm: Record<string, string | number | boolean> | null;
   data_drift: Record<string, string>;
 }
 
