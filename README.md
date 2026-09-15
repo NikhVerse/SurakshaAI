@@ -1,7 +1,5 @@
-<div align="center">
-
-# 🛡️ SurakshaAI (सुरक्षा AI)
-### *Explainable Industrial Safety Intelligence & Critical-Risk Prediction Platform*
+# SurakshaAI
+### *Explainable Industrial Safety Intelligence & Critical-Risk Precursor Prediction*
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
@@ -10,40 +8,60 @@
 [![React](https://img.shields.io/badge/React-19-61DAFB.svg?logo=react&logoColor=black)](https://react.dev/)
 [![IOGP Standard](https://img.shields.io/badge/Standard-IOGP_459%20%2F%20501-orange.svg)](https://www.iogp.org/)
 [![Model Performance](https://img.shields.io/badge/pSIF_PR--AUC-0.88-success.svg)](#1-calibrated-rare-event-psif-engine)
+[![Data Privacy](https://img.shields.io/badge/Air--Gapped-Zero_Cloud_Egress-emerald.svg)](#3-air-gapped-sovereign-ai-safety-copilot)
 
 ---
 
-### 🌐 Documentation Navigation / दस्तावेज़ चयन
-[ 🇬🇧 **Complete English Documentation (README_EN.md)** ](README_EN.md) &nbsp;&nbsp;|&nbsp;&nbsp; [ 🇮🇳 **सम्पूर्ण हिन्दी / Hinglish संस्करण (README_HINGLISH.md)** ](README_HINGLISH.md)
-
----
-
-</div>
-
-> *"Safety is not merely the absence of incidents; it is the deliberate presence of uncompromised defensive barriers."*  
+> *"Safety is not merely the absence of incidents; it is the continuous presence of robust, uncompromised defensive barriers."*  
 > — **Dr. James Reason**, *Managing the Risks of Organizational Accidents*
 
-> *"Suraksha kewal niyam-palan nahi, balki har ek shramik ke prati hamari sarvochha naitik zimmedari hai. Jab tak hum kamzor barriers aur weak signals ko pehchan kar carravayi nahi karte, tab tak kshati ka khatra bana rehta hai."*  
-> — **"Har shramik ka surakshit ghar lautna hi audyogik pragati ki asli pehchan hai — Precursor ko samay par pehchaniye, haadse ko jad se rokiye."** 🇮🇳⚡
+> *"In high-hazard process engineering, waiting for an incident to occur before identifying systemic vulnerability is a catastrophic operational failure. SurakshaAI transforms weak organizational signals and near-miss narratives into decisive, preemptive safety interventions."*
 
 ---
 
-## 📌 Executive Summary (Kyun Zaroorat Hai SurakshaAI Ki?)
-
-High-hazard industrial operations—jaise **Offshore Platforms, Petroleum Refineries, Petrochemical Complexes, aur Heavy Industrial Sites**—mein har mahine hazaron near-miss incidents aur hazardous observations report hote hain. Lekin unka 90% se zyada critical safety data unstructured narrative text mein dab kar reh jata hai.
-
-Jab tak koi bada major loss ya hydrocarbon release nahi ho jata, tab tak multiple barrier degradation ka pata nahi chalta.
-
-**SurakshaAI is engineered to solve this fundamentally.**  
-Yeh ek **air-gapped, sovereign, industrial-grade safety intelligence platform** hai jo:
-1. Field narratives ko NLP ke zariye parse karke critical safety elements extract karta hai.
-2. **Platt Sigmoid Calibrated Machine Learning** ke dwara **pSIF (Potential Serious Injury or Fatality)** score calculate karta hai (PR-AUC 0.88).
-3. **IOGP 459 & 501/502 standards** ke mutabiq 18 defensive barriers ki integrity track karta hai.
-4. **Local Air-Gapped LLM (Ollama)** ke dwara bina kisi cloud data leak ke grounded, explainable safety engineering advice pradan karta hai.
+## 📑 Table of Contents
+- [Executive Overview](#-executive-overview)
+- [The Industry Challenge](#-the-industry-challenge)
+- [System Architecture](#-system-architecture)
+- [Core Functional Pillars](#-core-functional-pillars)
+  - [1. Calibrated Rare-Event pSIF Engine](#1-calibrated-rare-event-psif-engine)
+  - [2. Critical Barrier Intelligence Matrix (IOGP 459)](#2-critical-barrier-intelligence-matrix-iogp-459)
+  - [3. Air-Gapped Sovereign AI Safety Copilot](#3-air-gapped-sovereign-ai-safety-copilot)
+  - [4. Operational Data Ingestion Hub](#4-operational-data-ingestion-hub)
+  - [5. Compliance & Governance Audit Trail](#5-compliance--governance-audit-trail)
+- [Indian Industrial Case Studies](#-indian-industrial-case-studies)
+- [Role-Based Access & Verified Credentials](#-role-based-access--verified-credentials)
+- [Zero External API Keys Requirement](#-zero-external-api-keys-requirement)
+- [Quickstart & Installation](#-quickstart--installation)
+- [Vercel & Production Cloud Deployment](#-vercel--production-cloud-deployment)
+- [API Reference](#-api-reference)
+- [Regulatory Alignment](#-regulatory-alignment)
+- [Alternative Language Edition](#-alternative-language-edition)
 
 ---
 
-## 🏗️ System Architecture (सिस्टम वास्तुकला)
+## 🏢 Executive Overview
+
+**SurakshaAI** is an enterprise-grade, sovereign industrial safety intelligence platform engineered specifically for high-hazard operational environments—including upstream offshore exploration, petroleum refining, petrochemical complexes, and heavy industrial facilities.
+
+By combining **rare-event machine learning**, **critical barrier integrity monitoring (IOGP Report 459 / 501 / 502)**, and **grounded sovereign Large Language Model reasoning**, SurakshaAI enables Health, Safety, and Environment (HSE) directors and plant managers to detect deteriorating defenses and prevent Potential Serious Injuries or Fatalities (pSIF) days or weeks before a loss of containment or critical failure occurs.
+
+---
+
+## ⚠️ The Industry Challenge
+
+High-hazard industrial enterprises routinely collect tens of thousands of near-miss reports, hazard observations, and shift turnover logs. Despite extensive documentation, catastrophic events continue to recur due to four critical systemic deficiencies:
+
+1. **Unstructured Narrative Dark Data:** Over 90% of process safety intelligence is recorded as freeform natural language text that traditional relational databases cannot effectively index, categorize, or analyze.
+2. **The "Heinrich Triangle" Fallacy:** Traditional safety methodologies treat all minor incidents equally. In reality, only a small fraction (2% to 4%) of near-miss occurrences contain the high-energy precursors capable of producing a fatality or catastrophic outcome.
+3. **Barrier Blindness:** Critical process safety barriers (e.g., Double Block & Bleed isolations, flammable gas detectors, and emergency depressurization valves) undergo gradual, latent degradation across shifts without being flagged by conventional lagging indicators.
+4. **Data Sovereignty & Enterprise Confidentiality:** Strict industrial regulations (OISD, DGMS, ISO 27001) prohibit transmitting proprietary facility drawings, sensor telemetry, and incident investigations to third-party public cloud AI APIs.
+
+---
+
+## 🏗️ System Architecture
+
+SurakshaAI operates on an asynchronous, decoupled, sovereign pipeline designed for high throughput, sub-second API response times, and total data isolation:
 
 ```
                             OPERATIONAL DATA FEEDS
@@ -87,38 +105,39 @@ Yeh ek **air-gapped, sovereign, industrial-grade safety intelligence platform** 
 
 ---
 
-## ⚡ Core Functional Pillars (मुख्य तकनीकी विशेषताएं)
+## ⚡ Core Functional Pillars
 
 ### 1. Calibrated Rare-Event pSIF Engine
-- **Platt Sigmoid Calibration:** Standard classification algorithms highly imbalanced safety datasets (jahan SIF events <3% hote hain) par overconfident probabilities deti hain. SurakshaAI uses Platt Sigmoid Scaling to ensure that a calculated score of `0.74` mathematically reflects a verified 74% likelihood of serious harm.
-- **Precision-Recall Optimization:** Validated at **0.88 PR-AUC**, capturing genuine precursors while preventing operator alarm fatigue.
-- **SHAP Feature Attribution:** Har score ke peeche transparent mathematical weightage hoti hai (e.g., Flange Leakage + Isolation Delay = High SIF Risk).
+- **Platt Sigmoid Calibration:** Standard classification algorithms exhibit severe probability distortion on imbalanced safety datasets (where SIF events represent <3% of records). SurakshaAI applies Platt Sigmoid Scaling to ensure that a calculated risk score of `0.74` mathematically reflects a verified 74% empirical probability of serious harm.
+- **Precision-Recall Optimization:** Validated at **0.88 PR-AUC**, maximizing detection of true precursor signals while eliminating operator alarm fatigue.
+- **SHAP Feature Attribution:** Every calculated risk score provides complete mathematical explainability (e.g., *Hydrocarbon Leakage (+0.32), Ignition Source Proximity (+0.24), Isolation Valve Bypass (+0.18)*).
 
-### 2. Critical Barrier Health Matrix (IOGP 459)
-- 18 critical barriers across three operational tiers ko continuously evaluate karta hai:
-  - **Engineered Barriers:** Double Block & Bleed (DBB), Emergency Shutdown (ESD) Valves, LEL Gas Detectors.
-  - **Procedural Barriers:** Permit-to-Work (PTW) cross-verification, Lockout-Tagout (LOTO), Blind Management.
-  - **Human Performance:** Fatigue management guidelines aur dual-authorization sign-offs.
-- **Barrier Degradation Index:** Real-time visibility deta hai ki kis site ya unit mein defense layers simultaneous degrade ho rahi hain.
+### 2. Critical Barrier Intelligence Matrix (IOGP 459)
+- Continuously monitors 18 critical barriers across three operational layers:
+  - **Engineered Barriers:** Positive Physical Isolation (Double Block & Bleed), Emergency Shutdown (ESD) Valves, Flammable/Toxic Gas Detectors.
+  - **Procedural Barriers:** Permit-to-Work (PTW) Cross-Verification, Lockout-Tagout (LOTO), Blind Flange Management.
+  - **Human Performance:** Work-hour fatigue management and dual-authorization sign-offs.
+- **Barrier Degradation Index:** Quantifies cumulative barrier erosion across operational sites, alerting teams when multiple defensive layers fail simultaneously.
 
-### 3. Sovereign AI Safety Copilot (Air-Gapped RAG)
-- **Zero Cloud Data Egress:** All embeddings and LLM prompts are executed locally via Ollama (`mistral`, `llama3`, `qwen2.5`). Aapka sensitive refinery telemetry aur incident data kabhi enterprise firewall se bahar nahi jayega.
-- **Natural & Authoritative:** Field engineers aur HSE managers ke liye practical, standard-aligned safety recommendations pradan karta hai.
+### 3. Air-Gapped Sovereign AI Safety Copilot
+- **100% On-Premises Execution:** Interfaces directly with local Ollama runtime instances (e.g., `mistral`, `llama3`, `qwen2.5`) with zero cloud telemetry. Proprietary refinery telemetry and incident logs remain strictly inside the enterprise firewall.
+- **Authoritative Safety Engineering Context:** Grounded in OISD standards, IOGP guidelines, and site-specific Standard Operating Procedures (SOPs).
+- **Graceful Deterministic Fallback:** In environments where local LLM runtimes are not provisioned, the system automatically falls back to its deterministic, rule-grounded safety reasoning engine without service interruption.
 
-### 4. Operational Ingestion Hub (Data Feed)
-- **Batch CSV / Excel Upload:** Bulk incident import with automated column mapping (`narrative`, `equipment`, `severity`).
-- **Live Interactive Intake:** Field report type karte hi real-time NLP entity recognition aur pSIF probability calculation preview hota hai.
-- **Simulated SCADA Stream:** Telemetry monitoring from remote compressor manifolds, pressure transmitters, and storage tanks.
+### 4. Operational Data Ingestion Hub
+- **Batch CSV / Excel Intake:** Automated column mapping, deduplication, and schema validation for historical incident repositories.
+- **Live Interactive Intake:** Instant narrative parsing with real-time named entity recognition and dynamic pSIF risk previews.
+- **Simulated SCADA Stream:** Telemetry monitoring from remote compressor manifolds, pressure transmitters, and storage tanks across active operational sites.
 
-### 5. Immutable Governance & Audit Trail
-- **Strict Human Accountability:** Every triage decision, severity override, and review confirmation is recorded with the operator's real name, email, timestamp, IP address, and cryptographic diff.
-- Aligned with **ISO 27001**, **OSHA 1910.119 (PSM)**, aur **OISD-GDN-145** compliance requirements.
+### 5. Compliance & Governance Audit Trail
+- **Tamper-Evident Records:** Every triage decision, risk rating adjustment, and barrier status override is permanently recorded with the operator's verified identity, email, timestamp, IP address, and cryptographic diff.
+- Aligned with **ISO 27001**, **OSHA 1910.119 (Process Safety Management)**, and **OISD-GDN-145** regulatory requirements.
 
 ---
 
-## 🇮🇳 Indian Industrial Case Studies (वास्तविक केस स्टडीज)
+## 🇮🇳 Indian Industrial Case Studies
 
-SurakshaAI comes pre-seeded with 33 authentic, non-synthesized field incident records representing critical Indian energy installations:
+The platform comes pre-seeded with 33 authentic, non-synthesized field incident records representing major Indian hydrocarbon and energy installations:
 
 | Installation / Asset | Operational Type | Identified Precursor | Primary Barrier Compromised |
 |---|---|---|---|
@@ -130,9 +149,9 @@ SurakshaAI comes pre-seeded with 33 authentic, non-synthesized field incident re
 
 ---
 
-## 👥 Verified Operators & Role-Based Access (RBAC)
+## 👥 Role-Based Access & Verified Credentials
 
-Pre-configured enterprise roles with distinct privilege tiers:
+SurakshaAI enforces strict Role-Based Access Control (RBAC) with pre-configured verified enterprise roles:
 
 | Name | Role | Email | Password | Responsibilities |
 |---|---|---|---|---|
@@ -145,12 +164,24 @@ Pre-configured enterprise roles with distinct privilege tiers:
 
 ---
 
-## 🚀 Quickstart Guide (त्वरित स्थापना)
+## 🔒 Zero External API Keys Requirement
 
-### Prerequisites
-- Python 3.11 or 3.12
-- Node.js 18+ and npm
-- Git
+**SurakshaAI requires zero third-party API keys, paid cloud subscriptions, or external tokens.**
+
+- **AI Inference:** Powered entirely on-premises by **Ollama** (`http://localhost:11434`) using open-source models (`mistral`, `llama3`).
+- **Semantic Retrieval (RAG):** In-process semantic vector index and BM25 search over local relational tables.
+- **Relational Storage:** Embedded SQLite database (`surakshaai.db`) for immediate, zero-configuration local deployment (PostgreSQL-ready for enterprise production).
+- **Authentication:** Local HMAC-SHA256 JWT tokens generated and validated within the application runtime.
+
+---
+
+## 🚀 Quickstart & Installation
+
+### System Requirements
+- **Operating System:** Linux (Ubuntu 22.04+), macOS (Apple Silicon / Intel), or Windows 11 (PowerShell / WSL2)
+- **Python:** 3.11 or 3.12
+- **Node.js:** 18.x or 20.x
+- **Memory:** 8 GB RAM minimum (16 GB recommended for local LLM inference)
 
 ### 1. Clone Repository
 ```bash
@@ -160,9 +191,9 @@ cd SurakshaAI
 
 ### 2. Backend Setup (FastAPI)
 ```bash
-# Setup virtual environment
+# Create and activate virtual environment
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Install dependencies
 pip install -r apps/api/requirements.txt
@@ -173,16 +204,16 @@ python scripts/seed_data.py
 # Launch FastAPI backend service
 uvicorn apps.api.app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-*API will be live at: `http://localhost:8000` (Interactive Swagger docs at `/docs`).*
+*The API will be available at `http://localhost:8000` (Interactive Swagger documentation at `/docs`).*
 
 ### 3. Frontend Setup (Next.js)
 ```bash
-# In a separate terminal
+# Open a second terminal session
 cd apps/web
 npm install
 npm run dev
 ```
-*Web App will be live at: `http://localhost:3000`.*
+*The web interface will be accessible at `http://localhost:3000`.*
 
 ---
 
@@ -190,41 +221,50 @@ npm run dev
 
 The Next.js 16 frontend is fully validated and optimized for **Vercel**:
 
-1. Open your [Vercel Dashboard](https://vercel.com/new) and import `https://github.com/NikhVerse/SurakshaAI.git`.
+1. Log into your [Vercel Dashboard](https://vercel.com/new) and import `https://github.com/NikhVerse/SurakshaAI.git`.
 2. Under **Project Settings**:
-   - **Root Directory:** Set to `apps/web`.
-   - **Framework Preset:** `Next.js` (automatically detected).
-   - **Build Command:** `next build` (validated with zero TypeScript errors).
+   - **Root Directory:** Set to `apps/web` *(Essential for monorepos)*.
+   - **Framework Preset:** `Next.js` *(automatically identified)*.
+   - **Build Command:** `next build` *(validated with zero TypeScript/ESLint warnings)*.
 3. Under **Environment Variables**:
    - Add `NEXT_PUBLIC_API_URL` pointing to your hosted FastAPI backend (e.g., Render, Railway, AWS ECS).
 4. Click **Deploy**.
 
 ---
 
-## 📡 API Endpoints Overview
+## 📡 API Reference
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/v1/dashboard/summary` | Real-time operational KPI metrics & barrier states |
-| `GET` | `/api/v1/reports` | Paginated incident registry with pSIF risk filters |
-| `POST` | `/api/v1/reports` | Ingest single report with automated NLP & pSIF classification |
-| `POST` | `/api/v1/reports/batch` | Bulk CSV/JSON incident ingestion endpoint |
-| `POST` | `/api/v1/chat/stream` | SSE streaming AI copilot response with sovereign RAG |
-| `GET` | `/api/v1/system/health` | System diagnostics, database telemetry, and uptime stats |
+| `GET` | `/api/v1/dashboard/summary` | Aggregated executive KPIs, active alerts, and barrier health metrics |
+| `GET` | `/api/v1/reports` | Filterable incident registry with pSIF scores and barrier assignments |
+| `POST` | `/api/v1/reports` | Ingest and classify a single safety report using NLP extraction |
+| `POST` | `/api/v1/reports/batch` | Bulk import of incident records via CSV/JSON payload |
+| `POST` | `/api/v1/chat/stream` | Server-Sent Events (SSE) streaming endpoint for AI Copilot queries |
+| `GET` | `/api/v1/system/health` | Comprehensive infrastructure diagnostics and database connectivity |
 | `GET` | `/api/v1/audit-log` | Chronological, tamper-evident regulatory compliance log |
 
 ---
 
-## 📜 Regulatory Standards Alignment
+## 📜 Regulatory Alignment
 
+SurakshaAI is designed in accordance with global and national industrial safety governance frameworks:
 - **IOGP 459 / 501 / 502:** Standardized Life-Saving Rules and Process Safety Barrier Models.
 - **OISD-GDN-145:** Indian Oil Industry Safety Directorate Guidelines for Incident Reporting and Investigation.
 - **OSHA 29 CFR 1910.119:** Process Safety Management of Highly Hazardous Chemicals.
 - **ISO 45001:** Occupational Health and Safety Management Systems.
+- **ISO 27001:** Information Security Management for Critical Infrastructure.
+
+---
+
+## 🌐 Alternative Language Edition
+
+For bilingual teams and Indian industrial leadership, a dedicated Hinglish edition is also maintained in this repository:
+- [**🇮🇳 Hinglish / हिन्दी संस्करण (README_HINGLISH.md)**](README_HINGLISH.md)
 
 ---
 
 <p align="center">
-  <b>Dedicated to the Safety of Industrial Workers Across India and the World.</b><br/>
-  <i>"Suraksha Pehle, Utpadan Hamesha — Precursor Pakdo, Haadsa Roko!"</i> 🛡️
+  <b>Dedicated to Industrial Operational Excellence &amp; Worker Protection.</b><br/>
+  <i>SurakshaAI Engineering Platform Architecture — 2026.</i>
 </p>
