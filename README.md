@@ -33,7 +33,7 @@
 - [Role-Based Access & Verified Credentials](#-role-based-access--verified-credentials)
 - [Zero External API Keys Requirement](#-zero-external-api-keys-requirement)
 - [Quickstart & Installation](#-quickstart--installation)
-- [Vercel & Production Cloud Deployment](#-vercel--production-cloud-deployment)
+- [Render Cloud Deployment (1-Click Blueprint)](#️-render-cloud-deployment-1-click-blueprint)
 - [API Reference](#-api-reference)
 - [Regulatory Alignment](#-regulatory-alignment)
 - [Alternative Language Edition](#-alternative-language-edition)
@@ -217,18 +217,31 @@ npm run dev
 
 ---
 
-## ☁️ Vercel & Production Cloud Deployment
+## ☁️ Render Cloud Deployment (1-Click Blueprint)
 
-The Next.js 16 frontend is fully validated and optimized for **Vercel**:
+SurakshaAI includes a pre-configured [`render.yaml`](render.yaml) Blueprint that allows you to deploy both the **Next.js 16 Web Frontend** and the **FastAPI Backend** simultaneously on [Render](https://render.com).
 
-1. Log into your [Vercel Dashboard](https://vercel.com/new) and import `https://github.com/NikhVerse/SurakshaAI.git`.
-2. Under **Project Settings**:
-   - **Root Directory:** Set to `apps/web` *(Essential for monorepos)*.
-   - **Framework Preset:** `Next.js` *(automatically identified)*.
-   - **Build Command:** `next build` *(validated with zero TypeScript/ESLint warnings)*.
-3. Under **Environment Variables**:
-   - Add `NEXT_PUBLIC_API_URL` pointing to your hosted FastAPI backend (e.g., Render, Railway, AWS ECS).
-4. Click **Deploy**.
+### Option 1: 1-Click Blueprint Deployment (Recommended)
+1. Go to your [Render Dashboard](https://dashboard.render.com/).
+2. Click **New +** → **Blueprint**.
+3. Connect your GitHub repository: `https://github.com/NikhVerse/SurakshaAI.git`.
+4. Render will automatically read [`render.yaml`](render.yaml) and configure both services:
+   - **`suraksha-web`** (Next.js Node Web Service)
+   - **`suraksha-api`** (FastAPI Python Web Service)
+5. Click **Apply**. Both services will build and deploy with automated CI/CD!
+
+### Option 2: Deploy Frontend Web Service Manually
+If you prefer deploying the frontend as a standalone Web Service:
+1. Click **New +** → **Web Service** on Render.
+2. Select `https://github.com/NikhVerse/SurakshaAI.git`.
+3. Configure the service:
+   - **Runtime:** `Node`
+   - **Root Directory:** `apps/web`
+   - **Build Command:** `npm install && npm run build`
+   - **Start Command:** `npm run start`
+4. Under **Environment Variables**:
+   - `NEXT_PUBLIC_API_URL`: Point to your deployed FastAPI backend URL.
+5. Click **Create Web Service**.
 
 ---
 

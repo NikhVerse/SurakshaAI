@@ -189,16 +189,28 @@ npm run dev
 
 ---
 
-## ☁️ वर्सेल पर परिनियोजन (Vercel Cloud Deployment)
+## ☁️ रेंडर क्लाउड परिनियोजन (Render Cloud Deployment)
 
-Next.js 16 फ्रंटएंड को Vercel पर सुगम परिनियोजन के लिए सत्यापित किया गया है:
-1. [Vercel Dashboard](https://vercel.com/new) पर जाएं और `https://github.com/NikhVerse/SurakshaAI.git` आयात करें।
-2. **Project Settings** में:
-   - **Root Directory:** `apps/web` चुनें।
-   - **Framework Preset:** `Next.js` स्वतः निर्धारित होगा।
-   - **Build Command:** `next build` (शून्य त्रुटि के साथ सत्यापित)।
-3. यदि बैकएंड किसी सार्वजनिक सर्वर पर होस्ट है, तो **Environment Variables** में `NEXT_PUBLIC_API_URL` जोड़ें।
-4. **Deploy** पर क्लिक करें।
+SurakshaAI में पूर्व-कॉन्फ़िगर की गई [`render.yaml`](render.yaml) ब्लूप्रिंट शामिल है, जिसके माध्यम से आप **Next.js 16 वेब फ्रंटएंड** और **FastAPI बैकएंड** दोनों को [Render](https://render.com) पर एक साथ आसानी से परिनियोजित कर सकते हैं।
+
+### विकल्प 1: 1-क्लिक ब्लूप्रिंट परिनियोजन (अनुशंसित)
+1. अपने [Render Dashboard](https://dashboard.render.com/) में लॉगिन करें।
+2. **New +** → **Blueprint** पर क्लिक करें।
+3. अपनी GitHub रिपॉजिटरी चुनें: `https://github.com/NikhVerse/SurakshaAI.git`।
+4. Render स्वतः [`render.yaml`](render.yaml) को पढ़कर दोनों सेवाओं को कॉन्फ़िगर करेगा:
+   - **`suraksha-web`** (Next.js नोड वेब सेवा)
+   - **`suraksha-api`** (FastAPI पायथन वेब सेवा)
+5. **Apply** पर क्लिक करें। दोनों सेवाएं स्वचालित रूप से लाइव हो जाएंगी!
+
+### विकल्प 2: केवल फ्रंटएंड वेब सेवा परिनियोजित करें
+1. Render पर **New +** → **Web Service** पर क्लिक करें।
+2. `https://github.com/NikhVerse/SurakshaAI.git` चुनें।
+3. सेटिंग्स कॉन्फ़िगर करें:
+   - **Runtime:** `Node`
+   - **Root Directory:** `apps/web`
+   - **Build Command:** `npm install && npm run build`
+   - **Start Command:** `npm run start`
+4. **Create Web Service** पर क्लिक करें।
 
 ---
 
