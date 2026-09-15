@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "description": "SurakshaAI — Explainable Industrial Safety Critical-Risk Intelligence Platform",
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
     "dev": "npm run dev:web",
     "dev:web": "npm --prefix apps/web run dev",
     "dev:api": ".\\.venv\\Scripts\\uvicorn apps.api.app.main:app --reload --port 8000",
-    "build": "npm --prefix apps/web run build",
-    "build:web": "npm --prefix apps/web run build",
+    "build": "cd apps/web && npm install && npm run build",
+    "build:web": "cd apps/web && npm install && npm run build",
     "test:api": ".\\.venv\\Scripts\\pytest apps/api/tests -v",
     "seed": ".\\.venv\\Scripts\\python data/demo/seed_data.py",
     "lint:api": ".\\.venv\\Scripts\\python -m pytest --collect-only"
