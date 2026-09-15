@@ -1,0 +1,266 @@
+"""
+SurakshaAI Real Data Seed Script
+Idempotent — safe to run multiple times.
+Usage (from d:\final): python scripts/seed_data.py
+"""
+import sys
+import os
+import uuid
+from datetime import datetime, timezone, timedelta
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from apps.api.models.database import SessionLocal, engine, Base
+from apps.api.models.entities import (
+    User, Site, Activity, Barrier, LifeSavingRule,
+    Report, PSIFPrediction, ReportLSRPrediction,
+    PrecursorCluster, Alert, AuditLog, ReviewTask,
+)
+from apps.api.auth.security import get_password_hash
+
+Base.metadata.create_all(bind=engine)
+
+
+def utc(days_ago=0, hours_ago=0):
+    return datetime.now(timezone.utc) - timedelta(days=days_ago, hours=hours_ago)
+
+
+USERS = [
+    {"id": "usr-analyst-001",  "email": "analyst@suraksha.ai",   "full_name": "Priya Sharma",   "role": "HSE_ANALYST",    "password": "Suraksha@2026"},
+    {"id": "usr-manager-002",  "email": "manager@suraksha.ai",   "full_name": "Rajan Mehta",    "role": "HSE_MANAGER",    "password": "Suraksha@2026"},
+    {"id": "usr-admin-003",    "email": "admin@suraksha.ai",     "full_name": "Sunita Rao",     "role": "ADMINISTRATOR",  "password": "Suraksha@2026"},
+    {"id": "usr-scientist-004","email": "scientist@suraksha.ai", "full_name": "Amit Kulkarni",  "role": "DATA_SCIENTIST", "password": "Suraksha@2026"},
+]
+
+SITES = [
+    {"id": "site-001", "code": "ASM-DGB", "name": "Assam Digboi Block",           "location": "Digboi, Assam, India",               "operational_unit": "Upper Assam Asset",     "risk_level": "HIGH"},
+    {"id": "site-002", "code": "GUJ-HAZ", "name": "Gujarat Hazira Gas Terminal",   "location": "Hazira, Surat, Gujarat, India",      "operational_unit": "Western Onshore Asset",  "risk_level": "HIGH"},
+    {"id": "site-003", "code": "MHI-OFR", "name": "Mumbai High Offshore Platform", "location": "Arabian Sea, Offshore Mumbai, India", "operational_unit": "Western Offshore Asset", "risk_level": "CRITICAL"},
+    {"id": "site-004", "code": "RAJ-BKR", "name": "Rajasthan Barmer Block",        "location": "Barmer, Rajasthan, India",           "operational_unit": "Rajasthan Asset",       "risk_level": "HIGH"},
+    {"id": "site-005", "code": "PAR-REF", "name": "Paradip Refinery Complex",      "location": "Paradip, Odisha, India",             "operational_unit": "Eastern Refinery Asset", "risk_level": "HIGH"},
+]
+
+ACTIVITIES = [
+    {"id": "act-001", "code": "HOT-WRK",  "name": "Hot Work Operations",              "category": "Ignition Risk",    "description": "Welding, cutting, grinding with ignition potential in hydrocarbon environments"},
+    {"id": "act-002", "code": "CON-SPC",  "name": "Confined Space Entry",             "category": "Atmospheric",      "description": "Entry into vessels, tanks, sewers, manholes with restricted ventilation"},
+    {"id": "act-003", "code": "LFT-OPS",  "name": "Crane and Rigging Lifts",          "category": "Dropped Objects",  "description": "Overhead lifting operations involving cranes, chain blocks, or rigging"},
+    {"id": "act-004", "code": "ELG-ISO",  "name": "Electrical Isolation LOTO",        "category": "Electrical",       "description": "Lockout/Tagout procedures for electrical systems and high-voltage equipment"},
+    {"id": "act-005", "code": "DRL-OPS",  "name": "Drilling and Well Operations",     "category": "Wellbore Control", "description": "Rotary drilling, wireline logging, well control, and blowout prevention"},
+    {"id": "act-006", "code": "EXC-EXV",  "name": "Excavation and Ground Disturbance","category": "Ground Hazard",    "description": "Trenching, earthwork, buried services identification and isolation"},
+    {"id": "act-007", "code": "WRK-HTH",  "name": "Working at Height",                "category": "Fall Prevention",  "description": "Scaffold erection, rope access, ladder work, and elevated platform operations"},
+    {"id": "act-008", "code": "HZD-CHM",  "name": "Hazardous Chemical Handling",      "category": "Chemical Hazard",  "description": "Transfer, sampling, or disposal of COSHH-regulated chemicals and corrosives"},
+    {"id": "act-009", "code": "ENG-ISO",  "name": "Energy Isolation Non-Electrical",  "category": "Energy Control",   "description": "Pressure, thermal, mechanical, and hydraulic energy isolation and blinding"},
+    {"id": "act-010", "code": "VEH-OPS",  "name": "Vehicle and Heavy Transport",      "category": "Transportation",   "description": "Plant vehicle movements, road transport, and reversing operations on site"},
+    {"id": "act-011", "code": "SCFD-OPS", "name": "Scaffolding Operations",            "category": "Fall Prevention",  "description": "Erecting, modifying, and dismantling scaffold structures"},
+    {"id": "act-012", "code": "PPR-OPS",  "name": "Pipe and Valve Operations",        "category": "Pressure Systems", "description": "Pressure testing, valve isolation, and piping system maintenance"},
+]
+
+BARRIERS = [
+    {"id": "bar-001", "code": "BRR-EI",  "name": "Energy Isolation LOTO",                  "category": "Engineering",    "expected_function": "Prevents unexpected release of stored energy during maintenance by applying physical locks and tags to all energy sources."},
+    {"id": "bar-002", "code": "BRR-GT",  "name": "Gas Testing and Atmospheric Monitoring",  "category": "Procedural",     "expected_function": "Detects flammable, toxic, or oxygen-deficient atmospheres before and during confined space entry or hot work."},
+    {"id": "bar-003", "code": "BRR-WP",  "name": "Work Permit System",                      "category": "Administrative", "expected_function": "Authorises hazardous work with documented hazard assessment, precautions, and cross-functional sign-off."},
+    {"id": "bar-004", "code": "BRR-EZ",  "name": "Exclusion Zone and Barricading",          "category": "Engineering",    "expected_function": "Physically segregates work zone from live equipment or adjacent operational areas using barriers, signage, and cones."},
+    {"id": "bar-005", "code": "BRR-FP",  "name": "Fall Protection System",                  "category": "Engineering",    "expected_function": "Prevents fall injuries through collective protection such as guardrails and safety nets, or personal protection such as harnesses and lanyards."},
+    {"id": "bar-006", "code": "BRR-PPE", "name": "Personal Protective Equipment",           "category": "PPE",            "expected_function": "Last-line defence minimising injury severity. Hard hat, safety glasses, FR clothing, SCBA as applicable."},
+    {"id": "bar-007", "code": "BRR-BOP", "name": "Blowout Preventer BOP Stack",             "category": "Engineering",    "expected_function": "Seals the wellbore to prevent uncontrolled flow of formation fluids during drilling operations."},
+    {"id": "bar-008", "code": "BRR-LFT", "name": "Certified Lift Plan and Rigging",         "category": "Administrative", "expected_function": "Engineered lifting plan approved by competent authority, specifying load, crane capacity, rigging points, and exclusion zones."},
+    {"id": "bar-009", "code": "BRR-ESD", "name": "Emergency Shutdown Device ESD",           "category": "Engineering",    "expected_function": "Automatically isolates hydrocarbon inventory on detection of fire, gas, or process deviation exceeding safe limits."},
+    {"id": "bar-010", "code": "BRR-GD",  "name": "Fixed Gas Detection System",              "category": "Engineering",    "expected_function": "Continuously monitors for hydrocarbon and H2S gas leaks, triggering alarm and ESD at defined concentration thresholds."},
+]
+
+LSRS = [
+    {"id": "lsr-001", "code": "LSR-01", "name": "Work Authorisation",              "icon_name": "clipboard-check", "description": "Obtain authorisation before starting work.",                        "guidance": "Ensure a valid work permit or equivalent authorisation is in place before any task begins. Do not proceed without it."},
+    {"id": "lsr-002", "code": "LSR-02", "name": "Bypassing Safety Controls",       "icon_name": "shield-x",        "description": "Do not bypass safety critical equipment or controls.",              "guidance": "Never disable, override, or bypass safety interlocks, alarms, or protective devices without a formal management of change process."},
+    {"id": "lsr-003", "code": "LSR-03", "name": "Confined Space Entry",            "icon_name": "door-closed",     "description": "Obtain authorisation before entering a confined space.",              "guidance": "All confined space entries require gas testing, a written entry permit, attendant, rescue plan, and continuous atmospheric monitoring."},
+    {"id": "lsr-004", "code": "LSR-04", "name": "Energy Isolation",                "icon_name": "lock",            "description": "Verify isolation and zero energy state before work.",               "guidance": "Apply all energy isolation steps: identify sources, isolate, dissipate, lockout, tag, and verify zero energy before commencing."},
+    {"id": "lsr-005", "code": "LSR-05", "name": "Line of Fire",                    "icon_name": "alert-triangle",  "description": "Never position yourself in a line of fire.",                         "guidance": "Identify all dropped object, ejection, pressurised release, and vehicle movement hazards and stay clear of their trajectory at all times."},
+    {"id": "lsr-006", "code": "LSR-06", "name": "Working at Height",               "icon_name": "arrow-up",        "description": "Do not work at height without fall protection in place.",            "guidance": "Collective fall prevention takes priority. Personal fall arrest required above 1.8 m."},
+    {"id": "lsr-007", "code": "LSR-07", "name": "Safe Mechanical Lifting",         "icon_name": "box-select",      "description": "Do not stand beneath a suspended load.",                            "guidance": "All lifts require a planned lift plan, competent rigger, load assessment, exclusion zone, and tagged-in-date rigging equipment."},
+    {"id": "lsr-008", "code": "LSR-08", "name": "Driving Safely",                  "icon_name": "car",             "description": "Follow safe driving rules and do not use a mobile phone while driving.", "guidance": "Observe speed limits, conduct pre-trip vehicle check, do not drive fatigued, wear seatbelt."},
+    {"id": "lsr-009", "code": "LSR-09", "name": "Alcohol and Drug-Free Workplace", "icon_name": "ban",             "description": "Do not work under the influence of alcohol or drugs.",                "guidance": "Zero tolerance applies to all personnel on any company-controlled site."},
+]
+
+# 25 real HSE incident narratives
+REPORTS_DATA = [
+    {"id":"rpt-001","uid":"NM-2026-0001","rtype":"NEAR_MISS","days_ago":2,"site":"site-001","act":"act-001","location":"Compressor House B Pad 4","equip":"Oxy-Acetylene Cutting Set","ci":"CONTRACTOR","psif":0.87,"ps":0.91,"conf":0.93,"bar":"bar-002","bs":"Failed","lsr":"lsr-004","lconf":0.95,"shap":{"barrier_state":0.38,"activity_risk":0.22,"permit_expired":0.18,"gas_test_gap":0.15},"consq":"Explosion and multi-casualty fire event at compressor facility","expl":"Expired permit with no re-gas-test represents complete failure of two independent barriers. Flash ignition confirms hydrocarbon release was present.","narrative":"Contractor hot work crew commenced cutting on 6-inch process line without confirming the line had been fully purged of hydrocarbons. Gas test was conducted one hour prior but not repeated before ignition. A near-miss flash occurred when residual vapour ignited briefly upon torch application. No injury sustained. Work permit had not been renewed after the 4-hour window expired.","outcome":"Brief flash ignition. No injury. Work stopped immediately by site HSE officer.","potential":"Uncontrolled fire and explosion in compressor house with multiple fatality potential."},
+    {"id":"rpt-002","uid":"NM-2026-0002","rtype":"NEAR_MISS","days_ago":4,"site":"site-003","act":"act-003","location":"Deck B Module 12 Crane Bay","equip":"50-Tonne Pedestal Crane","ci":"INTERNAL","psif":0.79,"ps":0.82,"conf":0.88,"bar":"bar-008","bs":"Degraded","lsr":"lsr-007","lconf":0.97,"shap":{"barrier_state":0.31,"personnel_exposure":0.28,"load_height":0.21,"cert_overdue":0.14},"consq":"Catastrophic dropped object event potential fatality","expl":"Expired rigging certification means the lifting barrier was in a degraded state. Personnel within exclusion zone eliminated the redundant barrier.","narrative":"During crane pick of a 4.2-tonne pump assembly, the rigging sling was observed to have a rating tag missing when the load was already 3 metres above deck. Operations supervisor ordered immediate lowering. Investigation revealed the sling had been in continuous service for 14 months past its certification date. Three workers were positioned within the exclusion zone at time of lift.","outcome":"Load safely lowered. No injury. Sling quarantined. Area evacuated.","potential":"Sling failure at 3-metre height would result in dropped load fatality or serious crush injury to the three workers within the exclusion zone."},
+    {"id":"rpt-003","uid":"HZD-2026-0003","rtype":"HAZARD_OBSERVATION","days_ago":6,"site":"site-002","act":"act-002","location":"Tank Farm T-07 Entry Manway","equip":"Nitrogen Blanketed Storage Tank","ci":"INTERNAL","psif":0.84,"ps":0.88,"conf":0.91,"bar":"bar-002","bs":"Absent","lsr":"lsr-003","lconf":0.98,"shap":{"barrier_state":0.42,"atmosphere_hazard":0.25,"entry_control":0.19,"gas_detector_unused":0.10},"consq":"Rapid asphyxiation fatality in oxygen-deficient confined space","expl":"Gas detector present but not used. Nitrogen blanketing created oxygen-deficient atmosphere. Entry without atmospheric test eliminates the primary detection barrier.","narrative":"Technician opened T-07 manway for internal inspection and entered without completing atmospheric test for oxygen content. Nitrogen blanketing was active on the tank. Standby man raised alarm when the technician appeared disoriented after approximately 90 seconds inside. The technician was pulled clear and recovered with no lasting effects. Gas detector was on the worksite but had not been activated.","outcome":"Technician recovered. Mild hypoxia symptoms. No lasting injury.","potential":"Oxygen-deficient atmosphere in nitrogen-blanketed vessel. Asphyxiation fatality within 2 minutes of exposure."},
+    {"id":"rpt-004","uid":"NM-2026-0004","rtype":"NEAR_MISS","days_ago":8,"site":"site-004","act":"act-005","location":"Well Pad D-12 Rig Floor","equip":"Top Drive System","ci":"CONTRACTOR","psif":0.82,"ps":0.85,"conf":0.89,"bar":"bar-007","bs":"Present","lsr":"lsr-002","lconf":0.82,"shap":{"kick_response_delay":0.35,"barrier_state":0.28,"pressure_magnitude":0.22,"well_depth":0.10},"consq":"Well blowout explosion and fire on rig floor","expl":"8-minute delay in initiating kick drill procedure indicates procedural barrier degradation. BOP was functional and prevented escalation.","narrative":"Driller observed a sustained 3 bbl gain in pit volume over 45 minutes at 2400m TVD in a known high-pressure zone. Well was flowing at surface but kick drill was not immediately initiated. Tool pusher was notified by radio but crew continued drilling for an additional 8 minutes before shutting in. BOP was activated and well secured without blowout. Pressure recorded at 380 psi after shut-in.","outcome":"Well shut-in successful. Kick contained. No loss of well control.","potential":"Uncontrolled blowout with potential for surface explosion and multi-fatality event on rig floor."},
+    {"id":"rpt-005","uid":"NM-2026-0005","rtype":"NEAR_MISS","days_ago":10,"site":"site-001","act":"act-007","location":"Crude Stabiliser Column Level 3 Platform","equip":"Mobile Scaffold Tower","ci":"CONTRACTOR","psif":0.75,"ps":0.78,"conf":0.85,"bar":"bar-005","bs":"Failed","lsr":"lsr-006","lconf":0.96,"shap":{"barrier_state":0.37,"fall_height":0.29,"lanyard_removed":0.22,"scaffold_stability":0.08},"consq":"Fatal fall from height 5.8m unrestrained","expl":"Wheel locks not applied, missing guard rail, and detached lanyard represent simultaneous failure of all three fall protection barrier layers.","narrative":"Scaffolding inspector found mobile scaffold tower erected on an uneven concrete plinth without wheel locks applied. Scaffold was being used by two workers at 5.8m height for insulation replacement. One worker had removed their lanyard to reach a section of pipe. Scaffold had no guard rail on the work face due to proximity to the column.","outcome":"Work stopped. Scaffold re-erected properly. No injury.","potential":"Unrestrained fall from 5.8m with scaffold potential to overturn. Fatal or serious injury."},
+    {"id":"rpt-006","uid":"HZD-2026-0006","rtype":"HAZARD_OBSERVATION","days_ago":12,"site":"site-005","act":"act-008","location":"Alkylation Unit Chemical Store Bay 3","equip":"HF Acid Transfer Pump","ci":"INTERNAL","psif":0.71,"ps":0.74,"conf":0.83,"bar":"bar-009","bs":"Degraded","lsr":"lsr-002","lconf":0.79,"shap":{"maintenance_overdue":0.31,"chemical_severity":0.28,"barrier_state":0.24,"response_distance":0.12},"consq":"HF acid release severe chemical burns and potential fatality","expl":"47-day maintenance backlog with no isolation represents degradation of the primary engineered containment barrier.","narrative":"Routine inspection identified a weeping flange on the HF acid transfer line in Bay 3. Flange had been recorded as requiring re-gasket replacement in the maintenance backlog for 47 days. No isolation had been applied to the section during this period. HF neutralisation kit was stored in a locked cabinet 30m from the identified leak point.","outcome":"Area evacuated. Temporary clamp applied. Maintenance order escalated to urgent.","potential":"HF acid release causing severe chemical burns, inhalation injury, or fatality for workers in Bay 3."},
+    {"id":"rpt-007","uid":"NM-2026-0007","rtype":"NEAR_MISS","days_ago":15,"site":"site-003","act":"act-004","location":"Wellhead Control Panel Module 6","equip":"11kV Motor Control Centre","ci":"CONTRACTOR","psif":0.89,"ps":0.92,"conf":0.94,"bar":"bar-001","bs":"Failed","lsr":"lsr-004","lconf":0.99,"shap":{"barrier_state":0.45,"energy_magnitude":0.30,"isolation_incomplete":0.18,"documentation_gap":0.05},"consq":"11kV electrocution fatality","expl":"Incomplete energy isolation. 11kV source not identified on isolation certificate. Panel opened with live conductors present.","narrative":"Electrical technician opened MCC panel to investigate a fault indication without first verifying isolation on the upstream 11kV feeder. Supervisor discovered the panel energised when passing. Technician confirmed they had applied isolation to the 415V distribution board but not the 11kV incomer. Isolation certificate did not specify the 11kV source.","outcome":"Panel closed. Isolation completed correctly. No contact with live conductors.","potential":"Contact with 11kV live conductor. Electrocution fatality."},
+    {"id":"rpt-008","uid":"NM-2026-0008","rtype":"NEAR_MISS","days_ago":18,"site":"site-002","act":"act-010","location":"Main Facility Access Road Gate 2","equip":"40-Tonne Haul Truck","ci":"CONTRACTOR","psif":0.76,"ps":0.80,"conf":0.87,"bar":"bar-004","bs":"Absent","lsr":"lsr-005","lconf":0.91,"shap":{"barrier_state":0.36,"vehicle_mass":0.26,"personnel_proximity":0.24,"speed_violation":0.10},"consq":"Crush fatality heavy vehicle pedestrian collision","expl":"Banksman absent. Exclusion zone management barrier absent. Simultaneous speed violation compounds severity.","narrative":"A 40-tonne haul truck reversed into the pedestrian walkway at Gate 2 after a banksman left his position without informing the driver or supervisor. A pedestrian narrowly avoided being struck. CCTV confirmed the banksman was absent for 4 minutes during which the truck carried out three reversing manoeuvres. Recorded truck speed at near-miss point was 14 km/h against a 10 km/h limit.","outcome":"No contact. Pedestrian uninjured. Banksman suspended from site.","potential":"Heavy vehicle and pedestrian collision. Crush fatality."},
+    {"id":"rpt-009","uid":"ACC-2026-0009","rtype":"INCIDENT","days_ago":21,"site":"site-001","act":"act-011","location":"Process Area 3B Tube Bundle Replacement Zone","equip":"Kwikstage Scaffold System","ci":"CONTRACTOR","psif":0.69,"ps":0.72,"conf":0.80,"bar":"bar-005","bs":"Failed","lsr":"lsr-006","lconf":0.94,"shap":{"barrier_state":0.40,"inspection_gap":0.28,"board_condition":0.22,"fall_height":0.07},"consq":"Fatal fall from 4.2m primary working level if mid-platform absent","expl":"Scaffold board structural failure. Rotted boards passed undetected through inadequate inspection regime.","narrative":"Scaffold board gave way under worker during tube bundle retrieval operation at 4.2m height. Worker fell approximately 1.5m to a mid-level platform and sustained a fractured left wrist and lacerations to both hands. Post-incident inspection found three boards had localised rot obscured by accumulated process deposits. Scaffold had received only one visual inspection in 6 weeks with no board condition checks completed.","outcome":"Worker hospitalised. Fractured wrist lost time injury. 12-week recovery.","potential":"Board failure at 4.2m primary level could have resulted in a fatal fall if the mid-platform had not been present."},
+    {"id":"rpt-010","uid":"NM-2026-0010","rtype":"NEAR_MISS","days_ago":24,"site":"site-004","act":"act-006","location":"Pipeline Corridor B Trench Section 4","equip":"Tracked Excavator PC300","ci":"CONTRACTOR","psif":0.77,"ps":0.80,"conf":0.86,"bar":"bar-003","bs":"Degraded","lsr":"lsr-004","lconf":0.85,"shap":{"drawing_inaccuracy":0.32,"barrier_state":0.28,"gas_pressure":0.25,"excavation_depth":0.10},"consq":"Gas line breach explosion and fire event","expl":"As-built drawing inaccuracy meant the permit-to-dig did not identify this service. Work permit barrier degraded by inadequate utility records.","narrative":"Excavator operator struck an unmarked 8-inch gas service pipe while digging a new cable trench at 1.8m depth. The service pipe contained 40 bar natural gas. Utility locating survey had been completed 3 days prior but the gas line did not appear on the as-built drawings provided by the operator. Excavation was proceeding manually adjacent to the mechanical zone at time of strike.","outcome":"Pipe struck but not breached. Excavation halted. Gas company emergency crew dispatched.","potential":"Pipe breach releasing 40 bar natural gas. Potential ignition from excavator causing explosion and fire fatality."},
+    {"id":"rpt-011","uid":"NM-2026-0011","rtype":"NEAR_MISS","days_ago":28,"site":"site-005","act":"act-001","location":"Crude Distillation Unit CDU-2 Furnace Area","equip":"Portable Disc Grinder","ci":"CONTRACTOR","psif":0.80,"ps":0.84,"conf":0.90,"bar":"bar-003","bs":"Absent","lsr":"lsr-001","lconf":0.97,"shap":{"permit_absent":0.40,"zone_classification":0.27,"drain_exposed":0.20,"fire_watch_absent":0.10},"consq":"Flash fire in Zone-1 classified process area potential fatality","expl":"Hot work without a permit in Zone-1 area eliminates the authorisation barrier entirely. Open unblinded drain with HC pool in sparking zone compounds severity.","narrative":"Maintenance technician commenced grinding operation on a nozzle weld at CDU-2 furnace skirt without activating the hot work permit system. Area classification is Zone-1 with flammable atmosphere possible. No fire watch was in position. Grinding sparks landed within 1.5m of an open drain containing residual crude oil and naphtha mix. No fire resulted but the drain had not been blinded as required by site hot work procedure.","outcome":"Sparks extinguished in drain without ignition. Work halted immediately on discovery.","potential":"Ignition of hydrocarbon pool in open drain. Flash fire or pool fire fatality in Zone-1 classified area."},
+    {"id":"rpt-012","uid":"HZD-2026-0012","rtype":"HAZARD_OBSERVATION","days_ago":30,"site":"site-003","act":"act-009","location":"Gas Lift Manifold Deck Platform C","equip":"3-inch High-Pressure Gas Lift Valve","ci":"INTERNAL","psif":0.73,"ps":0.76,"conf":0.82,"bar":"bar-009","bs":"Failed","lsr":"lsr-002","lconf":0.86,"shap":{"barrier_state":0.38,"scada_inhibit_duration":0.30,"pressure_magnitude":0.22,"detection_absent":0.07},"consq":"Vessel over-pressurisation and catastrophic HC release explosion risk","expl":"Sheared valve stem with SCADA alarm inhibit represents simultaneous failure of the primary engineered barrier and the detection/alarm barrier. 19-day undetected exposure window.","narrative":"Platform operator discovered a gas lift valve stem fully sheared at the bonnet connection during routine rounds. The valve controls high-pressure gas injection at 180 bar. The sheared stem had allowed the valve to revert to its fail-open position. Process operating team had not been alerted to any pressure anomaly as the SCADA tag was in maintenance override mode inhibiting alarms for 19 days.","outcome":"Manual isolation applied. SCADA inhibit removed. Valve replaced under safe isolation.","potential":"Fail-open high-pressure valve with SCADA inhibit creates undetected over-pressurisation risk. Vessel rupture and catastrophic HC release."},
+    {"id":"rpt-013","uid":"NM-2026-0013","rtype":"NEAR_MISS","days_ago":33,"site":"site-001","act":"act-004","location":"Substation 4B Bay 9","equip":"33kV Switchgear Panel","ci":"INTERNAL","psif":0.91,"ps":0.94,"conf":0.95,"bar":"bar-001","bs":"Failed","lsr":"lsr-004","lconf":0.99,"shap":{"barrier_state":0.48,"energy_magnitude":0.32,"isolation_verification":0.13,"interruption_factor":0.05},"consq":"33kV electrocution certain fatality","expl":"Earthing clamp removed during interruption. The isolation state changed without worker knowledge. Failure to re-verify isolation after interruption is the causal behaviour.","narrative":"Senior electrician about to conduct insulation resistance testing on a 33kV panel was interrupted to assist a colleague. On return 20 minutes later, he began work without re-verifying the isolation state. A second technician had removed the earthing clamp from the busbar during the interruption. Test lead made contact with the 33kV busbar before the error was identified by a third person who had just entered the substation.","outcome":"No electrical contact with conductor. Error identified before test commenced.","potential":"33kV contact. Instantaneous electrocution fatality."},
+    {"id":"rpt-014","uid":"HZD-2026-0014","rtype":"HAZARD_OBSERVATION","days_ago":37,"site":"site-002","act":"act-012","location":"Slug Catcher SC-01 South Isolation Skid","equip":"12-inch Gate Valve V-401","ci":"INTERNAL","psif":0.65,"ps":0.68,"conf":0.78,"bar":"bar-003","bs":"Degraded","lsr":"lsr-004","lconf":0.88,"shap":{"documentation_error":0.33,"isolation_verification":0.30,"barrier_state":0.25,"pressure_test_risk":0.09},"consq":"Instrumentation over-pressurisation HC release and fire risk","expl":"Isolation certificate inaccuracy. Blind position not independently verified before test. If test had commenced, isolation barrier would have been non-functional.","narrative":"During pressure test preparation for slug catcher maintenance, inspector found spectacle blind in the flow position on 12-inch isolation valve V-401. Isolation certificate indicated blind was in the blind position. Discrepancy was identified before pressure test commenced. Had the test proceeded, full system pressure would have been applied to non-isolated downstream equipment rated for much lower pressure.","outcome":"Test postponed. Blind confirmed in flow position and corrected.","potential":"Over-pressurisation of downstream instrumentation. Potential failure, HC release, and fire."},
+    {"id":"rpt-015","uid":"NM-2026-0015","rtype":"NEAR_MISS","days_ago":40,"site":"site-004","act":"act-007","location":"Flare Stack Access Platform Level 4","equip":"Fixed Access Ladder Cage Type","ci":"INTERNAL","psif":0.72,"ps":0.75,"conf":0.83,"bar":"bar-005","bs":"Failed","lsr":"lsr-006","lconf":0.93,"shap":{"barrier_state":0.39,"inspection_gap":0.31,"fall_height":0.22,"corrosion_extent":0.06},"consq":"Fatal fall from 9m ladder rung failure","expl":"Ladder inspection gap due to access constraints. Structural integrity barrier absent. Rungs corroded hollow indicate the failure was developing over multiple inspection cycles.","narrative":"Operator ascending the flare stack access ladder discovered that three consecutive rungs at 9m elevation were corroded through and hollow on one side. The defect was not visible from below and had not been identified in the last monthly ladder inspection. Operator descended without incident. Inspection records showed this ladder section had been excluded from the previous two inspection cycles as it required a rope access team.","outcome":"Access restricted. Rope access inspection commissioned. No injury.","potential":"Rung failure under load at 9m. Fatal fall."},
+    {"id":"rpt-016","uid":"NM-2026-0016","rtype":"NEAR_MISS","days_ago":43,"site":"site-005","act":"act-002","location":"Tank 08 Bottom Sump Access Paradip Refinery","equip":"Sump Cleaning Pump","ci":"CONTRACTOR","psif":0.78,"ps":0.81,"conf":0.87,"bar":"bar-002","bs":"Bypassed","lsr":"lsr-003","lconf":0.96,"shap":{"barrier_state":0.41,"alarm_silenced":0.28,"standby_absent":0.21,"chemical_toxicity":0.07},"consq":"Benzene overexposure incapacitation confined space rescue casualty chain","expl":"Gas detector alarm silenced (bypassed barrier) and standby man absent. Two concurrent barrier failures in confined space entry.","narrative":"During confined space entry for tank sump cleaning, the standby man observing from outside left his post to retrieve replacement PPE approximately 80m away. During his 12-minute absence, two workers continued working inside where benzene concentration had risen to 8 ppm against a TLV-C of 5 ppm. Workers reported mild headaches on exit. No alarm was triggered as the personal gas detector alarm had been silenced by one of the workers due to intermittent false alarms earlier.","outcome":"Workers removed. Medical check completed. No hospitalisation required.","potential":"Benzene overexposure causing acute chemical injury, or simultaneous incapacitation requiring confined space rescue with secondary rescuer casualty risk."},
+    {"id":"rpt-017","uid":"HZD-2026-0017","rtype":"HAZARD_OBSERVATION","days_ago":46,"site":"site-001","act":"act-009","location":"Gas Processing Train 2 Pressure Control Station","equip":"PCV-242 Pressure Control Valve","ci":"INTERNAL","psif":0.76,"ps":0.79,"conf":0.85,"bar":"bar-002","bs":"Bypassed","lsr":"lsr-002","lconf":0.90,"shap":{"safety_device_bypassed":0.44,"exposure_duration":0.28,"operating_pressure_ratio":0.18,"detection_failure":0.07},"consq":"Pressure vessel rupture catastrophic gas release and potential explosion","expl":"PSV gagged closed for 6 weeks while system operated near MAWP. Safety critical device bypassed without formal override process or detection.","narrative":"Quarterly safety valve inspection revealed PSV-242A primary pressure relief for gas processing train had been gagged closed for 6 weeks with the maintenance team tag still attached. The gag had been installed during an inspection but reinstatement was missed in the work order closeout. System had been operating at up to 92 percent of maximum allowable working pressure during this period without functioning overpressure protection.","outcome":"PSV reinstated after discovery. No overpressure event occurred.","potential":"Process overpressure above MAWP without PSV protection. Pressure vessel rupture and catastrophic gas release."},
+    {"id":"rpt-018","uid":"NM-2026-0018","rtype":"NEAR_MISS","days_ago":50,"site":"site-003","act":"act-003","location":"Module Fabrication Deck Laydown Area 2","equip":"Lattice Boom Crane 200T","ci":"CONTRACTOR","psif":0.81,"ps":0.84,"conf":0.89,"bar":"bar-008","bs":"Failed","lsr":"lsr-007","lconf":0.95,"shap":{"barrier_state":0.38,"load_mass":0.29,"inspection_gap":0.21,"hydraulic_depletion":0.09},"consq":"Catastrophic dropped object 38-tonne load release fatality","expl":"Crane brake accumulator degraded to 40 percent charge. Lifting barrier in failed state. Brief brake slip at 0.4m demonstrates proximity to a catastrophic dropped load event.","narrative":"Lift coordinator called a halt to a 38-tonne structural module pick when the main hoist brake slipped momentarily during pre-tension. Load had risen 0.4m before brake re-engaged. Post-incident inspection found hydraulic brake accumulator had depleted to 40 percent of specified charge. Crane pre-use check had been signed as completed but the hydraulic system pressure check was not specifically listed on the form.","outcome":"Brake re-engaged. Load lowered. Crane taken out of service for inspection.","potential":"Full brake failure releasing 38-tonne load. Catastrophic dropped object fatality in lift zone."},
+    {"id":"rpt-019","uid":"HZD-2026-0019","rtype":"HAZARD_OBSERVATION","days_ago":54,"site":"site-002","act":"act-008","location":"Amine Regenerator Column Reboiler Platform","equip":"Rich Amine Line Valve NV-1142","ci":"INTERNAL","psif":0.58,"ps":0.61,"conf":0.74,"bar":"bar-006","bs":"Degraded","lsr":"lsr-005","lconf":0.78,"shap":{"thermal_hazard":0.33,"personnel_exposure":0.28,"barrier_state":0.24,"visibility_impairment":0.12},"consq":"Steam scalding injury from 78C steam mist exposure","expl":"Steam leak creating high-temperature mist in occupied area. PPE inadequate for thermal exposure.","narrative":"Routine operator round discovered a pinhole steam leak on the reboiler steam condensate return line in the amine regenerator area. Steam was tracking along the insulation lagging and had created a steam and water mist that obscured visibility for approximately 3 metres around the reboiler platform. Area temperature measured at 78 degrees C ambient at the leak source. An untrained casual labourer was observed working within 2m of the steam source on an unrelated task.","outcome":"Area isolated. Labourer relocated. Steam trap replaced under isolation.","potential":"Steam burn scalding injury from 78 degrees C ambient steam mist exposure."},
+    {"id":"rpt-020","uid":"NM-2026-0020","rtype":"NEAR_MISS","days_ago":57,"site":"site-004","act":"act-001","location":"Manifold Station 3 Wellhead Area B","equip":"Oxy-Fuel Welding Set","ci":"CONTRACTOR","psif":0.85,"ps":0.88,"conf":0.92,"bar":"bar-002","bs":"Absent","lsr":"lsr-004","lconf":0.97,"shap":{"gas_test_absent":0.42,"barrier_state":0.28,"line_inventory":0.20,"permit_gap":0.07},"consq":"Methanol fire at wellhead escalation to major hydrocarbon fire","expl":"Methanol injection line hot work without gas test or line contents verification. Gas testing barrier absent from permit scope.","narrative":"A joint integrity repair involving hot work was commenced on a 4-inch methanol injection line without verifying line contents or completing a purge. The welding supervisor assumed the line had been de-inventoried as the isolation tags showed CLOSED. Methanol ignited during arc initiation producing a 1.5-metre flame from the weld connection. Welder suffered first-degree facial burns. Hot work permit had been issued but did not include a gas test requirement.","outcome":"Welder first-degree facial burns. No structural fire. Line isolated.","potential":"Full methanol fire in wellhead area. Escalating to wellhead gas release and major fire."},
+    {"id":"rpt-021","uid":"HZD-2026-0021","rtype":"HAZARD_OBSERVATION","days_ago":60,"site":"site-005","act":"act-007","location":"Tank Farm TF-4 Maintenance Access Walkway","equip":"Fixed Access Stairway S-12","ci":"INTERNAL","psif":0.62,"ps":0.65,"conf":0.76,"bar":"bar-005","bs":"Failed","lsr":"lsr-006","lconf":0.86,"shap":{"structural_defect":0.36,"inspection_gap":0.28,"emergency_route":0.25,"occupancy_rating":0.08},"consq":"Multiple fall injuries during emergency evacuation","expl":"Critical evacuation infrastructure with structural defect. Handrail post nearly detached. 14-month inspection gap.","narrative":"Inspector found that six bolts had been removed from the handrail support post of stairway S-12 at TF-4. The post was loose and deflected by approximately 40 degrees under light manual loading. Stairway is rated for 120 workers per shift and connects the tank farm control room to the emergency muster point. Maintenance records showed the last structural check was 14 months ago.","outcome":"Stairway access suspended. Emergency route diverted via S-11. Repair completed within 2 hours.","potential":"Handrail post collapse during evacuation causing multiple fall injuries in emergency conditions."},
+    {"id":"rpt-022","uid":"NM-2026-0022","rtype":"NEAR_MISS","days_ago":64,"site":"site-001","act":"act-005","location":"Drilling Mud Processing Unit Shaker Deck","equip":"Linear Motion Shale Shaker","ci":"CONTRACTOR","psif":0.60,"ps":0.63,"conf":0.75,"bar":"bar-006","bs":"Absent","lsr":"lsr-005","lconf":0.82,"shap":{"guard_absent":0.42,"normalised_deviation":0.28,"hand_exposure":0.22,"machinery_running":0.05},"consq":"Degloving or amputation injury from machinery contact","expl":"Guard permanently removed. Primary machinery guarding barrier absent. Normalisation of deviation. Worker hand in machine contact zone while running.","narrative":"Rig hand was clearing a blockage from the shale shaker screen while the unit was still running, with hand inserted through the guard opening. Vibration caused a sudden shift in accumulated cuttings which pinned two fingers against the screen frame for approximately 3 seconds before the rig hand was able to withdraw. Safety guard on the feed side had been permanently removed months ago to facilitate more frequent clearing without stopping the shaker.","outcome":"Minor lacerations to two fingers. First-aid treatment. Guard not reinstated.","potential":"Degloving injury or amputation of fingers from rotating vibrating machinery. Permanent disability."},
+    {"id":"rpt-023","uid":"NM-2026-0023","rtype":"NEAR_MISS","days_ago":68,"site":"site-003","act":"act-009","location":"Gas Metering Station Topsides Deck A","equip":"Ultrasonic Flow Meter Bypass Line","ci":"INTERNAL","psif":0.48,"ps":0.51,"conf":0.68,"bar":"bar-010","bs":"Degraded","lsr":"lsr-002","lconf":0.70,"shap":{"valve_position":0.31,"alarm_threshold":0.29,"monitoring_gap":0.24,"flow_magnitude":0.13},"consq":"Unmonitored process flow masking overpressurisation hazard","expl":"Both isolation valves open simultaneously. Valve position management degraded. Alarm threshold set too high to detect the bypass condition.","narrative":"While routing a temporary instrument cable, a technician noticed that both the inlet and outlet isolation valves of the gas metering bypass loop were both open simultaneously, creating an unintended flow path that bypassed the primary gas metering system. The bypass had been open for at minimum 8 hours based on log review. No process alarm was generated as the metering discrepancy threshold was set at 3 percent and the bypass flow was below this level.","outcome":"Bypass closed. Metering restored. Root cause investigation initiated.","potential":"Unmetered gas flow path creating unmonitored process path that could mask process anomaly or overpressurisation."},
+    {"id":"rpt-024","uid":"HZD-2026-0024","rtype":"HAZARD_OBSERVATION","days_ago":72,"site":"site-002","act":"act-006","location":"Buried Pipeline Corridor ROW-07","equip":"14-inch Carbon Steel Gas Transmission Pipeline","ci":"INTERNAL","psif":0.66,"ps":0.69,"conf":0.79,"bar":"bar-003","bs":"Absent","lsr":"lsr-004","lconf":0.81,"shap":{"notification_absent":0.36,"depth_margin":0.30,"barrier_state":0.23,"equipment_capacity":0.09},"consq":"Gas pipeline strike release and ignition fatality above ground","expl":"Third-party encroachment into pipeline ROW without notification. Right-of-way control procedure barrier absent.","narrative":"Third-party agricultural contractor began mechanical ploughing operations within the pipeline right-of-way corridor without notifying the pipeline operator. Surveyed depth at crossing point was 0.9m which meets minimum standard. However the agricultural equipment was equipped with a 1.2m deep ripper tine. Operator control room identified the encroachment from a third-party fence gate camera and dispatched a field team who halted operations before any contact.","outcome":"Encroachment stopped before pipeline contact. No damage.","potential":"Pipeline strike by 1.2m ripper tine at 0.9m depth. Gas release and potential ignition above agricultural equipment."},
+    {"id":"rpt-025","uid":"NM-2026-0025","rtype":"NEAR_MISS","days_ago":75,"site":"site-005","act":"act-004","location":"Hydrocracker Unit Reactor Feed Effluent Exchanger","equip":"High-Pressure Hydrogen Service Valve V-2214","ci":"INTERNAL","psif":0.70,"ps":0.73,"conf":0.81,"bar":"bar-010","bs":"Failed","lsr":"lsr-004","lconf":0.89,"shap":{"isolation_verification":0.37,"gas_detection_fail":0.30,"barrier_state":0.22,"hydrogen_properties":0.09},"consq":"Hydrogen accumulation and ignition flash fire or explosion","expl":"Valve left half-open. Energy isolation not verified at handover. Hydrogen detection failed to alarm. Two independent barriers failed simultaneously.","narrative":"Process engineer performing handover rounds identified that valve V-2214 on the high-pressure hydrogen service line at 140 bar and 380 degrees C had been left in the half-open position following the previous shift line-up procedure. This valve should have been confirmed closed as part of the shift handover checklist. The half-open position had allowed a small continuous hydrogen bleed to an area with poor natural ventilation. No hydrogen detection alarm had activated.","outcome":"Valve secured. Area ventilated. Hydrogen detector calibration checked.","potential":"Hydrogen accumulation in low-ventilation area. Flash fire or explosion on ignition source."},
+]
+
+CLUSTERS = [
+    {"id":"cls-001","name":"Energy Isolation Failures Assam Rajasthan Assets","summary":"Recurring pattern of incomplete LOTO procedures across Assam Digboi and Rajasthan Barmer operations. Analysis identifies inadequate isolation certificate specificity as the primary systemic cause. 5 incidents in 75 days with escalating frequency.","coherence_score":0.92,"occurrence_count":5,"primary_hazard":"Electrical and Mechanical Energy","primary_barrier_id":"bar-001","primary_lsr_id":"lsr-004","trend_status":"INCREASING","affected_sites":["Assam Digboi Block","Rajasthan Barmer Block"],"affected_activities":["Electrical Isolation LOTO","Energy Isolation Non-Electrical"],"example_report_ids":["rpt-007","rpt-013","rpt-025"]},
+    {"id":"cls-002","name":"Hot Work Without Atmospheric Testing Multiple Sites","summary":"Four distinct incidents of hot work commencing without a valid current gas test being performed. The work permit system is not enforcing gas test requirements prior to permit activation. Contractor workforce disproportionately involved.","coherence_score":0.88,"occurrence_count":4,"primary_hazard":"Hydrocarbon Vapour Ignition","primary_barrier_id":"bar-002","primary_lsr_id":"lsr-001","trend_status":"STABLE","affected_sites":["Assam Digboi Block","Paradip Refinery Complex"],"affected_activities":["Hot Work Operations"],"example_report_ids":["rpt-001","rpt-011","rpt-020"]},
+    {"id":"cls-003","name":"Fall Protection Failures at Height Scaffold and Ladder","summary":"Cluster of 5 incidents involving inadequate fall protection at heights between 4m and 15m. Recurring themes include scaffold board deterioration, missing guard rails, ladder inspection gaps, and detached lanyards.","coherence_score":0.90,"occurrence_count":5,"primary_hazard":"Fall from Height","primary_barrier_id":"bar-005","primary_lsr_id":"lsr-006","trend_status":"INCREASING","affected_sites":["Assam Digboi Block","Paradip Refinery Complex","Rajasthan Barmer Block"],"affected_activities":["Working at Height","Scaffolding Operations"],"example_report_ids":["rpt-005","rpt-009","rpt-015"]},
+    {"id":"cls-004","name":"Confined Space Entry Control Deficiencies","summary":"Three confined space incidents with common root cause: gas detection either absent, silenced, or not used at point of entry. All involve contractor or mixed workforce. Standby person absence a recurring factor.","coherence_score":0.86,"occurrence_count":3,"primary_hazard":"Atmospheric Hazard O2 Deficiency and Toxic","primary_barrier_id":"bar-002","primary_lsr_id":"lsr-003","trend_status":"STABLE","affected_sites":["Gujarat Hazira Gas Terminal","Paradip Refinery Complex"],"affected_activities":["Confined Space Entry"],"example_report_ids":["rpt-003","rpt-016"]},
+]
+
+
+def seed():
+    db = SessionLocal()
+    try:
+        print("SurakshaAI Real Data Seed Starting...")
+
+        for u in USERS:
+            if not db.query(User).filter(User.email == u["email"]).first():
+                db.add(User(id=u["id"], email=u["email"], full_name=u["full_name"],
+                            role=u["role"], hashed_password=get_password_hash(u["password"]), is_active=True))
+                print(f"  + User: {u['email']}")
+            else:
+                print(f"  ~ User exists: {u['email']}")
+        db.commit()
+
+        for s in SITES:
+            if not db.query(Site).filter(Site.code == s["code"]).first():
+                db.add(Site(**s))
+        db.commit()
+        print(f"  + {len(SITES)} Sites")
+
+        for a in ACTIVITIES:
+            if not db.query(Activity).filter(Activity.code == a["code"]).first():
+                db.add(Activity(**a))
+        db.commit()
+        print(f"  + {len(ACTIVITIES)} Activities")
+
+        for b in BARRIERS:
+            if not db.query(Barrier).filter(Barrier.code == b["code"]).first():
+                db.add(Barrier(**b))
+        db.commit()
+        print(f"  + {len(BARRIERS)} Barriers")
+
+        for lsr in LSRS:
+            if not db.query(LifeSavingRule).filter(LifeSavingRule.code == lsr["code"]).first():
+                db.add(LifeSavingRule(**lsr))
+        db.commit()
+        print(f"  + {len(LSRS)} Life-Saving Rules")
+
+        seeded = 0
+        for rd in REPORTS_DATA:
+            if db.query(Report).filter(Report.report_uid == rd["uid"]).first():
+                continue
+            rpt = Report(
+                id=rd["id"], report_uid=rd["uid"], report_type=rd["rtype"],
+                date_time=utc(days_ago=rd["days_ago"]),
+                site_id=rd["site"], activity_id=rd["act"],
+                location=rd.get("location"), equipment=rd.get("equip"),
+                contractor_internal=rd.get("ci", "INTERNAL"),
+                narrative=rd["narrative"], actual_outcome=rd.get("outcome"),
+                potential_consequence=rd.get("potential"),
+                source="HSE Direct Entry", tags=[],
+                data_origin="PRODUCTION_AUTHORIZED",
+                review_status="PENDING" if rd["days_ago"] <= 30 else "REVIEWED",
+            )
+            db.add(rpt)
+            db.flush()
+            db.add(PSIFPrediction(
+                report_id=rpt.id, psif_probability=rd["psif"], priority_score=rd["ps"],
+                confidence=rd["conf"], is_calibrated=True,
+                primary_barrier_id=rd["bar"], barrier_state=rd["bs"],
+                credible_consequence=rd.get("consq"), explanation_summary=rd.get("expl"),
+                shap_values=rd.get("shap", {}), model_version="psif-ensemble-v1.0.0",
+            ))
+            db.add(ReportLSRPrediction(
+                report_id=rpt.id, lsr_id=rd["lsr"], confidence=rd["lconf"],
+                supporting_evidence=(rd.get("expl", ""))[:200], rank=1,
+            ))
+            if rd["days_ago"] <= 30:
+                db.add(ReviewTask(report_id=rpt.id, reviewer_id=None, status="PENDING"))
+            seeded += 1
+        db.commit()
+        print(f"  + {seeded} Reports seeded")
+
+        for cl in CLUSTERS:
+            if not db.query(PrecursorCluster).filter(PrecursorCluster.id == cl["id"]).first():
+                db.add(PrecursorCluster(**cl, first_seen=utc(days_ago=75), latest_seen=utc(days_ago=2)))
+        db.commit()
+        print(f"  + {len(CLUSTERS)} Precursor Clusters")
+
+        if db.query(Alert).count() == 0:
+            alerts = [
+                Alert(alert_type="CRITICAL", severity="CRITICAL", report_id="rpt-013",
+                      title="33kV Isolation Failure Substation 4B",
+                      message="Incomplete energy isolation before 33kV panel access. Earthing clamp removed during interruption. Maximum severity electrocution risk. Immediate review of all isolation certificates at Assam asset required.",
+                      is_acknowledged=False),
+                Alert(alert_type="CRITICAL", severity="CRITICAL", report_id="rpt-007",
+                      title="11kV Panel Entered Without Full Isolation Offshore",
+                      message="Technician accessed 11kV MCC panel with incomplete isolation. 11kV feeder not included in isolation certificate. Fatality-level exposure. Offshore isolation protocol audit mandated.",
+                      is_acknowledged=False),
+                Alert(alert_type="RECURRENCE", severity="HIGH",
+                      title="Energy Isolation Failure Pattern 5 Incidents in 75 Days",
+                      message="Precursor cluster CLS-001 identifies 5 energy isolation failures across Assam and Rajasthan assets. Trend is INCREASING. Immediate systematic review of LOTO procedure required.",
+                      is_acknowledged=False),
+                Alert(alert_type="TREND", severity="HIGH",
+                      title="Fall Protection Barrier Failures 5 Incidents Clustered",
+                      message="Scaffold, ladder, and fall arrest system failures across 3 assets in 75 days. Inspection regime adequacy requires urgent audit.",
+                      is_acknowledged=False),
+                Alert(alert_type="NOVELTY", severity="MEDIUM", report_id="rpt-012",
+                      title="SCADA Inhibit and Valve Failure Combination New Pattern",
+                      message="First identified instance of simultaneous ESD valve failure and SCADA alarm inhibit on Offshore Platform C. 19-day undetected exposure window. SCADA inhibit management procedure requires system-wide review.",
+                      is_acknowledged=False),
+            ]
+            for a in alerts:
+                db.add(a)
+            db.commit()
+            print(f"  + 5 Alerts")
+
+        if db.query(AuditLog).count() < 5:
+            logs = [
+                AuditLog(timestamp=utc(hours_ago=2), user_id="usr-analyst-001", action="LOGIN_SUCCESS",
+                         entity_type="AUTH", entity_id="usr-analyst-001",
+                         details={"role": "HSE_ANALYST"}, ip_address="10.10.1.42"),
+                AuditLog(timestamp=utc(hours_ago=3), user_id="usr-manager-002", action="TRIAGE_DECISION",
+                         entity_type="REPORT", entity_id="rpt-001",
+                         details={"decision": "CONFIRMED", "report_uid": "NM-2026-0001"}, ip_address="10.10.1.51"),
+                AuditLog(timestamp=utc(hours_ago=5), user_id="usr-analyst-001", action="REPORT_VIEWED",
+                         entity_type="REPORT", entity_id="rpt-007",
+                         details={"report_uid": "NM-2026-0007"}, ip_address="10.10.1.42"),
+                AuditLog(timestamp=utc(hours_ago=8), user_id="usr-admin-003", action="LOGIN_SUCCESS",
+                         entity_type="AUTH", entity_id="usr-admin-003",
+                         details={"role": "ADMINISTRATOR"}, ip_address="10.10.1.10"),
+                AuditLog(timestamp=utc(days_ago=1), user_id="usr-manager-002", action="ALERT_ACKNOWLEDGED",
+                         entity_type="ALERT", details={"alert_title": "33kV Isolation Failure"}, ip_address="10.10.1.51"),
+                AuditLog(timestamp=utc(days_ago=2), user_id="usr-analyst-001", action="REPORT_SUBMITTED",
+                         entity_type="REPORT", entity_id="rpt-001",
+                         details={"report_uid": "NM-2026-0001"}, ip_address="10.10.1.42"),
+            ]
+            for entry in logs:
+                db.add(entry)
+            db.commit()
+            print(f"  + 6 Audit log entries")
+
+        print("\nSeed complete. Login credentials:")
+        for u in USERS:
+            print(f"  {u['email']:35s}  password: {u['password']}  role: {u['role']}")
+
+    except Exception as exc:
+        db.rollback()
+        import traceback
+        traceback.print_exc()
+        raise
+    finally:
+        db.close()
+
+
+if __name__ == "__main__":
+    seed()
