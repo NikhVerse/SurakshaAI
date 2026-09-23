@@ -14,7 +14,7 @@ export default function Navbar() {
           <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
             <Link href="/about" className="hover:text-slate-900 transition">About</Link>
             <Link href="/how-it-works" className="hover:text-slate-900 transition">How It Works</Link>
-            <Link href="/security" className="hover:text-slate-900 transition">Security &amp; Sovereign AI</Link>
+            <Link href="/security" className="hover:text-slate-900 transition">Security &amp; Governance</Link>
             <Link href="/docs" className="hover:text-slate-900 transition">Documentation</Link>
           </nav>
         </div>

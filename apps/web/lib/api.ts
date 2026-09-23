@@ -84,13 +84,182 @@ function getFallbackForPath<T>(path: string, options: RequestInit = {}): T | und
     } as unknown as T;
   }
   if (cleanPath === "/api/v1/chat/models") {
+    const fullCategorizedModels: ModelInfo[] = [
+      {
+        id: "mistral:7b",
+        name: "Mistral 7B Instruct",
+        provider: "Ollama",
+        category: "Local Sovereign",
+        context_window: "32k",
+        badge: "On-Prem",
+        description: "Balanced, private, air-gapped general HSE reasoning and incident extraction.",
+        is_local: true,
+      },
+      {
+        id: "llama3:8b",
+        name: "Llama 3 8B",
+        provider: "Ollama",
+        category: "Local Sovereign",
+        context_window: "8k",
+        badge: "On-Prem",
+        description: "Meta industrial safety-tuned model for local telemetry analysis.",
+        is_local: true,
+      },
+      {
+        id: "llama3.1:70b",
+        name: "Llama 3.1 70B",
+        provider: "Ollama",
+        category: "Frontier Reasoning",
+        context_window: "128k",
+        badge: "High VRAM",
+        description: "Deep barrier degradation and complex failure causality analysis.",
+        is_local: true,
+      },
+      {
+        id: "phi3:mini",
+        name: "Phi-3 Mini 3.8B",
+        provider: "Ollama",
+        category: "Fast Triage",
+        context_window: "128k",
+        badge: "Edge Fast",
+        description: "Ultra-fast low-latency triage classification for edge field devices.",
+        is_local: true,
+      },
+      {
+        id: "qwen2.5:7b",
+        name: "Qwen 2.5 7B",
+        provider: "Ollama",
+        category: "Local Sovereign",
+        context_window: "32k",
+        badge: "Multilingual",
+        description: "Multi-lingual process equipment tag mapping and vernacular logs.",
+        is_local: true,
+      },
+      {
+        id: "claude-3-7-sonnet-latest",
+        name: "Claude 3.7 Sonnet",
+        provider: "Anthropic",
+        category: "Frontier Reasoning",
+        context_window: "200k",
+        badge: "Hybrid Reasoning",
+        description: "Frontier complex root-cause reasoning, BowTie analysis, and barrier chains.",
+        is_local: false,
+      },
+      {
+        id: "claude-3-5-sonnet-20241022",
+        name: "Claude 3.5 Sonnet",
+        provider: "Anthropic",
+        category: "Frontier Reasoning",
+        context_window: "200k",
+        badge: "Flagship",
+        description: "Leading model for process engineering safety cases and P&ID diagnostics.",
+        is_local: false,
+      },
+      {
+        id: "claude-3-5-haiku-20241022",
+        name: "Claude 3.5 Haiku",
+        provider: "Anthropic",
+        category: "Fast Triage",
+        context_window: "200k",
+        badge: "Fast & Efficient",
+        description: "Rapid near-miss classification, entity extraction, and shift log digestion.",
+        is_local: false,
+      },
+      {
+        id: "claude-3-opus-20240229",
+        name: "Claude 3 Opus",
+        provider: "Anthropic",
+        category: "Long-Context Audit",
+        context_window: "200k",
+        badge: "Deep Audit",
+        description: "Comprehensive regulatory safety case compliance (OSHA PSM & OISD).",
+        is_local: false,
+      },
+      {
+        id: "gemini-2.0-flash",
+        name: "Gemini 2.0 Flash",
+        provider: "Google Gemini",
+        category: "Fast Triage",
+        context_window: "1M",
+        badge: "Ultra Fast",
+        description: "Next-gen low-latency streaming and real-time field video/telemetry ingestion.",
+        is_local: false,
+      },
+      {
+        id: "gemini-1.5-pro",
+        name: "Gemini 1.5 Pro",
+        provider: "Google Gemini",
+        category: "Long-Context Audit",
+        context_window: "2M",
+        badge: "2M Context",
+        description: "Full refinery inspection binders, thousands of PTW logs, and plant manuals.",
+        is_local: false,
+      },
+      {
+        id: "gemini-1.5-flash",
+        name: "Gemini 1.5 Flash",
+        provider: "Google Gemini",
+        category: "Fast Triage",
+        context_window: "1M",
+        badge: "High Throughput",
+        description: "High-volume SCADA sensor stream and continuous precursor monitoring.",
+        is_local: false,
+      },
+      {
+        id: "gpt-4o",
+        name: "GPT-4o",
+        provider: "OpenAI",
+        category: "Frontier Reasoning",
+        context_window: "128k",
+        badge: "Omni Intelligence",
+        description: "Multimodal industrial safety analysis, hazard photos, and incident narratives.",
+        is_local: false,
+      },
+      {
+        id: "gpt-4o-mini",
+        name: "GPT-4o Mini",
+        provider: "OpenAI",
+        category: "Fast Triage",
+        context_window: "128k",
+        badge: "Cost Effective",
+        description: "Lightweight high-volume classification of hazard observations.",
+        is_local: false,
+      },
+      {
+        id: "o1",
+        name: "OpenAI o1",
+        provider: "OpenAI",
+        category: "Frontier Reasoning",
+        context_window: "200k",
+        badge: "Deep Science",
+        description: "Deep mathematical risk modeling, explosion modeling, and barrier physics.",
+        is_local: false,
+      },
+      {
+        id: "o3-mini",
+        name: "OpenAI o3-mini",
+        provider: "OpenAI",
+        category: "Frontier Reasoning",
+        context_window: "200k",
+        badge: "STEM Reasoning",
+        description: "High-speed STEM logic and complex energy isolation verification chains.",
+        is_local: false,
+      },
+    ];
+
+    const providers: ModelProviderInfo[] = [
+      { name: "Ollama", category: "Local Private Engine", status: "connected", is_local: true, badge: "Air-Gapped" },
+      { name: "Anthropic", category: "Frontier Reasoning", status: "ready", is_local: false, badge: "Claude 3.7 / 3.5" },
+      { name: "Google Gemini", category: "Multimodal Long-Context", status: "ready", is_local: false, badge: "2M Context" },
+      { name: "OpenAI", category: "Frontier & STEM Reasoning", status: "ready", is_local: false, badge: "GPT-4o / o1 / o3" },
+    ];
+
     return {
-      models: [
-        { name: "mistral:7b-instruct", size: 4100000000 },
-        { name: "llama3:8b-instruct", size: 4700000000 },
-        { name: "qwen2.5:7b-safety", size: 4300000000 },
-      ],
+      providers,
+      categorized_models: fullCategorizedModels,
+      models: fullCategorizedModels.map((m) => ({ name: m.id, size: 0, provider: m.provider })),
       status: "connected",
+      engine: "Multi-Provider Sovereign Intelligence Platform",
     } as unknown as T;
   }
   if (cleanPath === "/api/v1/triage") {
@@ -230,7 +399,7 @@ export const systemApi = {
 };
 
 export const chatApi = {
-  getModels: () => fetchApi<{ models: OllamaModel[]; status: string }>("/api/v1/chat/models"),
+  getModels: () => fetchApi<ModelsResponse>("/api/v1/chat/models"),
 };
 
 // Type definitions
@@ -442,4 +611,32 @@ export interface OllamaModel {
   name: string;
   size?: number;
   modified_at?: string;
+  provider?: string;
+}
+
+export interface ModelInfo {
+  id: string;
+  name: string;
+  provider: "Ollama" | "Anthropic" | "Google Gemini" | "OpenAI";
+  category: "Local Sovereign" | "Frontier Reasoning" | "Fast Triage" | "Long-Context Audit";
+  context_window: string;
+  badge: string;
+  description: string;
+  is_local: boolean;
+}
+
+export interface ModelProviderInfo {
+  name: string;
+  category: string;
+  status: string;
+  is_local: boolean;
+  badge: string;
+}
+
+export interface ModelsResponse {
+  providers: ModelProviderInfo[];
+  categorized_models: ModelInfo[];
+  models: OllamaModel[];
+  status: string;
+  engine: string;
 }

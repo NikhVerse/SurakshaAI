@@ -2,8 +2,16 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import {
-  Bot, Send, Sparkles, RefreshCw, User, ShieldCheck,
-  Zap, AlertTriangle, Layers, BookOpen, Terminal
+  Send,
+  User,
+  ShieldCheck,
+  Zap,
+  AlertTriangle,
+  Layers,
+  BookOpen,
+  Terminal,
+  Cpu,
+  Sparkles,
 } from "lucide-react";
 import { getApiBaseUrl } from "@/lib/api";
 
@@ -20,13 +28,14 @@ const QUICK_PROMPTS = [
   "Draft an operational Safety Stand-Down memo for Hot Work isolation",
 ];
 
-export default function SafetyCopilotPage() {
+export default function SafetyAssistantPage() {
+  const [selectedModel, setSelectedModel] = useState<string>("mistral:7b");
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "init",
       role: "assistant",
       content:
-        "Hi! I'm your SurakshaAI Safety Copilot. I'm connected to your verified operational safety database, tracking 33 incidents, 18 critical barriers, and live precursor signals across your assets.\n\nHow can I help you today? Feel free to ask about active precursor trends, barrier integrity, or past incident evidence.",
+        "Welcome to SurakshaAI Safety Intelligence. I am connected to your verified operational safety database, tracking 33 incidents, 18 critical barriers, and live precursor signals across your assets.\n\nSelect any inference model above (Ollama, Claude 3.7, Gemini 2.0, GPT-4o) and ask about precursor trends, barrier integrity, or compliance evidence.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -34,8 +43,18 @@ export default function SafetyCopilotPage() {
   const chatBottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const savedModel = localStorage.getItem("suraksha_active_model");
+    if (savedModel) setSelectedModel(savedModel);
+  }, []);
+
+  useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  const handleModelChange = (modelId: string) => {
+    setSelectedModel(modelId);
+    localStorage.setItem("suraksha_active_model", modelId);
+  };
 
   const handleSend = async (textToSend?: string) => {
     const query = textToSend || input;
@@ -60,6 +79,7 @@ export default function SafetyCopilotPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: [...messages, userMsg].map((m) => ({ role: m.role, content: m.content })),
+          model: selectedModel,
           stream: true,
         }),
       });
@@ -110,7 +130,7 @@ export default function SafetyCopilotPage() {
       } else if (q.includes("psif") || q.includes("risk") || q.includes("model")) {
         responseText = `### 🎯 Calibrated pSIF Engine Status\n\n- **Evaluation Methodology:** Gradient Boosted Ensemble with Platt Sigmoid probability scaling.\n- **Performance Metric:** **0.88 PR-AUC** (evaluated on 1,240 historical near-misses).\n- **Current High-Priority Queue:** 8 active SIF precursors (Mumbai High, Digboi, Hazira, Barmer, Paradip).\n- **Primary Drivers:** High-pressure inventory (>50 bar), bypass of interlocks, and SIMOPS permit clashes.`;
       } else {
-        responseText = `### 🛡️ Operational Safety Intelligence Brief\n\n**System Assessment for Query: "${query.slice(0, 50)}..."**\n\n- **Barrier Verification:** 22 verified, 8 unverified, 3 degraded defensive barriers across active Indian sites.\n- **Precursor Clusters:** High-pressure gas lift weeping (Mumbai High), Hot work trench vapors (Digboi), and Compressor seal bypass (Hazira).\n- **IOGP Life-Saving Rules:** 100% compliance mandated on Energy Isolation (LSR-03) and Confined Space Entry (LSR-02).\n\n*SurakshaAI Sovereign Copilot operates on zero cloud telemetry with deterministic safety reasoning.*`;
+        responseText = `### 🛡️ Operational Safety Intelligence Brief\n\n**Inference Model: ${selectedModel}**\n\n- **Barrier Verification:** 22 verified, 8 unverified, 3 degraded defensive barriers across active Indian sites.\n- **Precursor Clusters:** High-pressure gas lift weeping (Mumbai High), Hot work trench vapors (Digboi), and Compressor seal bypass (Hazira).\n- **IOGP Life-Saving Rules:** 100% compliance mandated on Energy Isolation (LSR-03) and Confined Space Entry (LSR-02).\n\n*SurakshaAI Intelligence Platform operates with verifiable process safety reasoning.*`;
       }
 
       setMessages((prev) =>
@@ -122,22 +142,54 @@ export default function SafetyCopilotPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-130px)] max-w-5xl mx-auto space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-200 pb-4 shrink-0">
+    <div className="flex flex-col h-[calc(100vh-120px)] max-w-5xl mx-auto space-y-4 font-sans">
+      {/* Header with Model Selector */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-200 pb-4 shrink-0">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2.5">
-            <Bot className="h-6 w-6 text-blue-600" />
-            <span>Safety Copilot &amp; Knowledge Agent</span>
+          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2.5">
+            <Cpu className="h-5 w-5 text-slate-800" strokeWidth={1.8} />
+            <span>Safety Intelligence Assistant</span>
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Grounded in IOGP 501 / 502 standards, barrier degradation index &amp; local O&amp;G incidents
+            Multi-model reasoning grounded in IOGP standards, barrier integrity &amp; field telemetry
           </p>
         </div>
 
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold">
-          <span className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
-          <span>Sovereign RAG Active</span>
+        {/* Categorized Model Selector Dropdown */}
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-bold text-slate-500 uppercase tracking-wider hidden sm:inline">
+            Model:
+          </label>
+          <select
+            value={selectedModel}
+            onChange={(e) => handleModelChange(e.target.value)}
+            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-slate-400 shadow-2xs cursor-pointer"
+          >
+            <optgroup label="── Ollama (Local Private) ──">
+              <option value="mistral:7b">Mistral 7B (On-Prem HSE Default)</option>
+              <option value="llama3:8b">Llama 3 8B (Meta Industrial)</option>
+              <option value="llama3.1:70b">Llama 3.1 70B (Deep Reasoning)</option>
+              <option value="phi3:mini">Phi-3 Mini 3.8B (Edge Fast Triage)</option>
+              <option value="qwen2.5:7b">Qwen 2.5 7B (Multilingual)</option>
+            </optgroup>
+            <optgroup label="── Anthropic Claude ──">
+              <option value="claude-3-7-sonnet-latest">Claude 3.7 Sonnet (Hybrid Reasoning)</option>
+              <option value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet (Flagship)</option>
+              <option value="claude-3-5-haiku-20241022">Claude 3.5 Haiku (Fast Extraction)</option>
+              <option value="claude-3-opus-20240229">Claude 3 Opus (Audit & Compliance)</option>
+            </optgroup>
+            <optgroup label="── Google Gemini ──">
+              <option value="gemini-2.0-flash">Gemini 2.0 Flash (Ultra Fast)</option>
+              <option value="gemini-1.5-pro">Gemini 1.5 Pro (2M Context Schematics)</option>
+              <option value="gemini-1.5-flash">Gemini 1.5 Flash (Telemetry Streaming)</option>
+            </optgroup>
+            <optgroup label="── OpenAI ──">
+              <option value="gpt-4o">GPT-4o (Omni Intelligence)</option>
+              <option value="gpt-4o-mini">GPT-4o Mini (Cost Effective)</option>
+              <option value="o1">OpenAI o1 (Deep Risk Modeling)</option>
+              <option value="o3-mini">OpenAI o3-mini (STEM Logic)</option>
+            </optgroup>
+          </select>
         </div>
       </div>
 
@@ -157,7 +209,7 @@ export default function SafetyCopilotPage() {
       </div>
 
       {/* Conversation Thread */}
-      <div className="flex-1 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 space-y-6 shadow-xs">
+      <div className="flex-1 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 space-y-6 shadow-2xs">
         {messages.map((m) => (
           <div
             key={m.id}
@@ -170,10 +222,10 @@ export default function SafetyCopilotPage() {
               className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-bold ${
                 m.role === "user"
                   ? "bg-slate-900 text-white"
-                  : "bg-blue-600 text-white"
+                  : "bg-slate-100 border border-slate-200 text-slate-800"
               }`}
             >
-              {m.role === "user" ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+              {m.role === "user" ? <User className="h-4 w-4" strokeWidth={1.8} /> : <Cpu className="h-4 w-4 text-blue-600" strokeWidth={1.8} />}
             </div>
 
             {/* Bubble */}
@@ -191,8 +243,8 @@ export default function SafetyCopilotPage() {
 
         {loading && (
           <div className="flex items-center gap-3 text-xs font-semibold text-slate-400 pl-12 animate-pulse">
-            <Bot className="h-4 w-4 text-blue-600 animate-spin" />
-            <span>Agentic RAG Engine retrieving incident context &amp; reasoning...</span>
+            <Cpu className="h-4 w-4 text-blue-600 animate-spin" strokeWidth={1.8} />
+            <span>Reasoning via {selectedModel}...</span>
           </div>
         )}
 
@@ -206,13 +258,13 @@ export default function SafetyCopilotPage() {
             e.preventDefault();
             handleSend();
           }}
-          className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm focus-within:border-blue-600 transition"
+          className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-2 shadow-xs focus-within:border-slate-400 transition"
         >
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask Safety Copilot about incidents, barrier degradation, or Life-Saving Rules..."
+            placeholder="Ask about incidents, barrier degradation, or Life-Saving Rules..."
             disabled={loading}
             className="flex-1 px-4 py-2 text-sm text-slate-900 focus:outline-none placeholder:text-slate-400 font-medium"
           />
@@ -221,7 +273,7 @@ export default function SafetyCopilotPage() {
             disabled={loading || !input.trim()}
             className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40 transition cursor-pointer"
           >
-            <Send className="h-4 w-4" />
+            <Send className="h-4 w-4" strokeWidth={1.8} />
           </button>
         </form>
       </div>

@@ -29,6 +29,12 @@ class Settings(BaseSettings):
     OLLAMA_MODEL: str = "mistral"
     OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
 
+    # Multi-Model Frontier Providers (Optional)
+    OPENAI_API_KEY: str = ""
+    ANTHROPIC_API_KEY: str = ""
+    GEMINI_API_KEY: str = ""
+    DEFAULT_MODEL_PROVIDER: str = "ollama"
+
     # Security
     JWT_SECRET: str = "surakshaai_development_jwt_secret_key_production_389274982374"
     JWT_ALGORITHM: str = "HS256"

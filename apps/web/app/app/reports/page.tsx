@@ -106,18 +106,18 @@ export default function ReportsPage() {
           <button
             onClick={handleExportCSV}
             title="Download CSV report"
-            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:border-slate-400 hover:text-slate-900 shadow-xs transition cursor-pointer"
+            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:border-slate-400 hover:text-slate-900 shadow-2xs transition cursor-pointer"
           >
-            <Download className="h-4 w-4 text-slate-500" />
+            <Download className="h-4 w-4 text-slate-500" strokeWidth={1.8} />
             <span>Export CSV</span>
           </button>
 
           <Link
             href="/app/reports/new"
-            className="flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-bold text-white hover:bg-slate-800 shadow-sm transition active:scale-[0.99]"
+            className="flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-bold text-white hover:bg-slate-800 shadow-xs transition active:scale-[0.99]"
           >
-            <FileText className="h-4 w-4" />
-            <span>+ New Intake</span>
+            <FileText className="h-4 w-4 text-slate-300" strokeWidth={1.8} />
+            <span>New Intake</span>
           </Link>
         </div>
       </div>
@@ -153,17 +153,17 @@ export default function ReportsPage() {
       {/* Reports Table (Balanced Scale) */}
       <div className="rounded-2xl border border-slate-200 bg-white shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs sm:text-sm text-slate-700">
-            <thead className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+          <table className="w-full text-left text-sm text-slate-700">
+            <thead className="border-b border-slate-200 bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500">
               <tr>
-                <th className="px-5 py-3.5">UID</th>
-                <th className="px-5 py-3.5">Category</th>
-                <th className="px-5 py-3.5">Site / Activity</th>
-                <th className="px-5 py-3.5">Narrative</th>
-                <th className="px-5 py-3.5 text-center">pSIF Risk</th>
-                <th className="px-5 py-3.5">Barrier</th>
-                <th className="px-5 py-3.5">Status</th>
-                <th className="px-5 py-3.5 text-right">Operational Action</th>
+                <th className="px-5 py-4">UID</th>
+                <th className="px-5 py-4">Category</th>
+                <th className="px-5 py-4">Site / Activity</th>
+                <th className="px-5 py-4">Narrative</th>
+                <th className="px-5 py-4 text-center">pSIF Risk</th>
+                <th className="px-5 py-4">Barrier</th>
+                <th className="px-5 py-4">Status</th>
+                <th className="px-5 py-4 text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-sans">
@@ -178,29 +178,29 @@ export default function ReportsPage() {
                   const isHighRisk = (r.psif_probability || 0) >= 0.6;
                   const isConfirmed = confirmedIds[r.id] || r.review_status === "CONFIRMED";
                   return (
-                    <tr key={r.id} className="hover:bg-slate-50/70 transition">
-                      <td className="px-5 py-3.5 font-mono font-bold text-slate-900">
-                        <Link href={`/app/reports/${r.id}`} className="hover:text-sky-600 transition">
+                    <tr key={r.id} className="hover:bg-slate-50/80 transition">
+                      <td className="px-5 py-4 font-mono font-bold text-slate-900">
+                        <Link href={`/app/reports/${r.id}`} className="hover:text-blue-600 transition">
                           {r.report_uid}
                         </Link>
                       </td>
 
-                      <td className="px-5 py-3.5">
+                      <td className="px-5 py-4">
                         <span className="rounded-md bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-xs font-bold text-slate-700">
                           {r.report_type}
                         </span>
                       </td>
 
-                      <td className="px-5 py-3.5">
-                        <div className="font-bold text-slate-900 text-xs">{r.site_name || "Assam Asset"}</div>
-                        <div className="text-[11px] text-slate-400 font-medium">{r.activity_name || "Production"}</div>
+                      <td className="px-5 py-4">
+                        <div className="font-bold text-slate-900 text-sm">{r.site_name || "Assam Asset"}</div>
+                        <div className="text-xs text-slate-400 font-medium">{r.activity_name || "Production"}</div>
                       </td>
 
-                      <td className="px-5 py-3.5 max-w-xs">
-                        <p className="truncate text-slate-600 text-xs font-normal">{r.narrative_snippet}</p>
+                      <td className="px-5 py-4 max-w-xs">
+                        <p className="truncate text-slate-600 text-sm font-normal">{r.narrative_snippet}</p>
                       </td>
 
-                      <td className="px-5 py-3.5 text-center">
+                      <td className="px-5 py-4 text-center">
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold border font-mono ${
                             isHighRisk
@@ -212,17 +212,17 @@ export default function ReportsPage() {
                         </span>
                       </td>
 
-                      <td className="px-5 py-3.5">
-                        <span className="font-bold text-slate-900 text-xs block truncate max-w-[120px]">
+                      <td className="px-5 py-4">
+                        <span className="font-bold text-slate-900 text-sm block truncate max-w-[140px]">
                           {r.primary_barrier || "Energy Isolation"}
                         </span>
-                        <span className={`text-[10px] font-bold ${r.barrier_state === "Verified" ? "text-emerald-700" : "text-amber-700"}`}>
+                        <span className={`text-xs font-bold ${r.barrier_state === "Verified" ? "text-emerald-700" : "text-amber-700"}`}>
                           {r.barrier_state || "Unverified"}
                         </span>
                       </td>
 
-                      <td className="px-5 py-3.5">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${
+                      <td className="px-5 py-4">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold border ${
                           isConfirmed
                             ? "bg-emerald-50 text-emerald-800 border-emerald-200"
                             : "bg-amber-50 text-amber-800 border-amber-200"
@@ -231,7 +231,7 @@ export default function ReportsPage() {
                         </span>
                       </td>
 
-                      <td className="px-5 py-3.5 text-right">
+                      <td className="px-5 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           {!isConfirmed && (
                             <button
@@ -244,7 +244,7 @@ export default function ReportsPage() {
                           )}
                           <Link
                             href={`/app/reports/${r.id}`}
-                            className="rounded-lg bg-slate-900 px-3 py-1 text-xs font-bold text-white hover:bg-slate-800 transition"
+                            className="rounded-lg bg-slate-900 px-3 py-1 text-xs font-bold text-white hover:bg-slate-800 transition shadow-2xs"
                           >
                             Inspect
                           </Link>
