@@ -2,8 +2,22 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowUpDown, Filter, Check, CheckCircle2, AlertTriangle, X, Play, ShieldAlert } from "lucide-react";
+import {
+  Check,
+  CheckCircle2,
+  AlertTriangle,
+  X,
+  Play,
+  MapPin,
+  Clock,
+  ArrowUpRight,
+  Shield,
+  Layers,
+  SlidersHorizontal,
+} from "lucide-react";
 import { fetchApi, TriageTask } from "@/lib/api";
+import DetailDrawer, { DrawerData } from "@/components/ui/DetailDrawer";
+import { StatusDot, RiskScore, SeverityBadge } from "@/components/ui/StatusSystem";
 
 export default function TriagePage() {
   const [tasks, setTasks] = useState<TriageTask[]>([]);
@@ -11,6 +25,10 @@ export default function TriagePage() {
   const [statusFilter, setStatusFilter] = useState("PENDING");
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
+
+  // Detail Drawer
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerData, setDrawerData] = useState<DrawerData | null>(null);
 
   const loadTasks = () => {
     fetchApi<TriageTask[]>(`/api/v1/triage?status_filter=${statusFilter}&sort_by=${sortBy}`)
@@ -34,14 +52,13 @@ export default function TriagePage() {
         }),
       });
       setTasks((prev) => prev.filter((t) => t.task_id !== taskId));
-      setToast(`Incident ${reportUid} successfully marked as ${decision}. Audit record updated.`);
-      setTimeout(() => setToast(null), 4000);
+      setToast(`Incident ${reportUid} confirmed in compliance record.`);
+      setTimeout(() => setToast(null), 3500);
     } catch (err) {
       console.error(err);
     }
   };
 
-  // Operational Action: Batch Verify Top Incidents
   const handleBatchVerify = async () => {
     const pending = tasks.slice(0, 3);
     for (const t of pending) {
@@ -54,179 +71,156 @@ export default function TriagePage() {
         }),
       }).catch(() => {});
     }
-    setToast(`Batch verification completed for ${pending.length} priority incidents.`);
-    setTimeout(() => setToast(null), 4000);
+    setToast(`Batch verified ${pending.length} priority incidents.`);
+    setTimeout(() => setToast(null), 3500);
     loadTasks();
   };
 
+  const openDrawer = (t: TriageTask) => {
+    setDrawerData({
+      id: t.task_id,
+      uid: t.report_uid,
+      title: `${t.activity_name || "Operational Task"}: ${t.site_name || "Installation"}`,
+      severity: t.psif_probability >= 0.7 ? "CRITICAL" : "HIGH",
+      status: t.status,
+      riskScore: t.psif_probability,
+      location: t.site_name,
+      timestamp: t.date_time ? new Date(t.date_time).toLocaleDateString() : "Live",
+      narrative: t.narrative_snippet,
+      rule: t.primary_lsr || "LSR-03 (Energy Isolation)",
+      primaryBarrier: t.primary_barrier,
+      barrierState: t.barrier_state,
+      metrics: [
+        { label: "pSIF Probability", value: `${(t.psif_probability * 100).toFixed(0)}%` },
+        { label: "Priority Score", value: t.priority_score },
+        { label: "Confidence", value: `${(t.confidence * 100).toFixed(0)}%` },
+      ],
+      onConfirm: () => handleDecision(t.task_id, "CONFIRMED", t.report_uid),
+      onDismiss: () => handleDecision(t.task_id, "DISMISSED", t.report_uid),
+    });
+    setDrawerOpen(true);
+  };
+
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-20 font-sans">
+      <DetailDrawer
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        data={drawerData}
+      />
+
       {/* Toast Notice */}
       {toast && (
-        <div className="flex items-center justify-between gap-4 rounded-xl border border-emerald-300 bg-emerald-50 px-5 py-3.5 text-sm font-bold text-emerald-900 shadow-xs">
-          <div className="flex items-center gap-2.5">
-            <CheckCircle2 className="h-4.5 w-4.5 text-emerald-600 shrink-0" />
-            <span>{toast}</span>
-          </div>
-          <button onClick={() => setToast(null)} className="text-emerald-700 hover:text-emerald-900">
-            <X className="h-4 w-4" />
-          </button>
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-slate-900 text-white text-xs font-semibold shadow-2xl animate-in fade-in">
+          <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+          <span>{toast}</span>
         </div>
       )}
 
-      {/* Balanced Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-5">
+      {/* Header — 1-2 words */}
+      <div className="flex items-center justify-between border-b border-slate-200 pb-4">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
-              HSE Triage Queue
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+              SIF Triage
             </h1>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800">
-              {tasks.length} {statusFilter === "PENDING" ? "Pending" : "Total"}
+            <span className="font-mono text-xs font-black px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+              {tasks.length} Pending
             </span>
           </div>
-          <p className="text-sm sm:text-base text-slate-500 font-medium mt-1">
-            Priority safety review queue for human-in-the-loop verification and sign-off
+          <p className="text-xs text-slate-500 font-medium mt-0.5">
+            Operational review queue for human sign-off
           </p>
         </div>
 
-        {/* Operational Toolbar */}
-        <div className="flex flex-wrap items-center gap-3">
-          {tasks.length > 0 && statusFilter === "PENDING" && (
+        {tasks.length > 0 && statusFilter === "PENDING" && (
+          <button
+            onClick={handleBatchVerify}
+            className="flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-1.5 text-xs font-bold text-white hover:bg-slate-800 transition shadow-xs cursor-pointer"
+          >
+            <Play className="h-3.5 w-3.5 fill-current" />
+            <span>Verify Top 3</span>
+          </button>
+        )}
+      </div>
+
+      {/* Filters Toolbar */}
+      <div className="flex items-center justify-between gap-3 p-2 rounded-xl border border-slate-200 bg-white shadow-2xs">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2">
+            Filter:
+          </span>
+          {["PENDING", "CONFIRMED", "ALL"].map((f) => (
             <button
-              onClick={handleBatchVerify}
-              className="flex items-center gap-2 rounded-xl border border-sky-200 bg-sky-50 px-3.5 py-2 text-xs font-bold text-sky-800 hover:bg-sky-100 transition shadow-xs cursor-pointer"
+              key={f}
+              onClick={() => setStatusFilter(f)}
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
+                statusFilter === f
+                  ? "bg-slate-900 text-white shadow-2xs"
+                  : "text-slate-600 hover:bg-slate-100"
+              }`}
             >
-              <Play className="h-3.5 w-3.5 text-sky-600" />
-              <span>Batch Verify</span>
+              {f.charAt(0) + f.slice(1).toLowerCase()}
             </button>
-          )}
+          ))}
+        </div>
 
-          <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-xs">
-            {[
-              { key: "PENDING", label: "Pending" },
-              { key: "COMPLETED", label: "Resolved" },
-              { key: "ALL", label: "All" },
-            ].map((st) => (
-              <button
-                key={st.key}
-                onClick={() => setStatusFilter(st.key)}
-                className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition cursor-pointer ${
-                  statusFilter === st.key
-                    ? "bg-slate-900 text-white shadow-xs"
-                    : "text-slate-500 hover:text-slate-900"
-                }`}
-              >
-                {st.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold shadow-xs text-slate-700">
-            <ArrowUpDown className="h-3.5 w-3.5 text-slate-400" />
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="bg-transparent text-slate-900 focus:outline-none text-xs font-bold cursor-pointer"
-            >
-              <option value="psif_desc">Highest Risk</option>
-              <option value="priority_desc">Priority Score</option>
-              <option value="confidence_desc">Confidence</option>
-              <option value="date_desc">Recent</option>
-            </select>
-          </div>
+        <div className="flex items-center gap-1.5 pr-2">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">
+            Sort:
+          </span>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+          >
+            <option value="psif_desc">Highest pSIF</option>
+            <option value="date_desc">Latest</option>
+          </select>
         </div>
       </div>
 
-      {/* Balanced Table */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs sm:text-sm text-slate-700">
-            <thead className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-              <tr>
-                <th className="px-5 py-3.5">Incident UID</th>
-                <th className="px-5 py-3.5">Risk Probability</th>
-                <th className="px-5 py-3.5">Critical Barrier</th>
-                <th className="px-5 py-3.5">Life-Saving Rule</th>
-                <th className="px-5 py-3.5 text-right">Operational Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {tasks.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-400 text-sm font-medium">
-                    Triage queue is clear. No incidents awaiting verification.
-                  </td>
-                </tr>
-              ) : (
-                tasks.map((t) => (
-                  <tr key={t.task_id} className="hover:bg-slate-50/70 transition">
-                    <td className="px-5 py-4">
-                      <Link
-                        href={`/app/reports/${t.report_id}`}
-                        className="font-mono font-bold text-sm text-slate-900 hover:text-sky-600 transition block"
-                      >
-                        {t.report_uid}
-                      </Link>
-                      <div className="text-xs text-slate-500 font-medium truncate max-w-sm mt-0.5">
-                        {t.site_name}
-                      </div>
-                    </td>
+      {/* 10. Visual Incident Queue Cards (Exact match to prompt spec) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+        {tasks.map((t) => {
+          const isCritical = t.psif_probability >= 0.7;
+          return (
+            <div
+              key={t.task_id}
+              onClick={() => openDrawer(t)}
+              className="p-4 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition cursor-pointer flex flex-col justify-between space-y-3 shadow-2xs group"
+            >
+              <div className="flex items-center justify-between">
+                <SeverityBadge severity={isCritical ? "CRITICAL" : "HIGH"} />
+                <RiskScore score={t.psif_probability} size="md" />
+              </div>
 
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 font-mono">
-                          {(t.psif_probability * 100).toFixed(0)}% pSIF
-                        </span>
-                        <span className="text-xs font-semibold text-slate-400 font-mono">
-                          Score {t.priority_score}
-                        </span>
-                      </div>
-                    </td>
+              <div>
+                <span className="font-mono text-xs font-bold text-slate-900 block">
+                  {t.report_uid}
+                </span>
+                <span className="font-bold text-sm text-slate-800 block truncate mt-0.5">
+                  {t.activity_name || "Hazard Incident"}
+                </span>
+                <div className="flex items-center gap-1 text-xs text-slate-500 font-medium mt-1">
+                  <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
+                  <span className="truncate">{t.site_name || "Installation"}</span>
+                </div>
+              </div>
 
-                    <td className="px-5 py-4">
-                      <div className="font-bold text-slate-900 text-xs">{t.primary_barrier}</div>
-                      <span className={`inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded ${
-                        t.barrier_state === "Verified"
-                          ? "text-emerald-800 bg-emerald-50 border border-emerald-200"
-                          : "text-amber-800 bg-amber-50 border border-amber-200"
-                      }`}>
-                        {t.barrier_state}
-                      </span>
-                    </td>
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+                <span className="text-[11px] font-semibold text-slate-500 font-mono">
+                  {t.primary_barrier || "Isolation"}
+                </span>
 
-                    <td className="px-5 py-4">
-                      <span className="font-semibold text-slate-800 text-xs block">{t.primary_lsr}</span>
-                    </td>
-
-                    <td className="px-5 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleDecision(t.task_id, "CONFIRMED", t.report_uid)}
-                          className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-500 transition shadow-2xs cursor-pointer"
-                        >
-                          Confirm
-                        </button>
-                        <button
-                          onClick={() => handleDecision(t.task_id, "ESCALATED", t.report_uid)}
-                          className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
-                        >
-                          Escalate
-                        </button>
-                        <Link
-                          href={`/app/reports/${t.report_id}`}
-                          className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-slate-800 transition"
-                        >
-                          Inspect
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition flex items-center gap-0.5">
+                  Review
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </span>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

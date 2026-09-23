@@ -223,22 +223,54 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <Menu className="h-5 w-5" />
             </button>
 
+            {/* Dynamic Compact Breadcrumbs */}
+            <div className="hidden lg:flex items-center gap-1.5 text-xs font-semibold text-slate-400">
+              {(() => {
+                const getBreadcrumbs = () => {
+                  if (pathname.includes("/app/dashboard")) return ["Operations", "Dashboard"];
+                  if (pathname.includes("/app/triage")) return ["Operations", "Triage Queue"];
+                  if (pathname.includes("/app/reports")) return ["Operations", "Incidents"];
+                  if (pathname.includes("/app/precursors")) return ["Operations", "Precursors"];
+                  if (pathname.includes("/app/barriers")) return ["Operations", "Barrier Health"];
+                  if (pathname.includes("/app/data-feed")) return ["Operations", "Data Stream"];
+                  if (pathname.includes("/app/audit-log")) return ["Governance", "Audit Trail"];
+                  if (pathname.includes("/app/sites")) return ["Operations", "Assets"];
+                  if (pathname.includes("/app/activities")) return ["Operations", "Work Profiles"];
+                  if (pathname.includes("/app/knowledge")) return ["Governance", "Documents"];
+                  if (pathname.includes("/app/settings")) return ["System", "Settings"];
+                  if (pathname.includes("/app/chat")) return ["Intelligence", "Assistant"];
+                  if (pathname.includes("/docs")) return ["System", "Documentation"];
+                  return ["Suraksha", "Console"];
+                };
+                const [section, page] = getBreadcrumbs();
+                return (
+                  <>
+                    <span className="text-slate-400">{section}</span>
+                    <span className="text-slate-300">/</span>
+                    <span className="text-slate-900 font-bold">{page}</span>
+                  </>
+                );
+              })()}
+            </div>
+
+            <div className="hidden lg:block w-[1px] h-4 bg-slate-200" />
+
             {/* Quick Search */}
-            <div className="hidden sm:flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 py-1.5 text-sm text-slate-600 w-80 focus-within:border-slate-400 focus-within:bg-white transition shadow-2xs">
+            <div className="hidden sm:flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 py-1.5 text-sm text-slate-600 w-72 focus-within:border-slate-400 focus-within:bg-white transition shadow-2xs">
               <Search className="h-4 w-4 text-slate-400 shrink-0" strokeWidth={1.8} />
               <input
                 type="text"
                 placeholder="Search incidents, barriers, precursors..."
                 className="w-full bg-transparent focus:outline-none text-slate-900 text-xs font-medium placeholder:text-slate-400"
               />
-              <kbd className="hidden lg:inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-medium bg-white text-slate-500 border border-slate-200 shadow-2xs">
+              <kbd className="hidden xl:inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-medium bg-white text-slate-500 border border-slate-200 shadow-2xs">
                 ⌘K
               </kbd>
             </div>
           </div>
 
           <div className="flex items-center gap-3 sm:gap-4">
-            {/* Clean Genuine Status Indicator (No AI gimmick) */}
+            {/* Clean Genuine Status Indicator */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-semibold">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="hidden sm:inline">Telemetry Active</span>
