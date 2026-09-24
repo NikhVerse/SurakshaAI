@@ -291,7 +291,7 @@ export default function SettingsPage() {
                   </div>
 
                   <span className={`text-[11px] font-bold ${m.is_local ? "text-emerald-700" : "text-slate-700"}`}>
-                    {m.is_local ? "🔒 Air-Gapped" : "⚡ Cloud API"}
+                    {m.is_local ? "Air-Gapped" : "Cloud API"}
                   </span>
                 </div>
               </div>

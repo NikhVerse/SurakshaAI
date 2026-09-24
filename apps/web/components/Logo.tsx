@@ -2,115 +2,151 @@
 
 import React from "react";
 
-interface LogoProps {
-  size?: "small" | "default" | "large" | "icon";
+export interface LogoProps {
+  size?: "xs" | "sm" | "small" | "default" | "md" | "lg" | "large" | "xl" | "icon";
   iconOnly?: boolean;
+  inverted?: boolean; // white on black
   className?: string;
+  variant?: "primary" | "horizontal" | "symbol" | "wordmark";
+}
+
+/**
+ * Geometric Symbol SVG for SURAKSHA AI
+ * Strict pure Black & White geometry.
+ * Interlocking dual-faceted structural vault with negative-space geometric "S".
+ * Mathematically balanced for 16px, 24px, 32px, 48px, 64px display.
+ */
+export function SurakshaSymbol({
+  size = 32,
+  inverted = false,
+  className = "",
+}: {
+  size?: number;
+  inverted?: boolean;
+  className?: string;
+}) {
+  const primaryColor = inverted ? "#FFFFFF" : "#000000";
+  const bgColor = inverted ? "#000000" : "#FFFFFF";
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`shrink-0 select-none ${className}`}
+      aria-label="Suraksha AI Symbol"
+    >
+      {/* 
+        Precision Geometric Architecture:
+        Two interlocking precision-chamfered geometric angular vaults
+        forming an abstract geometric 'S' through a calibrated negative-space diagonal rift.
+      */}
+      {/* Top Wing / Upper Vault */}
+      <path
+        d="M6 14L24 4L42 14V21L36 17.5L24 10.8L12 17.5V30.5L6 27V14Z"
+        fill={primaryColor}
+      />
+
+      {/* Bottom Wing / Lower Vault */}
+      <path
+        d="M42 34L24 44L6 34V27L12 30.5L24 37.2L36 30.5V17.5L42 21V34Z"
+        fill={primaryColor}
+      />
+
+      {/* Central Geometric Interlocking S-Nucleus */}
+      <path
+        d="M17 19.5L24 15.5L31 19.5V23L27 21L24 19.2L20 21.5V26.5L27 30.5L31 28V31.5L24 35.5L17 31.5V28L21 30L24 31.8L28 29.5V24.5L21 20.5L17 23V19.5Z"
+        fill={primaryColor}
+      />
+    </svg>
+  );
 }
 
 export default function Logo({
   size = "default",
   iconOnly = false,
+  inverted = false,
   className = "",
+  variant = "horizontal",
 }: LogoProps) {
-  // Dimensions
-  const glyphSize =
-    size === "icon" ? 34 : size === "small" ? 28 : size === "large" ? 44 : 36;
-  const textSize =
-    size === "small"
-      ? "text-base tracking-[0.16em]"
-      : size === "large"
-      ? "text-2xl tracking-[0.18em]"
-      : "text-lg tracking-[0.18em]";
-  const subSize =
-    size === "small"
-      ? "text-[9px] tracking-[0.22em]"
-      : size === "large"
-      ? "text-[11px] tracking-[0.25em]"
-      : "text-[9.5px] tracking-[0.22em]";
+  // Normalize size scale
+  const isIcon = size === "icon" || iconOnly || variant === "symbol";
+  const pixelSize =
+    size === "xs"
+      ? 18
+      : size === "sm" || size === "small"
+      ? 24
+      : size === "icon"
+      ? 28
+      : size === "md"
+      ? 30
+      : size === "lg" || size === "large"
+      ? 38
+      : size === "xl"
+      ? 48
+      : 32;
+
+  const textColor = inverted ? "text-white" : "text-black";
+  const subtextColor = inverted ? "text-neutral-400" : "text-neutral-500";
+
+  if (variant === "wordmark") {
+    return (
+      <div className={`inline-flex items-baseline gap-1.5 select-none font-sans ${className}`}>
+        <span className={`font-black tracking-[0.18em] uppercase ${textColor} text-base sm:text-lg`}>
+          SURAKSHA
+        </span>
+        <span className={`font-semibold tracking-[0.22em] uppercase text-xs sm:text-sm ${subtextColor}`}>
+          AI
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div
-      className={`inline-flex items-center gap-3 select-none group transition-transform duration-200 hover:scale-[1.02] ${className}`}
+      className={`inline-flex items-center gap-2.5 select-none group transition-opacity hover:opacity-90 ${className}`}
     >
-      {/* Precision Geometric SVG Emblem */}
-      <div
-        className="relative shrink-0 flex items-center justify-center"
-        style={{ width: glyphSize, height: glyphSize }}
-      >
-        <svg
-          viewBox="0 0 48 48"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full drop-shadow-xs"
-        >
-          <defs>
-            <linearGradient id="facet-top" x1="8" y1="6" x2="40" y2="24" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#38BDF8" />
-              <stop offset="100%" stopColor="#0284C7" />
-            </linearGradient>
-            <linearGradient id="facet-left" x1="6" y1="16" x2="24" y2="44" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#1E293B" />
-              <stop offset="100%" stopColor="#0F172A" />
-            </linearGradient>
-            <linearGradient id="facet-right" x1="24" y1="24" x2="42" y2="44" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#2563EB" />
-              <stop offset="100%" stopColor="#1D4ED8" />
-            </linearGradient>
-            <linearGradient id="facet-core" x1="16" y1="16" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
-              <stop offset="100%" stopColor="#E2E8F0" stopOpacity="0.9" />
-            </linearGradient>
-          </defs>
+      <SurakshaSymbol size={pixelSize} inverted={inverted} />
 
-          {/* Top Isometric Facet */}
-          <path
-            d="M24 5.5L41 15.3L24 25L7 15.3L24 5.5Z"
-            fill="url(#facet-top)"
-          />
-
-          {/* Left Isometric Facet */}
-          <path
-            d="M6 16.8L23 26.5V44L6 34.2V16.8Z"
-            fill="url(#facet-left)"
-          />
-
-          {/* Right Isometric Facet */}
-          <path
-            d="M25 26.5L42 16.8V34.2L25 44V26.5Z"
-            fill="url(#facet-right)"
-          />
-
-          {/* Central Geometric Negative Space Prism */}
-          <path
-            d="M24 16.5L30.5 20.2V27.8L24 31.5L17.5 27.8V20.2L24 16.5Z"
-            fill="url(#facet-core)"
-            className="transition-all duration-300 group-hover:scale-95"
-            style={{ transformOrigin: "24px 24px" }}
-          />
-
-          {/* Precision Center Pin */}
-          <circle cx="24" cy="24" r="2.2" fill="#0F172A" />
-        </svg>
-      </div>
-
-      {/* Clean Minimalist Typography Wordmark (hidden if iconOnly) */}
-      {!iconOnly && size !== "icon" && (
-        <div className="flex flex-col justify-center leading-tight">
-          <div className="flex items-center gap-1.5">
+      {!isIcon && (
+        <div className="flex flex-col justify-center leading-none">
+          <div className="flex items-baseline gap-1.5">
             <span
-              className={`font-black text-slate-900 ${textSize} uppercase font-sans`}
+              className={`font-black tracking-[0.16em] uppercase ${textColor} ${
+                size === "large" || size === "lg"
+                  ? "text-xl"
+                  : size === "small" || size === "sm"
+                  ? "text-sm"
+                  : "text-base"
+              }`}
             >
-              Suraksha
+              SURAKSHA
+            </span>
+            <span
+              className={`font-semibold tracking-[0.2em] uppercase ${subtextColor} ${
+                size === "large" || size === "lg"
+                  ? "text-xs"
+                  : size === "small" || size === "sm"
+                  ? "text-[10px]"
+                  : "text-[11px]"
+              }`}
+            >
+              AI
             </span>
           </div>
-          <span
-            className={`font-bold text-slate-400 ${subSize} uppercase font-mono mt-0.5`}
-          >
-            Safety Intelligence
-          </span>
+          {size !== "sm" && size !== "small" && (
+            <span
+              className={`text-[8.5px] font-bold uppercase tracking-[0.24em] ${subtextColor} font-mono mt-1`}
+            >
+              Industrial Safety Intelligence
+            </span>
+          )}
         </div>
       )}
     </div>
   );
 }
+
+export { Logo };

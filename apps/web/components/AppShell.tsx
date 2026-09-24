@@ -90,7 +90,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                         : "text-slate-500 hover:bg-slate-100/90 hover:text-slate-900"
                     }`}
                   >
-                    <Icon className="h-5 w-5" strokeWidth={1.8} />
+                    <Icon className="h-5 w-5" strokeWidth={1.6} />
 
                     {/* Active Accent Pip */}
                     {isActive && (
@@ -144,7 +144,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               onClick={() => logout()}
               className="flex items-center justify-center w-10 h-10 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
             >
-              <LogOut className="h-4 w-4" strokeWidth={1.8} />
+              <LogOut className="h-4 w-4" strokeWidth={1.6} />
             </button>
 
             {/* Sign Out Tooltip */}
@@ -190,7 +190,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                           : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                       }`}
                     >
-                      <Icon className="h-4 w-4" strokeWidth={1.8} />
+                      <Icon className="h-4 w-4" strokeWidth={1.6} />
                       <span>{item.name}</span>
                     </Link>
                   );
@@ -257,7 +257,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
             {/* Quick Search */}
             <div className="hidden sm:flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 py-1.5 text-sm text-slate-600 w-72 focus-within:border-slate-400 focus-within:bg-white transition shadow-2xs">
-              <Search className="h-4 w-4 text-slate-400 shrink-0" strokeWidth={1.8} />
+              <Search className="h-4 w-4 text-slate-400 shrink-0" strokeWidth={1.6} />
               <input
                 type="text"
                 placeholder="Search incidents, barriers, precursors..."
@@ -282,7 +282,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition px-2.5 py-1.5 rounded-lg hover:bg-slate-100"
             >
               <span>Docs</span>
-              <ExternalLink className="h-3 w-3" strokeWidth={1.8} />
+              <ExternalLink className="h-3 w-3" strokeWidth={1.6} />
             </Link>
           </div>
         </header>
