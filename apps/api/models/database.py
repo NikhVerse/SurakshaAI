@@ -21,6 +21,11 @@ else:
     engine_kwargs["pool_size"] = 10
     engine_kwargs["max_overflow"] = 20
     engine_kwargs["pool_recycle"] = 300
+    connect_args = {}
+    if "supabase" in database_url and "sslmode" not in database_url:
+        connect_args["sslmode"] = "require"
+    if connect_args:
+        engine_kwargs["connect_args"] = connect_args
 
 engine = create_engine(database_url, **engine_kwargs)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
