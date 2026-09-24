@@ -18,8 +18,13 @@ knowledge_engine = get_knowledge_engine()
 
 
 def seed_database():
+    if os.environ.get("ALLOW_DEMO_SEED") != "true":
+        print("NOTICE: Demo seeding is strictly disabled in production. Set ALLOW_DEMO_SEED=true to seed in isolated development.")
+        sys.exit(0)
+
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
+
 
     # Clear existing data if re-seeding
     db.query(AuditLog).delete()

@@ -2,9 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  ShieldCheck,
-  ShieldX,
-  ShieldAlert,
   Shield,
   ArrowUpRight,
   Lock,
@@ -12,13 +9,13 @@ import {
   FileCheck,
   Wind,
   Power,
-  Activity,
-  CheckCircle2,
+  Camera,
 } from "lucide-react";
-import { taxonomyApi, Barrier, DashboardSummary, BarrierHealthItem, dashboardApi } from "@/lib/api";
+import { taxonomyApi, Barrier, BarrierHealthItem, dashboardApi } from "@/lib/api";
 import DetailDrawer, { DrawerData } from "@/components/ui/DetailDrawer";
 import Tooltip from "@/components/ui/Tooltip";
 import { StatusDot } from "@/components/ui/StatusSystem";
+import { getEvidenceForBarrier, getStandardsForBarrier } from "@/lib/evidenceData";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
   "BAR-ENG-01": Lock,
@@ -52,7 +49,10 @@ export default function BarriersPage() {
   const openDrawer = (b: Barrier, h?: BarrierHealthItem) => {
     const total = h ? h.verified + h.unverified + h.failed : 0;
     const failRate = total > 0 && h ? Math.round((h.failed / total) * 100) : 0;
-    const isVerified = failRate <= 20;
+    const isVerified = total === 0 || failRate <= 20;
+
+    const evidence = getEvidenceForBarrier(b.code);
+    const standards = getStandardsForBarrier(b.code);
 
     setDrawerData({
       id: b.code,
@@ -62,15 +62,17 @@ export default function BarriersPage() {
       status: isVerified ? "VERIFIED" : "DEGRADED",
       riskScore: failRate / 100,
       location: `Category: ${b.category}`,
-      timestamp: "Last audit 12m ago",
-      narrative: b.expected_function || "IOGP Report 459 standard critical process defense barrier.",
+      timestamp: "IOGP Report 459 Standard",
+      narrative: b.expected_function || "Critical process safety defense barrier.",
       primaryBarrier: b.name,
-      barrierState: isVerified ? "Verified" : "Degraded",
+      barrierState: total > 0 ? (isVerified ? "Verified" : "Degraded") : "No Activity",
       metrics: [
-        { label: "Verified Cases", value: h?.verified || 22 },
+        { label: "Verified Cases", value: h?.verified || 0 },
         { label: "Failure Count", value: h?.failed || 0 },
-        { label: "Evaluated Reports", value: total || 33 },
+        { label: "Evaluated Reports", value: total },
       ],
+      evidenceImages: evidence,
+      externalSources: standards,
       onConfirm: () => {
         // Confirm barrier audit
       },
@@ -99,7 +101,7 @@ export default function BarriersPage() {
 
         <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold font-mono">
           <StatusDot status="HEALTHY" size="sm" />
-          <span>88.4% Defense Index</span>
+          <span>{barriers.length} Monitored Barriers</span>
         </div>
       </div>
 
@@ -109,12 +111,16 @@ export default function BarriersPage() {
           ? [...Array(6)].map((_, i) => (
               <div key={i} className="h-32 rounded-2xl bg-slate-100 animate-pulse" />
             ))
-          : barriers.map((b) => {
+          : barriers.length === 0 ? (
+              <div className="col-span-full py-12 text-center text-xs font-semibold text-slate-400 bg-white rounded-2xl border border-slate-200">
+                No barriers found in the database.
+              </div>
+            ) : barriers.map((b) => {
               const h = healthByCode[b.code];
-              const total = h ? h.verified + h.unverified + h.failed : 25;
-              const failCount = h ? h.failed : 2;
-              const failRate = Math.round((failCount / total) * 100);
-              const healthScore = 100 - failRate;
+              const total = h ? h.verified + h.unverified + h.failed : 0;
+              const failCount = h ? h.failed : 0;
+              const failRate = total > 0 ? Math.round((failCount / total) * 100) : 0;
+              const healthScore = total > 0 ? 100 - failRate : 100;
               const isHealthy = failRate <= 20;
               const Icon = iconMap[b.code] || Shield;
 
@@ -147,7 +153,7 @@ export default function BarriersPage() {
                           isHealthy ? "text-emerald-600" : "text-amber-600"
                         }`}
                       >
-                        {healthScore}%
+                        {total > 0 ? `${healthScore}%` : "100%"}
                       </span>
                       <StatusDot status={isHealthy ? "HEALTHY" : "DEGRADED"} size="sm" />
                     </div>
@@ -171,12 +177,18 @@ export default function BarriersPage() {
                   </div>
 
                   <div className="flex items-center justify-between pt-1 border-t border-slate-100 text-xs">
-                    <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600 uppercase">
-                      {b.category}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600 uppercase">
+                        {b.category}
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-600 bg-slate-100/70 px-1.5 py-0.5 rounded border border-slate-200">
+                        <Camera className="h-3 w-3 text-slate-500" />
+                        <span>Evidence</span>
+                      </span>
+                    </div>
 
                     <span className="font-bold text-slate-900 group-hover:text-blue-600 transition flex items-center gap-0.5">
-                      Details
+                      Audit
                       <ArrowUpRight className="h-3.5 w-3.5" />
                     </span>
                   </div>

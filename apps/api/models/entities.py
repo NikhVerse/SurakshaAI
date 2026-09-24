@@ -22,12 +22,17 @@ class User(Base):
     email = Column(String(255), unique=True, index=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
     full_name = Column(String(255), nullable=False)
+    phone = Column(String(50), nullable=True)
     role = Column(String(50), default="HSE_ANALYST", nullable=False)
+    account_status = Column(String(50), default="ACTIVE", nullable=False)
+    profile_image = Column(String(500), nullable=True)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=get_utc_now)
     updated_at = Column(DateTime, default=get_utc_now, onupdate=get_utc_now)
+    last_login_at = Column(DateTime, nullable=True)
 
     reviews = relationship("ReviewTask", back_populates="reviewer")
+
 
 
 class Site(Base):

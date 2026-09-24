@@ -19,10 +19,23 @@ def test_system_health():
     assert data["status"] == "healthy"
 
 
+import time
+
 def test_login():
+    test_email = f"test_{int(time.time() * 1000)}@suraksha.ai"
+    reg_response = client.post("/api/v1/auth/register", json={
+        "full_name": "Test Safety Analyst",
+        "email": test_email,
+        "password": "SurakshaSecure@2026",
+        "role": "HSE_ANALYST"
+    })
+    assert reg_response.status_code == 200
+    reg_data = reg_response.json()
+    assert "access_token" in reg_data
+
     response = client.post("/api/v1/auth/login", json={
-        "email": "analyst@suraksha.ai",
-        "password": "Suraksha@2026"
+        "email": test_email,
+        "password": "SurakshaSecure@2026"
     })
     assert response.status_code == 200
     data = response.json()
@@ -36,7 +49,7 @@ def test_list_reports():
     reports = response.json()
     assert isinstance(reports, list)
     assert len(reports) >= 1
-    assert reports[0]["report_uid"] == "REP-2026-001"
+    assert "report_uid" in reports[0]
 
 
 def test_barriers_and_rules():

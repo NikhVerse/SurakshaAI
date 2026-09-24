@@ -13,7 +13,7 @@ export default function Footer() {
               </div>
               <span className="font-semibold text-slate-900">SurakshaAI</span>
               <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-mono text-slate-600">
-                v1.0-prototype
+                v1.0-enterprise
               </span>
             </div>
             <p className="text-xs text-slate-500 max-w-md leading-relaxed">
@@ -50,7 +50,7 @@ export default function Footer() {
               <li><Link href="/support" className="hover:text-slate-900">Help & Troubleshooting</Link></li>
               <li><Link href="/contact" className="hover:text-slate-900">Contact Team</Link></li>
               <li><Link href="/privacy" className="hover:text-slate-900">Data Minimization</Link></li>
-              <li><Link href="/terms" className="hover:text-slate-900">Terms of Demonstration</Link></li>
+              <li><Link href="/terms" className="hover:text-slate-900">Terms of Service</Link></li>
             </ul>
           </div>
         </div>

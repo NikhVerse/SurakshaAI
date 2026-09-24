@@ -11,18 +11,30 @@ class UserLogin(BaseModel):
 
 class UserRegister(BaseModel):
     email: EmailStr
-    password: str = Field(..., min_length=6)
+    password: str = Field(..., min_length=8)
     full_name: str
+    phone: Optional[str] = None
     role: Optional[str] = "HSE_ANALYST"
+    account_status: Optional[str] = "ACTIVE"
+
+
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+    profile_image: Optional[str] = None
 
 
 class UserResponse(BaseModel):
     id: str
     email: str
     full_name: str
+    phone: Optional[str] = None
     role: str
+    account_status: str = "ACTIVE"
+    profile_image: Optional[str] = None
     is_active: bool
     created_at: datetime
+    last_login_at: Optional[datetime] = None
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -30,6 +42,20 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: UserResponse
+
+
+# Dynamic Dashboard Stats
+class DashboardStatsResponse(BaseModel):
+    total_users: int = 0
+    active_users: int = 0
+    registered_responders: int = 0
+    total_reports: int = 0
+    open_cases: int = 0
+    resolved_cases: int = 0
+    critical_signals: int = 0
+    active_barriers: int = 0
+    unacknowledged_alerts: int = 0
+
 
 
 # Entity Schemas
@@ -225,3 +251,34 @@ class SystemHealthResponse(BaseModel):
     ollama_model: str
     vector_engine: str
     uptime_seconds: float
+
+
+# Help Desk AI Guidance & Model Switching
+class HelpDeskModelItem(BaseModel):
+    id: str
+    name: str
+    provider: str
+    description: str
+    badge: str
+    is_active: bool = True
+    context_window: str = "128k"
+
+
+class HelpDeskMessage(BaseModel):
+    role: str  # 'user', 'assistant', 'system'
+    content: str
+
+
+class HelpDeskChatRequest(BaseModel):
+    message: str
+    model: str = "gemini-2.5-flash"
+    history: List[HelpDeskMessage] = []
+
+
+class HelpDeskChatResponse(BaseModel):
+    reply: str
+    model_used: str
+    provider: str
+    suggested_actions: List[str] = []
+    navigation_links: List[Dict[str, str]] = []
+

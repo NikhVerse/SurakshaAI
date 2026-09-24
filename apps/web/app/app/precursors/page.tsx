@@ -20,6 +20,7 @@ import { precursorsApi, PrecursorCluster } from "@/lib/api";
 import { DetailDrawer } from "@/components/ui/DetailDrawer";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { TrendIndicator, Sparkline } from "@/components/ui/VisualGauges";
+import { getEvidenceForBarrier, getStandardsForBarrier } from "@/lib/evidenceData";
 
 export default function PrecursorsPage() {
   const [clusters, setClusters] = useState<PrecursorCluster[]>([]);
@@ -38,6 +39,7 @@ export default function PrecursorsPage() {
 
   const totalOccurrences = clusters.reduce((acc, c) => acc + (c.occurrence_count || 0), 0);
   const criticalClusters = clusters.filter((c) => c.trend_status === "INCREASING").length;
+  const uniqueSites = Array.from(new Set(clusters.flatMap((c) => c.affected_sites || [])));
 
   const filteredClusters = clusters.filter((c) => {
     if (activeFilter === "INCREASING") return c.trend_status === "INCREASING";
@@ -89,13 +91,17 @@ export default function PrecursorsPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Clusters</span>
-          <p className="text-2xl font-black text-slate-900 font-mono mt-0.5">0{clusters.length}</p>
+          <p className="text-2xl font-black text-slate-900 font-mono mt-0.5">
+            {clusters.length < 10 ? `0${clusters.length}` : clusters.length}
+          </p>
           <span className="text-[10px] font-semibold text-slate-500">HDBSCAN Semantic</span>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">High Hazard</span>
-          <p className="text-2xl font-black text-rose-600 font-mono mt-0.5">0{criticalClusters}</p>
+          <p className="text-2xl font-black text-rose-600 font-mono mt-0.5">
+            {criticalClusters < 10 ? `0${criticalClusters}` : criticalClusters}
+          </p>
           <span className="text-[10px] font-semibold text-rose-700">Increasing Trend</span>
         </div>
 
@@ -107,7 +113,9 @@ export default function PrecursorsPage() {
 
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Sites Exposed</span>
-          <p className="text-2xl font-black text-blue-600 font-mono mt-0.5">05</p>
+          <p className="text-2xl font-black text-blue-600 font-mono mt-0.5">
+            {uniqueSites.length < 10 ? `0${uniqueSites.length}` : uniqueSites.length}
+          </p>
           <span className="text-[10px] font-semibold text-blue-700">Cross-Plant Patterns</span>
         </div>
       </div>
@@ -182,14 +190,14 @@ export default function PrecursorsPage() {
                   <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 space-y-0.5">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Barrier</span>
                     <span className="text-xs font-bold text-slate-800 truncate block">
-                      {c.primary_barrier ? c.primary_barrier.split(" ")[0] : "Isolation"}
+                      {c.primary_barrier ? c.primary_barrier.split(" ")[0] : "—"}
                     </span>
                   </div>
 
                   <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 space-y-0.5">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rule</span>
                     <span className="text-xs font-bold text-slate-800 truncate block">
-                      {c.primary_lsr ? c.primary_lsr.split(" ")[0] : "LSR"}
+                      {c.primary_lsr ? c.primary_lsr.split(" ")[0] : "—"}
                     </span>
                   </div>
                 </div>
@@ -225,95 +233,58 @@ export default function PrecursorsPage() {
       <DetailDrawer
         isOpen={Boolean(selectedCluster)}
         onClose={() => setSelectedCluster(null)}
-        title={selectedCluster?.name || "Precursor Cluster"}
-        subtitle={`HDBSCAN Coherence ${Math.round((selectedCluster?.coherence_score || 0) * 100)}% • ${selectedCluster?.trend_status} Trend`}
-        status={{
-          label: selectedCluster?.trend_status === "INCREASING" ? "CRITICAL ESCALATION" : "MONITORED",
-          variant: selectedCluster?.trend_status === "INCREASING" ? "critical" : "healthy",
-        }}
-        metrics={[
-          { label: "Signals", value: selectedCluster?.occurrence_count || 0 },
-          { label: "Coherence", value: `${Math.round((selectedCluster?.coherence_score || 0) * 100)}%` },
-          { label: "Primary Hazard", value: selectedCluster?.primary_hazard || "—" },
-          { label: "Barrier", value: selectedCluster?.primary_barrier || "Isolation" },
-        ]}
-        tabs={[
-          {
-            id: "overview",
-            label: "Overview",
-            content: (
-              <div className="space-y-4">
-                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 space-y-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                    Synthesized Cluster Hypothesis
-                  </span>
-                  <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                    {selectedCluster?.summary}
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-slate-200 p-4 space-y-3">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                    Affected Operational Sites
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {selectedCluster?.affected_sites.map((s) => (
-                      <span key={s} className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {selectedCluster?.example_report_ids && selectedCluster.example_report_ids.length > 0 && (
-                  <div className="rounded-xl border border-slate-200 p-4 space-y-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                      Linked Operational Reports ({selectedCluster.example_report_ids.length})
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {selectedCluster.example_report_ids.map((id) => (
-                        <Link
-                          key={id}
-                          href={`/app/reports?cluster=${selectedCluster.id}`}
-                          className="font-mono text-xs font-bold text-blue-600 hover:underline bg-blue-50 px-2 py-0.5 rounded border border-blue-200"
-                        >
-                          {id}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ),
-          },
-          {
-            id: "actions",
-            label: "Actions",
-            content: (
-              <div className="space-y-3">
-                <p className="text-xs text-slate-600 font-medium">
-                  Trigger automated engineering stand-down or barrier inspection dispatch for linked assets:
-                </p>
-                <div className="space-y-2">
-                  <Link
-                    href={`/app/reports?cluster=${selectedCluster?.id}`}
-                    className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition text-xs font-bold text-slate-900"
-                  >
-                    <span>Filter All Linked Incidents</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                  <Link
-                    href="/app/barriers"
-                    className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition text-xs font-bold text-slate-900"
-                  >
-                    <span>Audit Connected Barrier Integrity</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              </div>
-            ),
-          },
-        ]}
+        data={
+          selectedCluster
+            ? {
+                id: selectedCluster.id,
+                uid: `CLS-${selectedCluster.id.slice(0, 8)}`,
+                title: selectedCluster.name,
+                category: selectedCluster.primary_hazard,
+                severity:
+                  selectedCluster.trend_status === "INCREASING"
+                    ? "CRITICAL"
+                    : "HEALTHY",
+                status:
+                  selectedCluster.trend_status === "INCREASING"
+                    ? "CRITICAL ESCALATION"
+                    : "MONITORED",
+                riskScore: selectedCluster.coherence_score,
+                location: selectedCluster.affected_sites?.join(", "),
+                timestamp: `HDBSCAN Coherence ${Math.round(
+                  selectedCluster.coherence_score * 100
+                )}%`,
+                narrative: selectedCluster.summary,
+                primaryBarrier: selectedCluster.primary_barrier,
+                barrierState: "Precursor Recurrence",
+                metrics: [
+                  {
+                    label: "Signals",
+                    value: selectedCluster.occurrence_count || 0,
+                  },
+                  {
+                    label: "Coherence",
+                    value: `${Math.round(
+                      (selectedCluster.coherence_score || 0) * 100
+                    )}%`,
+                  },
+                  {
+                    label: "Primary Hazard",
+                    value: selectedCluster.primary_hazard || "—",
+                  },
+                  {
+                    label: "Barrier",
+                    value: selectedCluster.primary_barrier || "—",
+                  },
+                ],
+                evidenceImages: getEvidenceForBarrier(
+                  selectedCluster.primary_barrier
+                ),
+                externalSources: getStandardsForBarrier(
+                  selectedCluster.primary_barrier
+                ),
+              }
+            : null
+        }
       />
     </div>
   );

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Upload, ArrowRight, ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react";
+import { Upload, ArrowLeft, CheckCircle2 } from "lucide-react";
 
 export default function KnowledgeUploadPage() {
   const router = useRouter();
@@ -30,8 +30,9 @@ export default function KnowledgeUploadPage() {
       const blob = new Blob([fileContent], { type: "text/plain" });
       formData.append("file", blob, `${title.replace(/\s+/g, "_")}.txt`);
 
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       const token = typeof window !== "undefined" ? localStorage.getItem("suraksha_token") : null;
-      const res = await fetch("http://localhost:8000/api/v1/knowledge/upload", {
+      const res = await fetch(`${apiUrl}/api/v1/knowledge/upload`, {
         method: "POST",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData,

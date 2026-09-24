@@ -51,3 +51,7 @@ SurakshaAI_Full_Final_Build_Prompt.md
 *.prompt.md
 scratch/
 brain/
+
+.vercel
+.env*
+!.env.example

@@ -11,16 +11,44 @@ from sqlalchemy.orm import Session
 
 from apps.api.models.database import get_db
 from apps.api.models.entities import (
-    Report, PSIFPrediction, ReviewTask, Barrier, Alert, AuditLog
+    User, Report, PSIFPrediction, ReviewTask, Barrier, Alert, AuditLog
 )
+from apps.api.schemas.schemas import DashboardStatsResponse
 from apps.api.services.llm_provider import get_llm_provider
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 llm_provider = get_llm_provider()
 
 
+@router.get("/stats", response_model=DashboardStatsResponse)
+def get_dashboard_stats(db: Session = Depends(get_db)):
+    """Dynamic metrics strictly calculated from database queries."""
+    total_users = db.query(User).count()
+    active_users = db.query(User).filter(User.is_active == True, User.account_status == "ACTIVE").count()
+    registered_responders = db.query(User).filter(User.role.in_(["RESPONDER", "HSE_ANALYST", "HSE_MANAGER"])).count()
+    total_reports = db.query(Report).count()
+    open_cases = db.query(Report).filter(Report.review_status == "PENDING").count()
+    resolved_cases = db.query(Report).filter(Report.review_status.in_(["VERIFIED", "COMPLETED", "RESOLVED"])).count()
+    critical_signals = db.query(PSIFPrediction).filter(PSIFPrediction.psif_probability >= 0.70).count()
+    active_barriers = db.query(Barrier).count()
+    unacknowledged_alerts = db.query(Alert).filter(Alert.is_acknowledged == False).count()
+
+    return DashboardStatsResponse(
+        total_users=total_users,
+        active_users=active_users,
+        registered_responders=registered_responders,
+        total_reports=total_reports,
+        open_cases=open_cases,
+        resolved_cases=resolved_cases,
+        critical_signals=critical_signals,
+        active_barriers=active_barriers,
+        unacknowledged_alerts=unacknowledged_alerts,
+    )
+
+
 @router.get("/summary")
 async def get_dashboard_summary(db: Session = Depends(get_db)):
+
     """Single-call dashboard summary — all real database metrics."""
     # Core counts from DB
     total_reports = db.query(Report).count()

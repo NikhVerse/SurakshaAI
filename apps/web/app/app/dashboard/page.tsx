@@ -5,33 +5,36 @@ import Link from "next/link";
 import {
   FileText,
   AlertTriangle,
-  ShieldCheck,
-  Layers,
   ArrowRight,
   RefreshCw,
   CheckCircle2,
   AlertCircle,
-  Plus,
-  MapPin,
-  ShieldAlert,
   ArrowUpRight,
-  XCircle,
-  Clock,
-  Lock,
-  Wind,
-  Power,
-  FileCheck,
-  Gauge,
-  Thermometer,
-  Flame,
-  Radio,
-  SlidersHorizontal,
+  Database,
 } from "lucide-react";
 import { dashboardApi, DashboardSummary } from "@/lib/api";
 import DetailDrawer, { DrawerData } from "@/components/ui/DetailDrawer";
 import Tooltip from "@/components/ui/Tooltip";
-import { StatusDot, RiskScore, SeverityBadge } from "@/components/ui/StatusSystem";
-import { LiveValue, Sparkline } from "@/components/ui/VisualGauges";
+import { StatusDot, SeverityBadge } from "@/components/ui/StatusSystem";
+
+// Helper: derive a colour from severity
+function getSeverityClass(severity: string): string {
+  switch ((severity || "").toUpperCase()) {
+    case "CRITICAL": return "border-rose-200/80 bg-rose-50/20 text-rose-700";
+    case "HIGH": return "border-amber-200/80 bg-amber-50/20 text-amber-800";
+    case "MEDIUM": return "border-yellow-200/80 bg-yellow-50/10 text-yellow-800";
+    default: return "border-slate-200 bg-white text-slate-700";
+  }
+}
+
+function EmptyState({ label }: { label: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-10 gap-2 text-slate-400">
+      <Database className="h-8 w-8 opacity-30" />
+      <p className="text-xs font-semibold">{label}</p>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -59,66 +62,45 @@ export default function DashboardPage() {
     loadData();
   }, []);
 
-  const openIncidentDrawer = (item: {
+  const openAlertDrawer = (alert: {
     id: string;
-    site: string;
-    rule: string;
-    risk: number;
     title: string;
-    narrative: string;
-    barrier: string;
-    barrierState: string;
+    message: string;
+    severity: string;
+    alert_type: string;
+    report_id?: string | null;
+    created_at?: string | null;
   }) => {
     setDrawerData({
-      id: item.id,
-      uid: item.id,
-      title: item.title,
-      severity: item.risk >= 0.8 ? "CRITICAL" : "HIGH",
-      status: "PENDING",
-      riskScore: item.risk,
-      location: item.site,
-      timestamp: "2 mins ago",
-      narrative: item.narrative,
-      rule: item.rule,
-      primaryBarrier: item.barrier,
-      barrierState: item.barrierState,
-      metrics: [
-        { label: "Line Pressure", value: 110.4, unit: "Bar" },
-        { label: "Vapor Reading", value: 18, unit: "% LEL" },
-      ],
-      onConfirm: () => {
-        // Confirmation feedback
-      },
+      id: alert.id,
+      uid: alert.report_id || alert.id,
+      title: alert.title,
+      severity: alert.severity,
+      status: "UNACKNOWLEDGED",
+      riskScore: alert.severity === "CRITICAL" ? 0.9 : alert.severity === "HIGH" ? 0.7 : 0.5,
+      location: "—",
+      timestamp: alert.created_at
+        ? new Date(alert.created_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })
+        : "—",
+      narrative: alert.message,
+      primaryBarrier: alert.alert_type,
+      barrierState: alert.severity,
+      metrics: [],
     });
     setDrawerOpen(true);
   };
 
-  const openBarrierDrawer = (barrier: {
-    name: string;
-    short: string;
-    score: number;
-    status: string;
-    iogp: string;
-  }) => {
-    setDrawerData({
-      id: barrier.short,
-      uid: barrier.iogp,
-      title: barrier.name,
-      severity: barrier.status,
-      status: barrier.status,
-      riskScore: 1 - barrier.score / 100,
-      location: "Active across 5 installations",
-      timestamp: "Inspected 12m ago",
-      narrative: `IOGP 459 standard defense barrier: ${barrier.name}. Current verified defense capacity is ${barrier.score}%. Continuous monitoring in effect across all shift permits.`,
-      primaryBarrier: barrier.name,
-      barrierState: barrier.status === "VERIFIED" ? "Verified" : "Degraded",
-      metrics: [
-        { label: "Verified Skids", value: 28, unit: "Units" },
-        { label: "Inspection Pass", value: `${barrier.score}%`, unit: "" },
-      ],
-    });
-    setDrawerOpen(true);
-  };
+  // Real KPI numbers from summary
+  const totalReports = summary?.total_reports ?? 0;
+  const psifPriority = summary?.psif_priority_count ?? 0;
+  const pendingReviews = summary?.pending_reviews ?? 0;
+  const activeBarriers = summary?.active_barriers ?? 0;
+  const unackAlerts = summary?.unacknowledged_alerts ?? 0;
+  const topAlerts = summary?.top_alerts ?? [];
+  const recentActivity = summary?.recent_activity ?? [];
+  const monthlyTrend = summary?.monthly_trend ?? [];
+  const barrierHealth = summary?.barrier_health ?? [];
+  const barrierStates = summary?.barrier_states ?? {};
 
   return (
     <div className="space-y-6 pb-20 font-sans">
@@ -129,14 +111,14 @@ export default function DashboardPage() {
         data={drawerData}
       />
 
-      {/* Header — Compact 1-2 word labels */}
+      {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-200 pb-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
             Command Center
           </h1>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Realtime SIF triage, barrier integrity matrix &amp; live telemetry
+            Live SIF triage metrics, barrier integrity &amp; precursor signals — all from the database
           </p>
         </div>
 
@@ -145,7 +127,7 @@ export default function DashboardPage() {
             type="button"
             onClick={loadData}
             disabled={loading}
-            title="Sync telemetry"
+            title="Refresh metrics"
             className="p-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition shadow-2xs cursor-pointer"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin text-slate-900" : ""}`} strokeWidth={1.8} />
@@ -163,199 +145,167 @@ export default function DashboardPage() {
       {error && (
         <div className="flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs font-bold text-rose-800">
           <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
-          <span>{error}</span>
+          <span>{error} — displaying zeroed metrics while offline.</span>
         </div>
       )}
 
-      {/* 09. TOP: 5-Card Number-First KPI Strip */}
+      {/* 5-Card KPI Strip — all numbers from real database */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        {/* Critical */}
+        {/* Total Reports */}
+        <div className="p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between shadow-2xs">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              Reports
+            </span>
+            <FileText className="h-3.5 w-3.5 text-slate-300" />
+          </div>
+          <span className={`text-3xl font-black font-mono tracking-tight mt-1.5 ${loading ? "text-slate-300 animate-pulse" : "text-slate-900"}`}>
+            {loading ? "—" : String(totalReports).padStart(2, "0")}
+          </span>
+          <span className="text-[10px] font-bold text-slate-500 mt-1">
+            Total Submissions
+          </span>
+        </div>
+
+        {/* Critical SIF Signals */}
         <div className="p-4 rounded-xl border border-rose-200/80 bg-rose-50/20 flex flex-col justify-between shadow-2xs">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-rose-700">
-              Critical
+              SIF Priority
             </span>
             <StatusDot status="CRITICAL" pulse size="sm" />
           </div>
-          <span className="text-3xl font-black font-mono text-rose-600 tracking-tight mt-1.5">
-            08
+          <span className={`text-3xl font-black font-mono text-rose-600 tracking-tight mt-1.5 ${loading ? "animate-pulse opacity-40" : ""}`}>
+            {loading ? "—" : String(psifPriority).padStart(2, "0")}
           </span>
           <span className="text-[10px] font-bold text-rose-600/90 mt-1">
-            pSIF ≥ 0.70
+            pSIF ≥ 0.60
           </span>
         </div>
 
-        {/* High Precursor Signals */}
+        {/* Pending Reviews */}
         <div className="p-4 rounded-xl border border-amber-200/80 bg-amber-50/20 flex flex-col justify-between shadow-2xs">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800">
-              High Risk
+              Pending
             </span>
             <StatusDot status="HIGH" size="sm" />
           </div>
-          <span className="text-3xl font-black font-mono text-amber-600 tracking-tight mt-1.5">
-            14
+          <span className={`text-3xl font-black font-mono text-amber-600 tracking-tight mt-1.5 ${loading ? "animate-pulse opacity-40" : ""}`}>
+            {loading ? "—" : String(pendingReviews).padStart(2, "0")}
           </span>
           <span className="text-[10px] font-bold text-amber-700 mt-1">
-            Precursor Signals
+            Awaiting Review
           </span>
         </div>
 
-        {/* Open Actions */}
+        {/* Active Barriers */}
         <div className="p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between shadow-2xs">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Open Actions
-            </span>
-            <StatusDot status="NEUTRAL" size="sm" />
-          </div>
-          <span className="text-3xl font-black font-mono text-slate-900 tracking-tight mt-1.5">
-            06
-          </span>
-          <span className="text-[10px] font-bold text-slate-500 mt-1">
-            Pending Sign-Off
-          </span>
-        </div>
-
-        {/* Barrier Health Index */}
-        <div className="p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Barrier
+              Barriers
             </span>
             <StatusDot status="HEALTHY" size="sm" />
           </div>
-          <span className="text-3xl font-black font-mono text-emerald-600 tracking-tight mt-1.5">
-            88.4%
+          <span className={`text-3xl font-black font-mono text-emerald-600 tracking-tight mt-1.5 ${loading ? "animate-pulse opacity-40" : ""}`}>
+            {loading ? "—" : String(activeBarriers).padStart(2, "0")}
           </span>
           <span className="text-[10px] font-bold text-emerald-700 mt-1">
-            18 IOGP Active
+            Active Barriers
           </span>
         </div>
 
-        {/* Live Monitored Assets */}
+        {/* Unacknowledged Alerts */}
         <div className="p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between shadow-2xs col-span-2 sm:col-span-1">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Live Assets
+              Alerts
             </span>
-            <StatusDot status="ONLINE" pulse size="sm" />
+            <StatusDot status={unackAlerts > 0 ? "CRITICAL" : "NEUTRAL"} pulse={unackAlerts > 0} size="sm" />
           </div>
-          <span className="text-3xl font-black font-mono text-slate-900 tracking-tight mt-1.5">
-            05
+          <span className={`text-3xl font-black font-mono tracking-tight mt-1.5 ${unackAlerts > 0 ? "text-rose-600" : "text-slate-900"} ${loading ? "animate-pulse opacity-40" : ""}`}>
+            {loading ? "—" : String(unackAlerts).padStart(2, "0")}
           </span>
           <span className="text-[10px] font-bold text-slate-500 mt-1">
-            Indian Hydrocarbon
+            Unacknowledged
           </span>
         </div>
       </div>
 
-      {/* 09. MAIN: Left (Critical Incidents) & Right (Barrier Health) */}
+      {/* Main Content: Active Alerts + Barrier Health */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* LEFT: Critical Precursor Incident Queue (Level 1 visual cards) */}
+        {/* LEFT: Live Alerts from DB */}
         <div className="lg:col-span-7 rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-rose-500" />
               <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800">
-                Critical SIF Incidents
+                Active Alerts
               </h2>
+              {topAlerts.length > 0 && (
+                <span className="ml-1 text-[10px] font-mono font-bold bg-rose-100 text-rose-700 rounded-full px-2 py-0.5">
+                  {topAlerts.length}
+                </span>
+              )}
             </div>
             <Link
               href="/app/triage"
               className="text-xs font-bold text-slate-700 hover:text-slate-900 flex items-center gap-1 transition"
             >
-              <span>View All (8)</span>
+              <span>Triage Queue</span>
               <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
 
-          <div className="space-y-2.5">
-            {[
-              {
-                id: "REP-MUM-001",
-                site: "Mumbai High",
-                rule: "Isolation Bypass",
-                risk: 0.88,
-                title: "Gas Release",
-                narrative:
-                  "Hydrocarbon vapor release during flare knockout drum bypass without gas test confirmation.",
-                barrier: "Positive Isolation DBB",
-                barrierState: "Failed",
-              },
-              {
-                id: "REP-ASM-004",
-                site: "Digboi Asset",
-                rule: "Energy Isolation",
-                risk: 0.82,
-                title: "Manifold Weep",
-                narrative:
-                  "Wellhead crude transfer manifold packing failure with unverified isolation boundary.",
-                barrier: "Isolation Boundary",
-                barrierState: "Degraded",
-              },
-              {
-                id: "REP-GUJ-007",
-                site: "Hazira Terminal",
-                rule: "Hot Work Control",
-                risk: 0.76,
-                title: "Vapor Ignition",
-                narrative:
-                  "Welding torch ignition near LPG condensate drain line; spark containment screen degraded.",
-                barrier: "Continuous Gas Sniffing",
-                barrierState: "Absent",
-              },
-            ].map((item) => (
-              <div
-                key={item.id}
-                onClick={() => openIncidentDrawer(item)}
-                className="p-3.5 rounded-xl border border-slate-200/90 bg-slate-50/40 hover:bg-white hover:border-slate-300 transition cursor-pointer flex items-center justify-between gap-3 group shadow-2xs"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <RiskScore score={item.risk} />
-
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs font-bold text-slate-900">
-                        {item.id}
-                      </span>
-                      <span className="text-slate-300">•</span>
-                      <span className="text-xs font-bold text-slate-800 truncate">
-                        {item.title}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-[11px] text-slate-500 font-medium mt-0.5">
-                      <span className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3 text-slate-400" />
-                        <span>{item.site}</span>
-                      </span>
-                      <span className="text-slate-300">•</span>
-                      <span className="text-slate-600 font-semibold truncate">
-                        {item.rule}
-                      </span>
+          {loading ? (
+            <div className="space-y-2.5">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-16 rounded-xl bg-slate-100 animate-pulse" />
+              ))}
+            </div>
+          ) : topAlerts.length === 0 ? (
+            <EmptyState label="No unacknowledged alerts. System nominal." />
+          ) : (
+            <div className="space-y-2.5">
+              {topAlerts.map((alert: any) => (
+                <div
+                  key={alert.id}
+                  onClick={() => openAlertDrawer(alert)}
+                  className={`p-3.5 rounded-xl border hover:bg-white hover:border-slate-300 transition cursor-pointer flex items-center justify-between gap-3 group shadow-2xs ${getSeverityClass(alert.severity)}`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <StatusDot status={alert.severity} size="sm" pulse={alert.severity === "CRITICAL"} />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-xs text-slate-900 truncate">
+                          {alert.title}
+                        </span>
+                        <SeverityBadge severity={alert.severity} />
+                      </div>
+                      <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+                        {alert.message}
+                      </p>
                     </div>
                   </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition flex items-center gap-0.5">
+                      Detail
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                    </span>
+                  </div>
                 </div>
-
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition flex items-center gap-0.5">
-                    Review
-                    <ArrowUpRight className="h-3.5 w-3.5" />
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* RIGHT: Visual Barrier Matrix (Icons + Short Labels + Progress Bars) */}
+        {/* RIGHT: Barrier Health from DB */}
         <div className="lg:col-span-5 rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
               <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800">
-                Barrier Matrix
+                Barrier Health
               </h2>
             </div>
             <Link
@@ -367,146 +317,160 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          <div className="space-y-3">
-            {[
-              {
-                icon: Lock,
-                short: "Isolation",
-                name: "Physical Isolation (Double Block & Bleed)",
-                score: 92,
-                status: "VERIFIED",
-                iogp: "BAR-ENG-01",
-              },
-              {
-                icon: Flame,
-                short: "Ignition",
-                name: "Hazardous Area Ignition Control (Ex-Rated)",
-                score: 85,
-                status: "DEGRADED",
-                iogp: "BAR-PHYS-02",
-              },
-              {
-                icon: FileCheck,
-                short: "Permit",
-                name: "Permit to Work (PTW) Cross-Signoff",
-                score: 71,
-                status: "FAILED",
-                iogp: "BAR-PROC-03",
-              },
-              {
-                icon: Wind,
-                short: "Detection",
-                name: "Combustible & Toxic Gas Detection (LEL)",
-                score: 96,
-                status: "VERIFIED",
-                iogp: "BAR-ENG-04",
-              },
-              {
-                icon: Power,
-                short: "Shutdown",
-                name: "Emergency Shutdown (ESD Valve Seal)",
-                score: 89,
-                status: "VERIFIED",
-                iogp: "BAR-ENG-05",
-              },
-            ].map((b) => {
-              const Icon = b.icon;
-              return (
-                <div
-                  key={b.short}
-                  onClick={() => openBarrierDrawer(b)}
-                  className="space-y-1.5 p-2 rounded-xl hover:bg-slate-50 transition cursor-pointer"
-                >
-                  <div className="flex items-center justify-between text-xs">
-                    <Tooltip content={`${b.name} (${b.iogp})`}>
-                      <div className="flex items-center gap-2">
-                        <Icon className="h-4 w-4 text-slate-600 shrink-0" strokeWidth={1.8} />
-                        <span className="font-bold text-slate-800">{b.short}</span>
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-10 rounded-xl bg-slate-100 animate-pulse" />
+              ))}
+            </div>
+          ) : barrierHealth.length === 0 ? (
+            <EmptyState label="No barrier data yet. Submit reports to generate barrier health." />
+          ) : (
+            <div className="space-y-3">
+              {barrierHealth.slice(0, 5).map((b: any) => {
+                const total = (b.verified || 0) + (b.unverified || 0) + (b.failed || 0);
+                const score = total > 0 ? Math.round((b.verified / total) * 100) : 0;
+                const statusVal = score >= 80 ? "VERIFIED" : score >= 50 ? "DEGRADED" : "FAILED";
+                return (
+                  <div key={b.code} className="space-y-1.5 p-2 rounded-xl hover:bg-slate-50 transition">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-slate-800 truncate max-w-[60%]">{b.name}</span>
+                      <div className="flex items-center gap-2 font-mono">
+                        <span className={`text-xs font-black ${score >= 80 ? "text-emerald-600" : score >= 50 ? "text-amber-600" : "text-rose-600"}`}>
+                          {score}%
+                        </span>
+                        <StatusDot status={statusVal} size="sm" />
                       </div>
-                    </Tooltip>
-
-                    <div className="flex items-center gap-2 font-mono">
-                      <span
-                        className={`text-xs font-black ${
-                          b.status === "VERIFIED"
-                            ? "text-emerald-600"
-                            : b.status === "DEGRADED"
-                            ? "text-amber-600"
-                            : "text-rose-600"
-                        }`}
-                      >
-                        {b.score}%
-                      </span>
-                      <StatusDot status={b.status} size="sm" />
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${score >= 80 ? "bg-emerald-500" : score >= 50 ? "bg-amber-500" : "bg-rose-500"}`}
+                        style={{ width: `${score}%` }}
+                      />
                     </div>
                   </div>
-
-                  <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-500 ${
-                        b.status === "VERIFIED"
-                          ? "bg-emerald-500"
-                          : b.status === "DEGRADED"
-                          ? "bg-amber-500"
-                          : "bg-rose-500"
-                      }`}
-                      style={{ width: `${b.score}%` }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* 09. BOTTOM: Live Data Telemetry Stream (No paragraphs, pure signal) */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
+      {/* Monthly Trend (from real DB) */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Live Field Telemetry Stream
+            <span className="h-2 w-2 rounded-full bg-blue-500" />
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800">
+              6-Month Report Trend
             </h2>
           </div>
           <Link
-            href="/app/data-feed"
+            href="/app/reports"
             className="text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-1"
           >
-            <span>Full Stream</span>
+            <span>All Reports</span>
             <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <LiveValue
-            label="GLM-04 Pressure"
-            value="110.4"
-            unit="Bar"
-            trend={+2.4}
-            status="CRITICAL"
-          />
-          <LiveValue
-            label="Reboiler Temp"
-            value="148.2"
-            unit="°C"
-            trend={-0.8}
-            status="HEALTHY"
-          />
-          <LiveValue
-            label="Trench Gas (LEL)"
-            value="2.4"
-            unit="% LEL"
-            trend={+0.4}
-            status="DEGRADED"
-          />
-          <LiveValue
-            label="ESD Valve Seal"
-            value="99.8"
-            unit="%"
-            status="HEALTHY"
-          />
+        {loading ? (
+          <div className="flex gap-4 h-24 items-end">
+            {[40, 60, 35, 75, 50, 65].map((h, i) => (
+              <div key={i} className="flex-1 rounded-t-lg bg-slate-100 animate-pulse" style={{ height: `${h}%` }} />
+            ))}
+          </div>
+        ) : monthlyTrend.length === 0 ? (
+          <EmptyState label="No reports yet. Submit incident reports to see monthly trends." />
+        ) : (
+          <div className="flex items-end gap-2 h-24">
+            {monthlyTrend.map((m: any) => {
+              const maxVal = Math.max(...monthlyTrend.map((x: any) => x.total_reports), 1);
+              const heightPct = Math.round((m.total_reports / maxVal) * 100);
+              const psifHeightPct = Math.round(((m.psif_priority || 0) / maxVal) * 100);
+              return (
+                <Tooltip
+                  key={m.month}
+                  content={`${m.month}: ${m.total_reports} reports, ${m.psif_priority} SIF-priority (${m.psif_density}%)`}
+                >
+                  <div className="flex-1 flex flex-col items-center gap-1 cursor-default">
+                    <div className="w-full flex items-end gap-0.5 h-20">
+                      <div
+                        className="flex-1 rounded-t-md bg-slate-200 transition-all duration-500"
+                        style={{ height: `${heightPct}%` }}
+                      />
+                      <div
+                        className="flex-1 rounded-t-md bg-rose-400 transition-all duration-500"
+                        style={{ height: `${psifHeightPct}%` }}
+                      />
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-400">{m.month}</span>
+                  </div>
+                </Tooltip>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="flex items-center gap-4 text-[10px] font-bold text-slate-400 pt-1">
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-slate-200" />
+            Total Reports
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-rose-400" />
+            SIF Priority
+          </span>
         </div>
+      </div>
+
+      {/* Recent Activity Feed */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              Recent Activity
+            </h2>
+          </div>
+          <Link
+            href="/app/audit-log"
+            className="text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-1"
+          >
+            <span>Full Log</span>
+            <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+
+        {loading ? (
+          <div className="space-y-2">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-8 rounded-lg bg-slate-100 animate-pulse" />
+            ))}
+          </div>
+        ) : recentActivity.length === 0 ? (
+          <EmptyState label="No activity recorded yet." />
+        ) : (
+          <div className="space-y-1">
+            {recentActivity.slice(0, 8).map((log: any) => (
+              <div
+                key={log.id}
+                className="flex items-center gap-3 px-2 py-1.5 rounded-lg hover:bg-slate-50 transition"
+              >
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                <span className="text-xs font-semibold text-slate-800 flex-1 truncate">
+                  {log.action.replace(/_/g, " ")} — {log.entity_type}
+                  {log.entity_id ? ` #${String(log.entity_id).slice(0, 8)}` : ""}
+                </span>
+                <span className="text-[10px] text-slate-400 font-mono shrink-0">
+                  {log.timestamp
+                    ? new Date(log.timestamp).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })
+                    : "—"}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

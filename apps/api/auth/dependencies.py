@@ -19,10 +19,6 @@ def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
     if not token:
-        # Fallback to demo default user if unauthenticated for smooth local demo testing
-        demo_user = db.query(User).filter(User.role == "HSE_ANALYST").first()
-        if demo_user:
-            return demo_user
         raise credentials_exception
 
     payload = decode_access_token(token)
@@ -35,17 +31,23 @@ def get_current_user(
     user = db.query(User).filter(User.id == user_id).first()
     if user is None:
         raise credentials_exception
-    if not user.is_active:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user")
+    if not user.is_active or user.account_status != "ACTIVE":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Account is inactive or suspended"
+        )
     return user
 
 
 def require_roles(allowed_roles: List[str]):
     def role_checker(current_user: User = Depends(get_current_user)) -> User:
-        if current_user.role not in allowed_roles and current_user.role != "ADMINISTRATOR":
+        user_role = (current_user.role or "").upper()
+        allowed = [r.upper() for r in allowed_roles]
+        if user_role not in allowed and user_role not in ["ADMINISTRATOR", "SUPER_ADMIN", "ADMIN"]:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"Operation not permitted for role {current_user.role}. Requires one of: {allowed_roles}"
             )
         return current_user
     return role_checker
+

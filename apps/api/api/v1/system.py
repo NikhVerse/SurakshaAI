@@ -143,14 +143,14 @@ def list_audit_logs(
             "id": l.id,
             "timestamp": l.timestamp.isoformat() if l.timestamp else None,
             "user_id": l.user_id,
-            "user_name": users[l.user_id].full_name if l.user_id in users else ("System Automator" if not l.user_id else "Priya Sharma"),
-            "user_email": users[l.user_id].email if l.user_id in users else ("system@suraksha.ai" if not l.user_id else "analyst@suraksha.ai"),
-            "user_role": users[l.user_id].role if l.user_id in users else "SYSTEM",
+            "user_name": users[l.user_id].full_name if l.user_id in users else ("System Automator" if not l.user_id else f"User {l.user_id[:8]}"),
+            "user_email": users[l.user_id].email if l.user_id in users else ("system@suraksha.ai" if not l.user_id else None),
+            "user_role": users[l.user_id].role if l.user_id in users else "OPERATOR",
             "action": l.action,
             "entity_type": l.entity_type,
             "entity_id": l.entity_id,
             "details": l.details,
-            "ip_address": l.ip_address or "10.14.22.8",
+            "ip_address": l.ip_address or "127.0.0.1",
         }
         for l in logs
     ]

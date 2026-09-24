@@ -2,400 +2,346 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  Settings,
-  Cpu,
   User,
   Shield,
   CheckCircle2,
-  Lock,
-  Terminal,
-  Database,
-  Key,
+  Users,
+  Edit3,
+  X,
+  Phone,
+  Mail,
   Server,
-  Zap,
-  Check,
-  ExternalLink,
-  Sparkles,
-  Layers,
-  ChevronRight,
-  Sliders,
-  Eye,
-  EyeOff,
-  Radio,
+  Database,
+  Cpu,
+  Clock,
+  UserCheck,
+  UserX,
 } from "lucide-react";
-import { chatApi, ModelInfo, ModelProviderInfo, ModelsResponse } from "@/lib/api";
+import { usersApi, systemApi, UserItem } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
+import { StatusDot } from "@/components/ui/StatusSystem";
 
 export default function SettingsPage() {
-  const { user } = useAuth();
-  const [modelData, setModelData] = useState<ModelsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedProvider, setSelectedProvider] = useState<string>("ALL");
-  const [activeModelId, setActiveModelId] = useState<string>("mistral:7b");
+  const { user, updateProfile } = useAuth();
   const [toast, setToast] = useState<string | null>(null);
 
-  // API Key Form State
-  const [showKeys, setShowKeys] = useState(false);
-  const [keys, setKeys] = useState({
-    openai: "",
-    anthropic: "",
-    gemini: "",
-    ollamaUrl: "http://localhost:11434",
-  });
+  // Profile Edit State
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editName, setEditName] = useState(user?.full_name || "");
+  const [editPhone, setEditPhone] = useState(user?.phone || "");
+  const [savingProfile, setSavingProfile] = useState(false);
 
-  useEffect(() => {
-    // Load persisted settings
-    const savedModel = localStorage.getItem("suraksha_active_model");
-    if (savedModel) setActiveModelId(savedModel);
+  // User Management State (Admin)
+  const [userList, setUserList] = useState<UserItem[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
 
-    const savedKeys = localStorage.getItem("suraksha_provider_keys");
-    if (savedKeys) {
-      try {
-        setKeys(JSON.parse(savedKeys));
-      } catch {}
+  // System Health
+  const [systemHealth, setSystemHealth] = useState<any>(null);
+  const [loadingHealth, setLoadingHealth] = useState(true);
+
+  const loadUsers = () => {
+    if (user?.role === "ADMINISTRATOR" || user?.role === "SUPER_ADMIN") {
+      setLoadingUsers(true);
+      usersApi
+        .listUsers()
+        .then(setUserList)
+        .catch(console.error)
+        .finally(() => setLoadingUsers(false));
     }
-
-    chatApi
-      .getModels()
-      .then((res) => {
-        setModelData(res);
-      })
-      .catch((err) => {
-        console.error("Failed to load models:", err);
-      })
-      .finally(() => setLoading(false));
-  }, []);
-
-  const handleSelectModel = (id: string, name: string) => {
-    setActiveModelId(id);
-    localStorage.setItem("suraksha_active_model", id);
-    setToast(`Active model switched to ${name} (${id})`);
-    setTimeout(() => setToast(null), 3500);
   };
 
-  const handleSaveKeys = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (user?.full_name) setEditName(user.full_name);
+    if (user?.phone) setEditPhone(user.phone);
+  }, [user]);
+
+  useEffect(() => {
+    loadUsers();
+  }, [user?.role]);
+
+  useEffect(() => {
+    systemApi
+      .getHealth()
+      .then(setSystemHealth)
+      .catch(console.error)
+      .finally(() => setLoadingHealth(false));
+  }, []);
+
+  const handleRoleChange = async (userId: string, newRole: string) => {
+    try {
+      await usersApi.updateUserRole(userId, newRole);
+      setToast(`User role updated to ${newRole}`);
+      loadUsers();
+      setTimeout(() => setToast(null), 3500);
+    } catch (err: any) {
+      setToast(err.message || "Failed to update role");
+      setTimeout(() => setToast(null), 3500);
+    }
+  };
+
+  const handleStatusToggle = async (userId: string, currentStatus: string) => {
+    const newStatus = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+    try {
+      await usersApi.updateUserRole(userId, undefined, newStatus);
+      setToast(`Account status set to ${newStatus}`);
+      loadUsers();
+      setTimeout(() => setToast(null), 3500);
+    } catch (err: any) {
+      setToast(err.message || "Failed to update status");
+      setTimeout(() => setToast(null), 3500);
+    }
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem("suraksha_provider_keys", JSON.stringify(keys));
-    setToast("Model provider configuration saved successfully.");
-    setTimeout(() => setToast(null), 3500);
+    setSavingProfile(true);
+    try {
+      await updateProfile({ full_name: editName, phone: editPhone });
+      setIsEditingProfile(false);
+      setToast("Profile updated successfully.");
+      setTimeout(() => setToast(null), 3500);
+    } catch (err: any) {
+      setToast(err.message || "Failed to update profile.");
+      setTimeout(() => setToast(null), 3500);
+    } finally {
+      setSavingProfile(false);
+    }
   };
 
   const roleLabel = (role?: string) =>
-    role ? role.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "HSE Lead Analyst";
+    role ? role.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "—";
 
-  const initials = (user?.full_name || "Priya Sharma")
+  const initials = (user?.full_name || "?")
     .split(" ")
     .map((n) => n[0])
     .slice(0, 2)
     .join("")
     .toUpperCase();
 
-  const filteredModels = (modelData?.categorized_models || []).filter((m) => {
-    if (selectedProvider === "ALL") return true;
-    return m.provider.toLowerCase() === selectedProvider.toLowerCase();
-  });
-
   return (
-    <div className="space-y-10 max-w-5xl pb-20 font-sans">
+    <div className="space-y-8 max-w-4xl pb-20 font-sans">
       {/* Toast Notice */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-slate-900 text-white text-sm font-semibold shadow-2xl animate-in fade-in slide-in-from-bottom-2">
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-slate-900 text-white text-xs font-semibold shadow-2xl animate-in fade-in slide-in-from-bottom-2">
           <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
           <span>{toast}</span>
         </div>
       )}
 
       {/* Header */}
-      <div className="border-b border-slate-200 pb-5">
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
-          Platform Settings &amp; Model Architecture
+      <div className="border-b border-slate-200 pb-4">
+        <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+          Account &amp; System Configuration
         </h1>
-        <p className="text-sm sm:text-base text-slate-500 font-medium mt-1">
-          Manage inference models across Ollama, Claude, Gemini, OpenAI, and security parameters
+        <p className="text-xs text-slate-500 font-medium mt-0.5">
+          Operator identity profile, administrative user controls, and sovereign system telemetry
         </p>
       </div>
 
-      {/* Account Details */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-7 space-y-6 shadow-2xs">
-        <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
-          <User className="h-5 w-5 text-slate-700" strokeWidth={1.8} />
-          <h2 className="text-base font-bold text-slate-900">Active Operator Identity</h2>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-900 text-white text-lg font-black shadow-xs">
-            {initials}
-          </div>
-          <div>
-            <p className="text-base font-bold text-slate-900">{user?.full_name || "Priya Sharma"}</p>
-            <p className="text-xs text-slate-500 font-medium">{user?.email || "analyst@suraksha.ai"}</p>
-            <span className="inline-flex items-center mt-1.5 px-2.5 py-0.5 rounded-md text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 uppercase">
-              {roleLabel(user?.role)}
-            </span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-              Operator Identifier
-            </label>
-            <div className="p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono text-xs text-slate-700">
-              {user?.id ? user.id.slice(0, 20) + "..." : "usr-ops-priya-01"}
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-              Access Permission Level
-            </label>
-            <div className="p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-medium text-xs text-slate-700">
-              L4 Certified Incident Investigator &amp; Barrier Assessor
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Model Providers & Categorized Models Hub */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-7 space-y-6 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-100">
+      {/* Section 1: Operator Profile */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-6 shadow-2xs">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2.5">
-            <Cpu className="h-5 w-5 text-slate-800" strokeWidth={1.8} />
-            <div>
-              <h2 className="text-lg font-bold text-slate-900">Multi-Model Inference Registry</h2>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Categorized models across private on-premises and frontier cloud providers
-              </p>
-            </div>
+            <User className="h-4 w-4 text-slate-700" strokeWidth={1.8} />
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
+              Active Operator Profile
+            </h2>
           </div>
-
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Active: <strong className="font-mono text-slate-900">{activeModelId}</strong></span>
-          </div>
-        </div>
-
-        {/* 4 Provider Status Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-          {[
-            { name: "Ollama", category: "Private On-Prem", badge: "Air-Gapped", desc: "Local low-latency inference with zero egress." },
-            { name: "Anthropic", category: "Frontier Reasoning", badge: "Claude 3.7 / 3.5", desc: "Deep root-cause and BowTie barrier causality." },
-            { name: "Google Gemini", category: "Multimodal Engine", badge: "2M Context", desc: "Full plant manuals, P&ID schematics & telemetry." },
-            { name: "OpenAI", category: "Frontier & STEM", badge: "GPT-4o / o1 / o3", desc: "Physical risk calculation & energy isolation logic." },
-          ].map((p) => {
-            const isSelected = selectedProvider.toLowerCase() === p.name.toLowerCase() || (selectedProvider === "ALL" && p.name === "Ollama");
-            return (
-              <button
-                key={p.name}
-                type="button"
-                onClick={() => setSelectedProvider(selectedProvider === p.name ? "ALL" : p.name)}
-                className={`p-4 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between space-y-2 ${
-                  selectedProvider.toLowerCase() === p.name.toLowerCase()
-                    ? "border-slate-900 bg-slate-900 text-white shadow-xs"
-                    : "border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300 text-slate-800"
-                }`}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <span className="font-bold text-sm">{p.name}</span>
-                  <span
-                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
-                      selectedProvider.toLowerCase() === p.name.toLowerCase()
-                        ? "bg-white/20 text-white"
-                        : "bg-slate-200 text-slate-700"
-                    }`}
-                  >
-                    {p.badge}
-                  </span>
-                </div>
-                <p
-                  className={`text-xs ${
-                    selectedProvider.toLowerCase() === p.name.toLowerCase() ? "text-slate-300" : "text-slate-500"
-                  }`}
-                >
-                  {p.desc}
-                </p>
-                <span
-                  className={`text-[11px] font-semibold flex items-center gap-1 ${
-                    selectedProvider.toLowerCase() === p.name.toLowerCase() ? "text-blue-300" : "text-blue-600"
-                  }`}
-                >
-                  {selectedProvider.toLowerCase() === p.name.toLowerCase() ? "Showing Models" : "Filter Category"}
-                  <ChevronRight className="h-3 w-3" />
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Model Filter Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-2">
-          {["ALL", "Ollama", "Anthropic", "Google Gemini", "OpenAI"].map((prov) => (
-            <button
-              key={prov}
-              type="button"
-              onClick={() => setSelectedProvider(prov)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
-                selectedProvider === prov
-                  ? "bg-slate-900 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
-              }`}
-            >
-              {prov === "ALL" ? "All Models (16)" : prov}
-            </button>
-          ))}
-        </div>
-
-        {/* Categorized Model Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredModels.map((m) => {
-            const isActive = activeModelId === m.id;
-            return (
-              <div
-                key={m.id}
-                onClick={() => handleSelectModel(m.id, m.name)}
-                className={`p-4 rounded-xl border transition cursor-pointer flex flex-col justify-between space-y-3 ${
-                  isActive
-                    ? "border-slate-900 bg-white ring-2 ring-slate-900 shadow-xs"
-                    : "border-slate-200 bg-slate-50/40 hover:bg-white hover:border-slate-300 shadow-2xs"
-                }`}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-slate-900">{m.name}</span>
-                      {isActive && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-900 text-white text-[10px] font-bold">
-                          <Check className="h-3 w-3" strokeWidth={2.5} /> Active
-                        </span>
-                      )}
-                    </div>
-                    <span className="font-mono text-xs text-slate-500 font-semibold block mt-0.5">{m.id}</span>
-                  </div>
-
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
-                      {m.context_window}
-                    </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
-                      {m.badge}
-                    </span>
-                  </div>
-                </div>
-
-                <p className="text-xs text-slate-600 leading-relaxed font-normal">{m.description}</p>
-
-                <div className="flex items-center justify-between pt-2 border-t border-slate-200/60 text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-700">{m.provider}</span>
-                    <span className="text-slate-300">•</span>
-                    <span className="text-slate-500 font-medium">{m.category}</span>
-                  </div>
-
-                  <span className={`text-[11px] font-bold ${m.is_local ? "text-emerald-700" : "text-slate-700"}`}>
-                    {m.is_local ? "Air-Gapped" : "Cloud API"}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Optional Provider Keys Configuration Drawer */}
-        <div className="pt-4 border-t border-slate-100">
           <button
             type="button"
-            onClick={() => setShowKeys(!showKeys)}
-            className="flex items-center gap-2 text-xs font-bold text-slate-700 hover:text-slate-900 cursor-pointer"
+            onClick={() => setIsEditingProfile(!isEditingProfile)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition cursor-pointer"
           >
-            <Key className="h-4 w-4 text-slate-500" strokeWidth={1.8} />
-            <span>{showKeys ? "Hide Custom Provider API Keys" : "Configure Custom Provider API Keys & Endpoints"}</span>
-            <ChevronRight className={`h-3.5 w-3.5 transition-transform ${showKeys ? "rotate-90" : ""}`} />
+            {isEditingProfile ? (
+              <>
+                <X className="h-3.5 w-3.5 text-slate-500" />
+                <span>Cancel</span>
+              </>
+            ) : (
+              <>
+                <Edit3 className="h-3.5 w-3.5 text-slate-500" />
+                <span>Edit Profile</span>
+              </>
+            )}
           </button>
-
-          {showKeys && (
-            <form onSubmit={handleSaveKeys} className="mt-4 p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-4">
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Enter your optional API keys for cloud frontier models. If no keys are provided, SurakshaAI automatically uses
-                the local Ollama model or the sovereign grounded RAG safety engine with zero external network egress.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">OpenAI API Key</label>
-                  <input
-                    type="password"
-                    placeholder="sk-proj-..."
-                    value={keys.openai}
-                    onChange={(e) => setKeys({ ...keys, openai: e.target.value })}
-                    className="w-full text-xs font-mono p-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-slate-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Anthropic API Key</label>
-                  <input
-                    type="password"
-                    placeholder="sk-ant-api03-..."
-                    value={keys.anthropic}
-                    onChange={(e) => setKeys({ ...keys, anthropic: e.target.value })}
-                    className="w-full text-xs font-mono p-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-slate-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Google Gemini API Key</label>
-                  <input
-                    type="password"
-                    placeholder="AIzaSy..."
-                    value={keys.gemini}
-                    onChange={(e) => setKeys({ ...keys, gemini: e.target.value })}
-                    className="w-full text-xs font-mono p-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-slate-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Ollama Local Endpoint</label>
-                  <input
-                    type="text"
-                    placeholder="http://localhost:11434"
-                    value={keys.ollamaUrl}
-                    onChange={(e) => setKeys({ ...keys, ollamaUrl: e.target.value })}
-                    className="w-full text-xs font-mono p-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-slate-400"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-2">
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition cursor-pointer shadow-xs"
-                >
-                  Save Provider Configuration
-                </button>
-              </div>
-            </form>
-          )}
         </div>
+
+        {isEditingProfile ? (
+          <form onSubmit={handleSaveProfile} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full text-xs font-semibold p-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-slate-400"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                  Phone Number
+                </label>
+                <input
+                  type="text"
+                  placeholder="+91 98765 43210"
+                  value={editPhone}
+                  onChange={(e) => setEditPhone(e.target.value)}
+                  className="w-full text-xs font-semibold p-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-slate-400"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                type="submit"
+                disabled={savingProfile}
+                className="px-4 py-2 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-slate-800 disabled:opacity-50 transition cursor-pointer"
+              >
+                {savingProfile ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-900 text-white font-black text-lg shrink-0">
+              {initials}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-1">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Name</span>
+                <p className="text-sm font-bold text-slate-900 mt-0.5">{user?.full_name || "—"}</p>
+              </div>
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Email Address</span>
+                <p className="text-sm font-mono font-medium text-slate-700 mt-0.5">{user?.email || "—"}</p>
+              </div>
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Assigned Role</span>
+                <span className="inline-block mt-0.5 px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 font-bold text-xs border border-slate-200">
+                  {roleLabel(user?.role)}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Security & Audit Parameters */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-7 space-y-4 shadow-2xs">
-        <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
-          <Shield className="h-5 w-5 text-emerald-600" strokeWidth={1.8} />
-          <h2 className="text-base font-bold text-slate-900">Compliance &amp; Data Sovereignty</h2>
+      {/* Section 2: User Administration (Admin Only) */}
+      {(user?.role === "ADMINISTRATOR" || user?.role === "SUPER_ADMIN") && (
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5 shadow-2xs">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="flex items-center gap-2.5">
+              <Users className="h-4 w-4 text-slate-700" strokeWidth={1.8} />
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
+                User Management ({userList.length})
+              </h2>
+            </div>
+          </div>
+
+          {loadingUsers ? (
+            <div className="py-6 text-center text-xs text-slate-400">Loading user accounts...</div>
+          ) : userList.length === 0 ? (
+            <div className="py-6 text-center text-xs text-slate-400">No other users registered.</div>
+          ) : (
+            <div className="divide-y divide-slate-100 overflow-x-auto">
+              {userList.map((u) => (
+                <div key={u.id} className="py-3 flex items-center justify-between gap-4 min-w-[500px]">
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-lg bg-slate-100 text-slate-800 font-bold text-xs flex items-center justify-center">
+                      {(u.full_name || u.email).slice(0, 2).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-900">{u.full_name}</p>
+                      <p className="text-[11px] font-mono text-slate-500">{u.email}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <select
+                      value={u.role}
+                      onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                      className="text-xs font-medium bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 focus:outline-none"
+                    >
+                      <option value="HSE_ANALYST">HSE Analyst</option>
+                      <option value="HSE_MANAGER">HSE Manager</option>
+                      <option value="ADMINISTRATOR">Administrator</option>
+                    </select>
+
+                    <button
+                      type="button"
+                      onClick={() => handleStatusToggle(u.id, u.account_status)}
+                      className={`text-[11px] font-bold px-2 py-1 rounded-lg border transition ${
+                        u.account_status === "ACTIVE"
+                          ? "bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100"
+                          : "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200"
+                      }`}
+                    >
+                      {u.account_status}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Section 3: Sovereign System & Infrastructure Diagnostics */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 shadow-2xs">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <Server className="h-4 w-4 text-slate-700" strokeWidth={1.8} />
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
+              Sovereign Infrastructure Diagnostics
+            </h2>
+          </div>
+          <span className="flex items-center gap-1.5 text-xs font-bold font-mono text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+            <StatusDot status="HEALTHY" size="sm" />
+            <span>Air-Gapped Sovereign</span>
+          </span>
         </div>
 
-        <div className="space-y-3 text-xs text-slate-600 leading-relaxed">
-          <div className="flex items-center gap-2 font-medium">
-            <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" strokeWidth={1.8} />
-            <span>All decision trails recorded in append-only SQLite / Postgres Audit Log</span>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
+            <div className="flex items-center gap-1.5 text-slate-500">
+              <Database className="h-3.5 w-3.5" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">Database Engine</span>
+            </div>
+            <p className="text-xs font-bold text-slate-900 font-mono">
+              SQLite / PostgreSQL Core
+            </p>
+            <span className="text-[10px] text-emerald-700 font-semibold block">
+              {systemHealth?.database === "connected" ? "Connected & Indexed" : "Active Local Instance"}
+            </span>
           </div>
-          <div className="flex items-center gap-2 font-medium">
-            <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" strokeWidth={1.8} />
-            <span>JWT tokens cryptographically signed with HS256 HMAC</span>
+
+          <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
+            <div className="flex items-center gap-1.5 text-slate-500">
+              <Cpu className="h-3.5 w-3.5" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">Vector Index</span>
+            </div>
+            <p className="text-xs font-bold text-slate-900 font-mono">
+              In-Process Hybrid Index
+            </p>
+            <span className="text-[10px] text-emerald-700 font-semibold block">
+              BM25 + Semantic Embeddings
+            </span>
           </div>
-          <div className="flex items-center gap-2 font-medium">
-            <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" strokeWidth={1.8} />
-            <span>IOGP 459 / OISD-GDN-145 process safety regulatory alignment</span>
+
+          <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
+            <div className="flex items-center gap-1.5 text-slate-500">
+              <Clock className="h-3.5 w-3.5" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">Uptime</span>
+            </div>
+            <p className="text-xs font-bold text-slate-900 font-mono">
+              {systemHealth?.uptime_seconds ? `${Math.round(systemHealth.uptime_seconds)}s` : "Online"}
+            </p>
+            <span className="text-[10px] text-slate-500 font-semibold block">
+              Version {systemHealth?.app_version || "1.0.0"}
+            </span>
           </div>
         </div>
       </div>

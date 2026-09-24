@@ -8,18 +8,12 @@ import {
   FileText,
   MapPin,
   ArrowRight,
-  SlidersHorizontal,
-  X,
-  AlertTriangle,
-  Lock,
-  Wind,
-  Flame,
-  CheckCircle2,
 } from "lucide-react";
 import { fetchApi, ReportItem } from "@/lib/api";
 import DetailDrawer, { DrawerData } from "@/components/ui/DetailDrawer";
 import Tooltip from "@/components/ui/Tooltip";
 import { StatusDot, RiskScore } from "@/components/ui/StatusSystem";
+import { getEvidenceForBarrier, getStandardsForBarrier } from "@/lib/evidenceData";
 
 export default function ReportsPage() {
   const [reports, setReports] = useState<ReportItem[]>([]);
@@ -52,8 +46,8 @@ export default function ReportsPage() {
     const rows = reports.map((r) => [
       r.report_uid,
       r.report_type,
-      `"${r.site_name || "Assam Asset"}"`,
-      `"${r.activity_name || "Operations"}"`,
+      `"${r.site_name || "—"}"`,
+      `"${r.activity_name || "—"}"`,
       r.psif_probability != null ? `${(r.psif_probability * 100).toFixed(0)}%` : "N/A",
       `"${r.primary_barrier || "None"}"`,
       r.review_status,
@@ -78,20 +72,22 @@ export default function ReportsPage() {
     setDrawerData({
       id: r.id,
       uid: r.report_uid,
-      title: `${r.report_type.replace(/_/g, " ")}: ${r.site_name || "Installation"}`,
+      title: `${r.report_type.replace(/_/g, " ")}${r.site_name ? ` · ${r.site_name}` : ""}`,
       severity: (r.psif_probability || 0) >= 0.7 ? "CRITICAL" : "HIGH",
       status: r.review_status,
-      riskScore: r.psif_probability || 0.75,
-      location: r.site_name,
-      timestamp: r.date_time ? new Date(r.date_time).toLocaleDateString() : "Recent",
-      narrative: r.narrative_snippet || "Precursor incident requiring operational review.",
-      primaryBarrier: r.primary_barrier,
-      barrierState: r.barrier_state,
-      rule: r.primary_lsr || "IOGP Standard",
+      riskScore: r.psif_probability || 0,
+      location: r.site_name || "—",
+      timestamp: r.date_time ? new Date(r.date_time).toLocaleDateString() : "—",
+      narrative: r.narrative_snippet || "No narrative details recorded.",
+      primaryBarrier: r.primary_barrier || "—",
+      barrierState: r.barrier_state || "—",
+      rule: r.primary_lsr || "—",
       metrics: [
-        { label: "pSIF Priority", value: `${((r.psif_probability || 0) * 100).toFixed(0)}%` },
-        { label: "Barrier Status", value: r.barrier_state || "Unverified" },
+        { label: "pSIF Probability", value: r.psif_probability != null ? `${(r.psif_probability * 100).toFixed(0)}%` : "—" },
+        { label: "Barrier Status", value: r.barrier_state || "—" },
       ],
+      evidenceImages: getEvidenceForBarrier(r.primary_barrier),
+      externalSources: getStandardsForBarrier(r.primary_barrier),
       onConfirm: () => {
         // Confirm action
       },
@@ -210,18 +206,18 @@ export default function ReportsPage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1 font-bold text-slate-900 text-xs">
                           <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
-                          <span className="truncate max-w-[160px]">{r.site_name || "Installation"}</span>
+                          <span className="truncate max-w-[160px]">{r.site_name || "—"}</span>
                         </div>
                       </td>
 
                       <td className="px-4 py-3 text-center">
-                        <RiskScore score={r.psif_probability || 0.65} size="sm" />
+                        <RiskScore score={r.psif_probability ?? 0} size="sm" />
                       </td>
 
                       <td className="px-4 py-3">
-                        <Tooltip content={r.primary_barrier || "Engineered Barrier"}>
+                        <Tooltip content={r.primary_barrier || "—"}>
                           <span className="font-semibold text-slate-800 text-xs truncate max-w-[130px] block">
-                            {r.primary_barrier || "Isolation"}
+                            {r.primary_barrier || "—"}
                           </span>
                         </Tooltip>
                       </td>
@@ -233,7 +229,7 @@ export default function ReportsPage() {
                             size="sm"
                           />
                           <span className="text-xs font-mono font-bold text-slate-600">
-                            {r.barrier_state || "Unverified"}
+                            {r.barrier_state || "—"}
                           </span>
                         </div>
                       </td>

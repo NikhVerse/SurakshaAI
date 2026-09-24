@@ -3,21 +3,14 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  Check,
   CheckCircle2,
-  AlertTriangle,
-  X,
   Play,
   MapPin,
-  Clock,
   ArrowUpRight,
-  Shield,
-  Layers,
-  SlidersHorizontal,
 } from "lucide-react";
 import { fetchApi, TriageTask } from "@/lib/api";
 import DetailDrawer, { DrawerData } from "@/components/ui/DetailDrawer";
-import { StatusDot, RiskScore, SeverityBadge } from "@/components/ui/StatusSystem";
+import { RiskScore, SeverityBadge } from "@/components/ui/StatusSystem";
 
 export default function TriagePage() {
   const [tasks, setTasks] = useState<TriageTask[]>([]);
@@ -80,16 +73,16 @@ export default function TriagePage() {
     setDrawerData({
       id: t.task_id,
       uid: t.report_uid,
-      title: `${t.activity_name || "Operational Task"}: ${t.site_name || "Installation"}`,
+      title: `${t.activity_name || "Incident"}: ${t.site_name || "Site"}`,
       severity: t.psif_probability >= 0.7 ? "CRITICAL" : "HIGH",
       status: t.status,
       riskScore: t.psif_probability,
-      location: t.site_name,
-      timestamp: t.date_time ? new Date(t.date_time).toLocaleDateString() : "Live",
+      location: t.site_name || "—",
+      timestamp: t.date_time ? new Date(t.date_time).toLocaleDateString() : "—",
       narrative: t.narrative_snippet,
-      rule: t.primary_lsr || "LSR-03 (Energy Isolation)",
-      primaryBarrier: t.primary_barrier,
-      barrierState: t.barrier_state,
+      rule: t.primary_lsr || "—",
+      primaryBarrier: t.primary_barrier || "—",
+      barrierState: t.barrier_state || "—",
       metrics: [
         { label: "pSIF Probability", value: `${(t.psif_probability * 100).toFixed(0)}%` },
         { label: "Priority Score", value: t.priority_score },
@@ -98,6 +91,7 @@ export default function TriagePage() {
       onConfirm: () => handleDecision(t.task_id, "CONFIRMED", t.report_uid),
       onDismiss: () => handleDecision(t.task_id, "DISMISSED", t.report_uid),
     });
+    setDrawerOpen(true);
     setDrawerOpen(true);
   };
 
@@ -180,48 +174,62 @@ export default function TriagePage() {
         </div>
       </div>
 
-      {/* 10. Visual Incident Queue Cards (Exact match to prompt spec) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-        {tasks.map((t) => {
-          const isCritical = t.psif_probability >= 0.7;
-          return (
-            <div
-              key={t.task_id}
-              onClick={() => openDrawer(t)}
-              className="p-4 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition cursor-pointer flex flex-col justify-between space-y-3 shadow-2xs group"
-            >
-              <div className="flex items-center justify-between">
-                <SeverityBadge severity={isCritical ? "CRITICAL" : "HIGH"} />
-                <RiskScore score={t.psif_probability} size="md" />
-              </div>
+      {/* Visual Incident Queue Cards */}
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="p-4 rounded-xl border border-slate-200 bg-white h-36 animate-pulse" />
+          ))}
+        </div>
+      ) : tasks.length === 0 ? (
+        <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-slate-500 text-xs font-medium space-y-1">
+          <CheckCircle2 className="h-8 w-8 text-emerald-500 mx-auto mb-2" />
+          <p className="font-bold text-slate-800 text-sm">Triage Queue Cleared</p>
+          <p className="text-slate-400">All high-priority incidents have been reviewed and verified by HSE operations.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          {tasks.map((t) => {
+            const isCritical = t.psif_probability >= 0.7;
+            return (
+              <div
+                key={t.task_id}
+                onClick={() => openDrawer(t)}
+                className="p-4 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition cursor-pointer flex flex-col justify-between space-y-3 shadow-2xs group"
+              >
+                <div className="flex items-center justify-between">
+                  <SeverityBadge severity={isCritical ? "CRITICAL" : "HIGH"} />
+                  <RiskScore score={t.psif_probability} size="md" />
+                </div>
 
-              <div>
-                <span className="font-mono text-xs font-bold text-slate-900 block">
-                  {t.report_uid}
-                </span>
-                <span className="font-bold text-sm text-slate-800 block truncate mt-0.5">
-                  {t.activity_name || "Hazard Incident"}
-                </span>
-                <div className="flex items-center gap-1 text-xs text-slate-500 font-medium mt-1">
-                  <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
-                  <span className="truncate">{t.site_name || "Installation"}</span>
+                <div>
+                  <span className="font-mono text-xs font-bold text-slate-900 block">
+                    {t.report_uid}
+                  </span>
+                  <span className="font-bold text-sm text-slate-800 block truncate mt-0.5">
+                    {t.activity_name || "Hazard Incident"}
+                  </span>
+                  <div className="flex items-center gap-1 text-xs text-slate-500 font-medium mt-1">
+                    <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
+                    <span className="truncate">{t.site_name || "—"}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+                  <span className="text-[11px] font-semibold text-slate-500 font-mono truncate max-w-[170px]">
+                    {t.primary_barrier || "—"}
+                  </span>
+
+                  <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition flex items-center gap-0.5 shrink-0">
+                    Review
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </span>
                 </div>
               </div>
-
-              <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-                <span className="text-[11px] font-semibold text-slate-500 font-mono">
-                  {t.primary_barrier || "Isolation"}
-                </span>
-
-                <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition flex items-center gap-0.5">
-                  Review
-                  <ArrowUpRight className="h-3.5 w-3.5" />
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

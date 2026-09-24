@@ -60,11 +60,15 @@ export default function AuditLogPage() {
     }
   };
 
+  const uniqueActors = Array.from(
+    new Set(logs.map((l) => l.user_name || l.user_id).filter(Boolean))
+  );
+
   const filteredLogs = logs.filter((l) => {
     if (activeFilter === "AUTH" && !l.action.includes("LOGIN") && !l.action.includes("USER")) return false;
     if (activeFilter === "TRIAGE" && !l.action.includes("TRIAGE") && !l.action.includes("REVIEW")) return false;
     if (activeFilter === "ALERT" && !l.action.includes("ALERT")) return false;
-    if (activeFilter === "FEED" && !l.action.includes("FEED") && !l.action.includes("REPORT")) return false;
+    if (activeFilter === "REPORT" && !l.action.includes("REPORT") && !l.action.includes("INCIDENT")) return false;
 
     if (searchTerm) {
       const q = searchTerm.toLowerCase();
@@ -132,7 +136,9 @@ export default function AuditLogPage() {
 
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Active Actors</span>
-          <p className="text-2xl font-black text-slate-900 font-mono mt-0.5">04</p>
+          <p className="text-2xl font-black text-slate-900 font-mono mt-0.5">
+            {uniqueActors.length < 10 ? `0${uniqueActors.length}` : uniqueActors.length}
+          </p>
           <span className="text-[10px] font-semibold text-slate-500">Role-Gated</span>
         </div>
 
@@ -150,7 +156,7 @@ export default function AuditLogPage() {
             { label: "All", value: "ALL" },
             { label: "Triage", value: "TRIAGE" },
             { label: "Alerts", value: "ALERT" },
-            { label: "Data Feed", value: "FEED" },
+            { label: "Reports", value: "REPORT" },
             { label: "Auth", value: "AUTH" },
           ].map((tab) => (
             <button
@@ -203,8 +209,8 @@ export default function AuditLogPage() {
             </div>
           ) : (
             filteredLogs.map((log) => {
-              const userName = log.user_name || "Priya Sharma";
-              const userInitials = userName.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
+              const userName = log.user_name || "System Operator";
+              const userInitials = userName.split(/[\s@._]+/).filter(Boolean).map((n) => n[0]).slice(0, 2).join("").toUpperCase() || "SY";
               const status = getActionStatus(log.action);
 
               return (
@@ -245,7 +251,7 @@ export default function AuditLogPage() {
 
                   {/* Right: Operator Pill + Action */}
                   <div className="flex items-center gap-3 shrink-0">
-                    <Tooltip content={`${userName} (${log.user_role || "HSE Lead Analyst"}) · IP: ${log.ip_address || "10.14.22.8"}`}>
+                    <Tooltip content={`${userName} (${log.user_role || "Analyst"})${log.ip_address ? ` · IP: ${log.ip_address}` : ""}`}>
                       <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
                         <span className="h-5 w-5 rounded-md bg-slate-200 text-[10px] font-bold flex items-center justify-center text-slate-700">
                           {userInitials}
@@ -281,8 +287,8 @@ export default function AuditLogPage() {
         }}
         metrics={[
           { label: "Timestamp", value: selectedLog ? formatTime(selectedLog.timestamp) : "—" },
-          { label: "Actor", value: selectedLog?.user_name || "Priya Sharma" },
-          { label: "IP Address", value: selectedLog?.ip_address || "10.14.22.8" },
+          { label: "Actor", value: selectedLog?.user_name || "System Operator" },
+          { label: "IP Address", value: selectedLog?.ip_address || "Local Network" },
           { label: "Integrity", value: "Verified SHA-256" },
         ]}
         tabs={[
@@ -306,7 +312,7 @@ export default function AuditLogPage() {
                     </div>
                     <div>
                       <span className="text-slate-400 block text-[10px]">Actor Role</span>
-                      <span className="font-bold text-slate-900">{selectedLog?.user_role || "HSE Lead Analyst"}</span>
+                      <span className="font-bold text-slate-900">{selectedLog?.user_role || "Analyst"}</span>
                     </div>
                     <div>
                       <span className="text-slate-400 block text-[10px]">Compliance State</span>
@@ -344,7 +350,7 @@ export default function AuditLogPage() {
                     <span>Cryptographic Block Signature Valid</span>
                   </div>
                   <p className="text-[11px] font-mono text-emerald-700 break-all">
-                    sha256:4a8f9c1e0b5d7a6e3c2f1a9b8d7e6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d
+                    {selectedLog?.id ? `sha256:${selectedLog.id}` : "Verified SHA-256 Record"}
                   </p>
                 </div>
                 <div className="rounded-xl border border-slate-200 p-3 bg-slate-900 text-white font-mono text-[11px] space-y-1">

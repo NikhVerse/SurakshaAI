@@ -10,7 +10,7 @@ from apps.api.app.config import get_settings
 from apps.api.models.database import engine, Base
 from apps.api.models import entities  # noqa: F401 — ensures all models registered
 from apps.api.api.v1 import (
-    auth, reports, triage, taxonomy, precursors, knowledge, system, dashboard, chat
+    auth, users, reports, triage, taxonomy, precursors, knowledge, system, dashboard, helpdesk
 )
 
 settings = get_settings()
@@ -48,15 +48,22 @@ app.add_middleware(
 
 # Register all API v1 routers
 PREFIX = "/api/v1"
-app.include_router(auth.router,       prefix=PREFIX)
-app.include_router(reports.router,    prefix=PREFIX)
-app.include_router(triage.router,     prefix=PREFIX)
-app.include_router(taxonomy.router,   prefix=PREFIX)
-app.include_router(precursors.router, prefix=PREFIX)
-app.include_router(knowledge.router,  prefix=PREFIX)
-app.include_router(system.router,     prefix=PREFIX)
-app.include_router(dashboard.router,  prefix=PREFIX)
-app.include_router(chat.router,       prefix=PREFIX)
+app.include_router(auth.router,        prefix=PREFIX)
+app.include_router(users.router,       prefix=PREFIX)
+app.include_router(reports.router,     prefix=PREFIX)
+app.include_router(triage.router,      prefix=PREFIX)
+app.include_router(taxonomy.router,    prefix=PREFIX)
+app.include_router(precursors.router,  prefix=PREFIX)
+app.include_router(knowledge.router,   prefix=PREFIX)
+app.include_router(system.router,      prefix=PREFIX)
+app.include_router(dashboard.router,   prefix=PREFIX)
+app.include_router(helpdesk.router,    prefix=PREFIX)
+
+# Direct root aliases for /auth, /users, /dashboard
+app.include_router(auth.router)
+app.include_router(users.router)
+app.include_router(dashboard.router)
+
 
 
 @app.get("/")

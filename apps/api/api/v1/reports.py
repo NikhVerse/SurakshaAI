@@ -367,3 +367,46 @@ def get_report_detail(report_id: str, db: Session = Depends(get_db)):
         similar_reports=similar_items,
         created_at=report.created_at
     )
+
+
+@router.patch("/{report_id}/status", response_model=ReportDetailResponse)
+def update_report_status(
+    report_id: str,
+    status: str = Query(..., description="Target status: SUBMITTED, UNDER_REVIEW, ACTIVE, RESOLVED"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Update case status through its simple lifecycle (Submitted -> Under Review -> Active -> Resolved)."""
+    normalized_status = status.upper().replace(" ", "_")
+    valid_statuses = {"SUBMITTED", "UNDER_REVIEW", "ACTIVE", "RESOLVED", "PENDING", "VERIFIED"}
+    if normalized_status not in valid_statuses:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid status '{status}'. Valid statuses: {', '.join(sorted(valid_statuses))}"
+        )
+
+    report = db.query(Report).filter(Report.id == report_id).first()
+    if not report:
+        raise HTTPException(status_code=404, detail="Report/Case not found")
+
+    old_status = report.review_status
+    report.review_status = normalized_status
+    report.updated_at = datetime.now(timezone.utc)
+
+    # Log audit event
+    audit = AuditLog(
+        user_id=current_user.id if current_user else "SYSTEM",
+        action="CASE_STATUS_UPDATED",
+        entity_type="REPORT",
+        entity_id=report.id,
+        details={
+            "old_status": old_status,
+            "new_status": normalized_status,
+            "updated_by": current_user.email if current_user else "ANONYMOUS"
+        }
+    )
+    db.add(audit)
+    db.commit()
+    db.refresh(report)
+
+    return get_report_detail(report.id, db)

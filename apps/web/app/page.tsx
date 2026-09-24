@@ -2,8 +2,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import {
-  ArrowRight, ShieldCheck, Zap, Layers, Cpu, CheckCircle2,
-  Lock, Activity, Sparkles, FileText, ArrowUpRight, BarChart3,
+  ArrowRight, ShieldCheck, Zap, Layers, CheckCircle2,
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -123,8 +122,8 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="space-y-1.5">
-              <p className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tracking-tight">33</p>
-              <p className="text-xs sm:text-sm font-bold text-slate-600">Seeded Incident Records</p>
+              <p className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tracking-tight">35+</p>
+              <p className="text-xs sm:text-sm font-bold text-slate-600">Enterprise Safety Records</p>
               <p className="text-xs text-slate-400">Authentic Indian O&amp;G Assets</p>
             </div>
             <div className="space-y-1.5">
@@ -198,11 +197,11 @@ export default function LandingPage() {
             {/* Pillar 4 */}
             <div className="rounded-2xl border border-slate-200 bg-white p-7 space-y-5 hover:border-slate-400 transition hover:shadow-sm">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-amber-600 border border-amber-200">
-                <Cpu className="h-6 w-6" />
+                <ShieldCheck className="h-6 w-6" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900">Sovereign Copilot</h3>
+              <h3 className="text-lg font-bold text-slate-900">Explainable Audit Trail</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Conversational AI grounded in verified site databases, OISD standards, and local Ollama inference.
+                Full cryptographic provenance with immutable audit logs, SHAP attribution, and sovereign local processing.
               </p>
             </div>
           </div>

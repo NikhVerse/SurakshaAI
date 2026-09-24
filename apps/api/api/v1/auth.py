@@ -19,10 +19,12 @@ def register_user(payload: UserRegister, db: Session = Depends(get_db)):
         )
 
     new_user = User(
-        email=payload.email,
-        full_name=payload.full_name,
+        email=payload.email.lower().strip(),
+        full_name=payload.full_name.strip(),
+        phone=payload.phone.strip() if payload.phone else None,
         hashed_password=get_password_hash(payload.password),
-        role=payload.role or "HSE_ANALYST"
+        role=payload.role or "HSE_ANALYST",
+        account_status=payload.account_status or "ACTIVE",
     )
     db.add(new_user)
     db.commit()
@@ -33,7 +35,7 @@ def register_user(payload: UserRegister, db: Session = Depends(get_db)):
         action="USER_REGISTERED",
         entity_type="USER",
         entity_id=new_user.id,
-        details={"email": new_user.email, "role": new_user.role}
+        details={"email": new_user.email, "role": new_user.role, "phone": new_user.phone}
     )
     db.add(audit)
     db.commit()
@@ -48,13 +50,13 @@ def register_user(payload: UserRegister, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=TokenResponse)
 def login_user(payload: UserLogin, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == payload.email).first()
+    clean_email = payload.email.lower().strip()
+    user = db.query(User).filter(User.email == clean_email).first()
     if not user or not verify_password(payload.password, user.hashed_password):
-        # Record failed login audit
         audit = AuditLog(
             action="LOGIN_FAILED",
             entity_type="AUTH",
-            details={"email": payload.email}
+            details={"email": clean_email}
         )
         db.add(audit)
         db.commit()
@@ -62,6 +64,17 @@ def login_user(payload: UserLogin, db: Session = Depends(get_db)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password."
         )
+
+    if not user.is_active or user.account_status != "ACTIVE":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Account is inactive or suspended. Please contact administrator."
+        )
+
+    from datetime import datetime, timezone
+    user.last_login_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(user)
 
     token = create_access_token({"sub": user.id, "email": user.email, "role": user.role})
 
@@ -80,6 +93,7 @@ def login_user(payload: UserLogin, db: Session = Depends(get_db)):
         "token_type": "bearer",
         "user": user
     }
+
 
 
 @router.get("/me", response_model=UserResponse)

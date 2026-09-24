@@ -18,6 +18,22 @@ import {
 } from "lucide-react";
 import { StatusDot, SeverityBadge, RiskScore } from "./StatusSystem";
 
+export interface EvidenceItem {
+  url: string;
+  title: string;
+  caption?: string;
+  timestamp?: string;
+  assetId?: string;
+  tag?: string;
+}
+
+export interface ExternalSource {
+  name: string;
+  url: string;
+  authority: string;
+  code?: string;
+}
+
 export interface DrawerData {
   id: string;
   uid?: string;
@@ -34,7 +50,8 @@ export interface DrawerData {
   primaryBarrier?: string;
   barrierState?: string;
   metrics?: Array<{ label: string; value: string | number; unit?: string }>;
-  evidenceImages?: string[];
+  evidenceImages?: EvidenceItem[];
+  externalSources?: ExternalSource[];
   timeline?: Array<{ time: string; event: string; status?: string }>;
   onConfirm?: () => void;
   onDismiss?: () => void;
@@ -258,18 +275,119 @@ export function DetailDrawer({
                 )}
 
                 {activeTab === "EVIDENCE" && (
-                  <div className="space-y-4">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
-                      Field Photographs &amp; Sensor Telemetry
-                    </span>
+                  <div className="space-y-5">
+                    <div>
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-2">
+                        Photographic Verification &amp; Physical Evidence
+                      </span>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 flex flex-col justify-center space-y-2">
-                        <span className="text-xs font-bold text-slate-800">SCADA Pressure Trace</span>
-                        <span className="text-2xl font-black font-mono text-rose-600">110.4 Bar</span>
-                        <span className="text-[10px] text-slate-500 font-medium">
-                          +18% spike preceding manifold bleed
-                        </span>
+                      <div className="space-y-3">
+                        {(data.evidenceImages && data.evidenceImages.length > 0
+                          ? data.evidenceImages
+                          : [
+                              {
+                                url: "/evidence/loto_valve.jpg",
+                                title: "High-Pressure Manifold LOTO Lockout Verification",
+                                caption: "Physical lock and danger tag #7845 attached to valve handle prior to line intervention.",
+                                timestamp: data.timestamp || "Inspection Log",
+                                assetId: data.asset || "V-102 Separator Manifold",
+                                tag: "PHYSICAL LOCKOUT",
+                              },
+                              {
+                                url: "/evidence/flange_inspection.jpg",
+                                title: "Non-Destructive Ultrasonic Flange Testing",
+                                caption: "NDT wall-thickness and torque seal integrity scan by certified safety technician.",
+                                timestamp: data.timestamp || "Verification Audit",
+                                assetId: "HP Condensate P-104",
+                                tag: "ULTRASONIC SCAN",
+                              },
+                            ]
+                        ).map((img, idx) => (
+                          <div
+                            key={idx}
+                            className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-2xs group"
+                          >
+                            <div className="relative aspect-video w-full bg-slate-100 overflow-hidden">
+                              <img
+                                src={img.url}
+                                alt={img.title}
+                                className="h-full w-full object-cover object-center group-hover:scale-[1.02] transition duration-300"
+                                loading="lazy"
+                              />
+                              {img.tag && (
+                                <span className="absolute top-2.5 left-2.5 rounded bg-slate-900/85 backdrop-blur-xs px-2 py-0.5 text-[9px] font-mono font-bold text-white uppercase tracking-wider border border-white/20">
+                                  {img.tag}
+                                </span>
+                              )}
+                            </div>
+                            <div className="p-3.5 space-y-1">
+                              <div className="flex items-center justify-between text-xs font-bold text-slate-900">
+                                <span>{img.title}</span>
+                                {img.assetId && (
+                                  <span className="font-mono text-[10px] text-slate-400">{img.assetId}</span>
+                                )}
+                              </div>
+                              {img.caption && (
+                                <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+                                  {img.caption}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Official External Documents & Source Guidelines */}
+                    <div className="pt-2 border-t border-slate-100 space-y-2.5">
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
+                        Governing Regulatory Standards &amp; External Citations
+                      </span>
+
+                      <div className="space-y-2">
+                        {(data.externalSources || [
+                          {
+                            name: "IOGP Report 459: Life-Saving Rules & Barrier Taxonomy",
+                            authority: "International Association of Oil & Gas Producers",
+                            url: "https://www.iogp.org/bookstore/product/iogp-report-459-life-saving-rules/",
+                            code: "IOGP-459",
+                          },
+                          {
+                            name: "OISD-STD-145: Work Permit & Energy Isolation Guidelines",
+                            authority: "Oil Industry Safety Directorate of India",
+                            url: "https://www.oisd.gov.in/standards",
+                            code: "OISD-145",
+                          },
+                          {
+                            name: "OSHA 1910.147: The Control of Hazardous Energy (Lockout/Tagout)",
+                            authority: "Occupational Safety and Health Administration",
+                            url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.147",
+                            code: "OSHA-1910",
+                          },
+                        ]).map((src, idx) => (
+                          <a
+                            key={idx}
+                            href={src.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300 transition flex items-center justify-between gap-3 text-xs group cursor-pointer"
+                          >
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700">
+                                  {src.code || "STD"}
+                                </span>
+                                <span className="font-bold text-slate-900 group-hover:text-blue-600 transition truncate">
+                                  {src.name}
+                                </span>
+                              </div>
+                              <span className="text-[10px] text-slate-500 block truncate mt-0.5">
+                                {src.authority}
+                              </span>
+                            </div>
+                            <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition shrink-0" />
+                          </a>
+                        ))}
                       </div>
                     </div>
                   </div>

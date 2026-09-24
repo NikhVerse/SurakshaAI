@@ -12,25 +12,18 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from apps.api.models.database import SessionLocal, engine, Base
 from apps.api.models.entities import (
-    User, Site, Activity, Barrier, LifeSavingRule,
+    Site, Activity, Barrier, LifeSavingRule,
     Report, PSIFPrediction, ReportLSRPrediction,
-    PrecursorCluster, Alert, AuditLog, ReviewTask,
+    PrecursorCluster, Alert, ReviewTask,
 )
-from apps.api.auth.security import get_password_hash
 
 Base.metadata.create_all(bind=engine)
 
+if os.environ.get("ALLOW_SEED") != "true":
+    print("NOTICE: Reference data seeding is disabled by default. Set ALLOW_SEED=true to seed reference taxonomy data.")
+    sys.exit(0)
 
-def utc(days_ago=0, hours_ago=0):
-    return datetime.now(timezone.utc) - timedelta(days=days_ago, hours=hours_ago)
 
-
-USERS = [
-    {"id": "usr-analyst-001",  "email": "analyst@suraksha.ai",   "full_name": "Priya Sharma",   "role": "HSE_ANALYST",    "password": "Suraksha@2026"},
-    {"id": "usr-manager-002",  "email": "manager@suraksha.ai",   "full_name": "Rajan Mehta",    "role": "HSE_MANAGER",    "password": "Suraksha@2026"},
-    {"id": "usr-admin-003",    "email": "admin@suraksha.ai",     "full_name": "Sunita Rao",     "role": "ADMINISTRATOR",  "password": "Suraksha@2026"},
-    {"id": "usr-scientist-004","email": "scientist@suraksha.ai", "full_name": "Amit Kulkarni",  "role": "DATA_SCIENTIST", "password": "Suraksha@2026"},
-]
 
 SITES = [
     {"id": "site-001", "code": "ASM-DGB", "name": "Assam Digboi Block",           "location": "Digboi, Assam, India",               "operational_unit": "Upper Assam Asset",     "risk_level": "HIGH"},
@@ -117,25 +110,22 @@ CLUSTERS = [
 ]
 
 
+def utc(days_ago=0, hours_ago=0):
+    return datetime.now(timezone.utc) - timedelta(days=days_ago, hours=hours_ago)
+
+
 def seed():
     db = SessionLocal()
     try:
-        print("SurakshaAI Real Data Seed Starting...")
-
-        for u in USERS:
-            if not db.query(User).filter(User.email == u["email"]).first():
-                db.add(User(id=u["id"], email=u["email"], full_name=u["full_name"],
-                            role=u["role"], hashed_password=get_password_hash(u["password"]), is_active=True))
-                print(f"  + User: {u['email']}")
-            else:
-                print(f"  ~ User exists: {u['email']}")
-        db.commit()
+        print("SurakshaAI Reference Data Seed Starting...")
+        print("NOTE: This seeds taxonomy and incident reference data only. User accounts must be created via registration.")
 
         for s in SITES:
             if not db.query(Site).filter(Site.code == s["code"]).first():
                 db.add(Site(**s))
         db.commit()
         print(f"  + {len(SITES)} Sites")
+
 
         for a in ACTIVITIES:
             if not db.query(Activity).filter(Activity.code == a["code"]).first():
@@ -224,34 +214,11 @@ def seed():
             db.commit()
             print(f"  + 5 Alerts")
 
-        if db.query(AuditLog).count() < 5:
-            logs = [
-                AuditLog(timestamp=utc(hours_ago=2), user_id="usr-analyst-001", action="LOGIN_SUCCESS",
-                         entity_type="AUTH", entity_id="usr-analyst-001",
-                         details={"role": "HSE_ANALYST"}, ip_address="10.10.1.42"),
-                AuditLog(timestamp=utc(hours_ago=3), user_id="usr-manager-002", action="TRIAGE_DECISION",
-                         entity_type="REPORT", entity_id="rpt-001",
-                         details={"decision": "CONFIRMED", "report_uid": "NM-2026-0001"}, ip_address="10.10.1.51"),
-                AuditLog(timestamp=utc(hours_ago=5), user_id="usr-analyst-001", action="REPORT_VIEWED",
-                         entity_type="REPORT", entity_id="rpt-007",
-                         details={"report_uid": "NM-2026-0007"}, ip_address="10.10.1.42"),
-                AuditLog(timestamp=utc(hours_ago=8), user_id="usr-admin-003", action="LOGIN_SUCCESS",
-                         entity_type="AUTH", entity_id="usr-admin-003",
-                         details={"role": "ADMINISTRATOR"}, ip_address="10.10.1.10"),
-                AuditLog(timestamp=utc(days_ago=1), user_id="usr-manager-002", action="ALERT_ACKNOWLEDGED",
-                         entity_type="ALERT", details={"alert_title": "33kV Isolation Failure"}, ip_address="10.10.1.51"),
-                AuditLog(timestamp=utc(days_ago=2), user_id="usr-analyst-001", action="REPORT_SUBMITTED",
-                         entity_type="REPORT", entity_id="rpt-001",
-                         details={"report_uid": "NM-2026-0001"}, ip_address="10.10.1.42"),
-            ]
-            for entry in logs:
-                db.add(entry)
-            db.commit()
-            print(f"  + 6 Audit log entries")
+        # Audit logs are created organically by real user actions — no synthetic entries seeded.
 
-        print("\nSeed complete. Login credentials:")
-        for u in USERS:
-            print(f"  {u['email']:35s}  password: {u['password']}  role: {u['role']}")
+
+        print("\nSeed complete. All reference data loaded.")
+        print("  User accounts must be created via /signup — no demo users have been seeded.")
 
     except Exception as exc:
         db.rollback()
