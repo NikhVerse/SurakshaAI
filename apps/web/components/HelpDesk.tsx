@@ -16,61 +16,65 @@ import {
 import { helpdeskApi, HelpDeskModel, HelpDeskMessage } from "@/lib/api";
 
 const DEFAULT_MODELS: HelpDeskModel[] = [
+  // Google Gemini
   {
     id: "gemini-2.5-flash",
     name: "Gemini 2.5 Flash",
-    provider: "Google",
-    description: "Fast & direct answers",
-    badge: "Fast",
+    provider: "Google Gemini",
+    description: "Fast & direct safety answers",
+    badge: "Gemini",
     is_active: true,
     context_window: "1M",
   },
   {
     id: "gemini-1.5-pro",
     name: "Gemini 1.5 Pro",
-    provider: "Google",
-    description: "Deep hazard reasoning",
-    badge: "Deep",
+    provider: "Google Gemini",
+    description: "Deep hazard reasoning & compliance",
+    badge: "Gemini Pro",
     is_active: true,
     context_window: "2M",
   },
-  {
-    id: "claude-3-5-sonnet",
-    name: "Claude 3.5 Sonnet",
-    provider: "Anthropic",
-    description: "Safety compliance & standards",
-    badge: "Safety",
-    is_active: true,
-    context_window: "200k",
-  },
+  // OpenAI
   {
     id: "gpt-4o",
     name: "GPT-4o",
     provider: "OpenAI",
-    description: "Multimodal procedures",
-    badge: "Multimodal",
+    description: "Multimodal inspection & procedures",
+    badge: "GPT-4o",
     is_active: true,
     context_window: "128k",
   },
   {
-    id: "deepseek-r1",
-    name: "DeepSeek-R1",
-    provider: "DeepSeek",
-    description: "Logic & calculations",
-    badge: "Logic",
+    id: "gpt-4o-mini",
+    name: "GPT-4o Mini",
+    provider: "OpenAI",
+    description: "High-speed operational evaluation",
+    badge: "OpenAI Mini",
     is_active: true,
-    context_window: "64k",
+    context_window: "128k",
+  },
+  // Free Ollama Models (Local / Open-Source)
+  {
+    id: "llama3.2",
+    name: "Llama 3.2 (Ollama)",
+    provider: "Ollama (Free Local)",
+    description: "Free, sovereign local open-weights model",
+    badge: "Free Local",
+    is_active: true,
+    context_window: "128k",
   },
   {
-    id: "suraksha-local-v1",
-    name: "Suraksha Local",
-    provider: "SurakshaAI",
-    description: "Private on-prem engine",
-    badge: "Private",
+    id: "mistral",
+    name: "Mistral 7B (Ollama)",
+    provider: "Ollama (Free Local)",
+    description: "Free, fast on-premises safety intelligence",
+    badge: "Free Local",
     is_active: true,
     context_window: "32k",
   },
 ];
+
 
 interface ChatItem extends HelpDeskMessage {
   id: string;

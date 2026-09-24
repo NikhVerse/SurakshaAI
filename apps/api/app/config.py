@@ -32,9 +32,8 @@ class Settings(BaseSettings):
     OLLAMA_MODEL: str = "mistral"
     OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
 
-    # Multi-Model Frontier Providers (Optional)
+    # Multi-Model Providers (OpenAI, Gemini & Free Ollama)
     OPENAI_API_KEY: str = ""
-    ANTHROPIC_API_KEY: str = ""
     GEMINI_API_KEY: str = ""
     DEFAULT_MODEL_PROVIDER: str = "ollama"
 

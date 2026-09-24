@@ -16,61 +16,65 @@ router = APIRouter(prefix="/helpdesk", tags=["Help Desk & AI Guidance"])
 settings = get_settings()
 
 AVAILABLE_MODELS: List[HelpDeskModelItem] = [
+    # Google Gemini Models
     HelpDeskModelItem(
         id="gemini-2.5-flash",
         name="Gemini 2.5 Flash",
-        provider="Google",
-        description="Fast & direct guidance",
-        badge="Fast",
+        provider="Google Gemini",
+        description="Fast & direct safety guidance",
+        badge="Gemini",
         is_active=True,
         context_window="1M",
     ),
     HelpDeskModelItem(
         id="gemini-1.5-pro",
         name="Gemini 1.5 Pro",
-        provider="Google",
-        description="Deep hazard reasoning",
-        badge="Deep",
+        provider="Google Gemini",
+        description="Deep hazard reasoning & compliance",
+        badge="Gemini Pro",
         is_active=True,
         context_window="2M",
     ),
-    HelpDeskModelItem(
-        id="claude-3-5-sonnet",
-        name="Claude 3.5 Sonnet",
-        provider="Anthropic",
-        description="Safety standards & compliance",
-        badge="Safety",
-        is_active=True,
-        context_window="200k",
-    ),
+    # OpenAI Models
     HelpDeskModelItem(
         id="gpt-4o",
         name="GPT-4o",
         provider="OpenAI",
-        description="Multimodal & procedures",
+        description="Multimodal inspection & procedures",
         badge="GPT-4o",
         is_active=True,
         context_window="128k",
     ),
     HelpDeskModelItem(
-        id="deepseek-r1",
-        name="DeepSeek-R1",
-        provider="DeepSeek",
-        description="Logic & risk calculation",
-        badge="Logic",
+        id="gpt-4o-mini",
+        name="GPT-4o Mini",
+        provider="OpenAI",
+        description="High-speed operational evaluation",
+        badge="OpenAI Mini",
         is_active=True,
-        context_window="64k",
+        context_window="128k",
+    ),
+    # Free Ollama Models (Local / Open-Source)
+    HelpDeskModelItem(
+        id="llama3.2",
+        name="Llama 3.2 (Ollama)",
+        provider="Ollama (Free Local)",
+        description="Free, sovereign local open-weights model",
+        badge="Free Local",
+        is_active=True,
+        context_window="128k",
     ),
     HelpDeskModelItem(
-        id="suraksha-local-v1",
-        name="Suraksha Local",
-        provider="Suraksha Local",
-        description="Private on-prem engine",
-        badge="On-Prem",
+        id="mistral",
+        name="Mistral 7B (Ollama)",
+        provider="Ollama (Free Local)",
+        description="Free, fast on-premises safety intelligence",
+        badge="Free Local",
         is_active=True,
         context_window="32k",
     ),
 ]
+
 
 NATURAL_GUIDANCE: List[Dict[str, Any]] = [
     {
@@ -238,11 +242,11 @@ NATURAL_GUIDANCE: List[Dict[str, Any]] = [
     },
     {
         "id": "models",
-        "keywords": ["switch model", "change model", "models", "gemini", "claude", "gpt", "deepseek"],
+        "keywords": ["switch model", "change model", "models", "gemini", "gpt", "openai", "ollama", "llama", "mistral"],
         "reply": (
             "You can switch reasoning models anytime using the top selector: "
-            "**Gemini Flash** for quick answers, **Claude Sonnet** for compliance standards, **GPT-4o** for multimodal procedures, "
-            "and **DeepSeek-R1** for logic."
+            "**Gemini** (Flash / Pro) for instant reasoning, **OpenAI** (GPT-4o / GPT-4o Mini) for advanced procedure analysis, "
+            "and **Free Ollama** (Llama 3.2 / Mistral) for sovereign, local privacy with zero cloud API costs."
         ),
         "links": [],
         "actions": ["Report incident", "Barrier health"],
@@ -260,41 +264,89 @@ def find_guidance(query: str) -> Optional[Dict[str, Any]]:
 
 
 async def call_external_llm(prompt: str, model_id: str) -> Optional[str]:
-    """Call external LLM concisely if configured."""
+    """Call external LLM (Google Gemini, OpenAI, or Free Local Ollama) concisely if configured."""
+    system_instruction = (
+        "You are a friendly, natural AI safety assistant for the SurakshaAI industrial platform. "
+        "Answer conversationally and naturally, like a helpful safety colleague. "
+        "Keep answers to 1-3 sentences with clean markdown links (e.g. [New Report](/app/reports/new), [Triage](/app/triage), [Barrier Health](/app/barriers)). "
+        "Avoid robotic jargon, filler words, or walls of text."
+    )
     try:
-        if "gemini" in model_id and settings.GEMINI_API_KEY:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_id}:generateContent?key={settings.GEMINI_API_KEY}"
+        m_lower = model_id.lower()
+        # 1. Google Gemini
+        if "gemini" in m_lower and settings.GEMINI_API_KEY:
+            api_model = "gemini-1.5-flash" if "flash" in m_lower else "gemini-1.5-pro"
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{api_model}:generateContent?key={settings.GEMINI_API_KEY}"
             payload = {
                 "contents": [
                     {
                         "role": "user",
                         "parts": [
                             {
-                                "text": (
-                                    "You are a friendly, natural AI safety assistant for the SurakshaAI industrial platform. "
-                                    "Answer conversationally and naturally, like a helpful safety colleague. "
-                                    "Keep answers to 1-3 sentences with clean markdown links (e.g. [New Report](/app/reports/new), [Triage](/app/triage), [Barrier Health](/app/barriers)). "
-                                    "Avoid robotic jargon, filler words, or walls of text.\n\n"
-                                    f"User Question: {prompt}"
-                                )
+                                "text": f"{system_instruction}\n\nUser Question: {prompt}"
                             }
                         ],
                     }
                 ],
-                "generationConfig": {"temperature": 0.4, "maxOutputTokens": 160},
+                "generationConfig": {"temperature": 0.4, "maxOutputTokens": 200},
             }
             async with httpx.AsyncClient(timeout=8.0) as client:
                 resp = await client.post(url, json=payload)
                 if resp.status_code == 200:
-                    data = resp.json()
-                    candidates = data.get("candidates", [])
+                    candidates = resp.json().get("candidates", [])
                     if candidates:
                         text = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
                         if text:
                             return text.strip()
+
+        # 2. OpenAI (GPT-4o, GPT-4o Mini)
+        elif ("gpt" in m_lower or "openai" in m_lower) and settings.OPENAI_API_KEY:
+            url = "https://api.openai.com/v1/chat/completions"
+            headers = {
+                "Authorization": f"Bearer {settings.OPENAI_API_KEY}",
+                "Content-Type": "application/json",
+            }
+            payload = {
+                "model": model_id,
+                "messages": [
+                    {"role": "system", "content": system_instruction},
+                    {"role": "user", "content": prompt},
+                ],
+                "temperature": 0.4,
+                "max_tokens": 200,
+            }
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                resp = await client.post(url, json=payload, headers=headers)
+                if resp.status_code == 200:
+                    choices = resp.json().get("choices", [])
+                    if choices:
+                        content = choices[0].get("message", {}).get("content", "")
+                        if content:
+                            return content.strip()
+
+        # 3. Free Local Ollama Models (Llama 3.2, Mistral)
+        elif any(kw in m_lower for kw in ["llama", "mistral", "ollama"]):
+            target_model = "mistral" if "mistral" in m_lower else "llama3.2"
+            url = f"{settings.OLLAMA_BASE_URL.rstrip('/')}/api/chat"
+            payload = {
+                "model": target_model,
+                "messages": [
+                    {"role": "system", "content": system_instruction},
+                    {"role": "user", "content": prompt},
+                ],
+                "stream": False,
+                "options": {"temperature": 0.3, "num_predict": 200},
+            }
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                resp = await client.post(url, json=payload)
+                if resp.status_code == 200:
+                    content = resp.json().get("message", {}).get("content", "")
+                    if content:
+                        return content.strip()
     except Exception:
         pass
     return None
+
 
 
 @router.get("/models", response_model=List[HelpDeskModelItem])
