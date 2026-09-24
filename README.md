@@ -23,13 +23,14 @@
 - [Executive Overview](#-executive-overview)
 - [The Industry Challenge](#-the-industry-challenge)
 - [System Architecture](#-system-architecture)
-- [Supported Multi-Model AI Suite](#-supported-multi-model-ai-suite)
+- [AI Safety Intelligence (OpenAI Powered)](#-ai-safety-intelligence-openai-powered)
 - [Core Functional Pillars](#-core-functional-pillars)
   - [1. Calibrated Rare-Event pSIF Engine](#1-calibrated-rare-event-psif-engine)
   - [2. Critical Barrier Intelligence Matrix (IOGP 459)](#2-critical-barrier-intelligence-matrix-iogp-459)
-  - [3. Interactive HelpDesk & AI Safety Copilot](#3-interactive-helpdesk--ai-safety-copilot)
-  - [4. Physical Evidence Verification & Asset Registry](#4-physical-evidence-verification--asset-registry)
-  - [5. Compliance & Governance Audit Trail](#5-compliance--governance-audit-trail)
+  - [3. Natural HelpDesk Copilot (OpenAI ChatGPT)](#3-natural-helpdesk-copilot-openai-chatgpt)
+  - [4. Enterprise User Onboarding & Regional Control](#4-enterprise-user-onboarding--regional-control)
+  - [5. Physical Evidence Verification & Asset Registry](#5-physical-evidence-verification--asset-registry)
+  - [6. Compliance & Governance Audit Trail](#6-compliance--governance-audit-trail)
 - [Indian Industrial Case Studies](#-indian-industrial-case-studies)
 - [Role-Based Access & Verified Credentials](#-role-based-access--verified-credentials)
 - [Vercel Deployment Guide](#-vercel-deployment-guide)
@@ -44,7 +45,7 @@
 
 **SurakshaAI** is an enterprise-grade industrial safety intelligence platform engineered specifically for high-hazard operational environments—including upstream offshore exploration, petroleum refining, petrochemical complexes, and heavy industrial facilities.
 
-By combining **calibrated rare-event machine learning**, **critical barrier integrity monitoring (IOGP Report 459 / 501 / 502)**, and a curated **frontier & local AI suite** (Google Gemini, OpenAI, and free sovereign Ollama models), SurakshaAI enables Health, Safety, and Environment (HSE) directors and plant managers to detect deteriorating defenses and prevent Potential Serious Injuries or Fatalities (pSIF) days or weeks before a loss of containment or critical failure occurs.
+By combining **calibrated rare-event machine learning**, **critical barrier integrity monitoring (IOGP Report 459 / 501 / 502)**, and a **direct OpenAI ChatGPT-powered natural conversational assistant**, SurakshaAI enables Health, Safety, and Environment (HSE) directors and plant managers to detect deteriorating defenses and prevent Potential Serious Injuries or Fatalities (pSIF) days or weeks before a loss of containment or critical failure occurs.
 
 ---
 
@@ -89,11 +90,10 @@ SurakshaAI operates on an asynchronous, decoupled, sovereign pipeline designed f
                                              │
                                              ▼
                         ┌────────────────────────────────────────┐
-                        │      Multi-Model Safety Intelligence   │
-                        │  - Google Gemini (Flash / Pro)         │
-                        │  - OpenAI (GPT-4o / GPT-4o Mini)       │
-                        │  - Free Local Ollama (Llama 3.2 / Mis) │
-                        │  - Deterministic Safety Fallback       │
+                        │      OpenAI Natural AI Safety Core     │
+                        │  - OpenAI GPT-4o Conversational Engine │
+                        │  - Deterministic Safety Intelligence   │
+                        │  - Full Multi-Turn Chat History        │
                         └────────────────────────────────────────┘
                                              │
                                              ▼
@@ -101,26 +101,22 @@ SurakshaAI operates on an asynchronous, decoupled, sovereign pipeline designed f
                         │    Enterprise Next.js 16 Web Portal    │
                         │  - Clean Light UI & High-Contrast Font │
                         │  - Role-Based Triage & Immutable Audit │
-                        │  - Evidence Verification & HelpDesk    │
+                        │  - Post-Login Headset Help Desk Widget │
                         └────────────────────────────────────────┘
 ```
 
 ---
 
-## Supported Multi-Model AI Suite
+## AI Safety Intelligence (OpenAI Powered)
 
-SurakshaAI exclusively supports a curated, purpose-built multi-model selection:
+SurakshaAI is configured with a unified, single-model AI standard: **OpenAI GPT-4o**. There is no confusing model switcher or complex dropdown selection—the platform delivers direct, articulate, and natural conversation just like ChatGPT:
 
-| Provider | Model | Badge | Best Use Case | Context Window |
+| Provider | Model | Integration | Primary Function | Context Window |
 |---|---|---|---|---|
-| **Google Gemini** | **Gemini 2.5 Flash** | `Gemini` | Ultra-fast safety reasoning & natural guidance | 1M tokens |
-| **Google Gemini** | **Gemini 1.5 Pro** | `Gemini Pro` | Deep multimodal hazard analysis & compliance | 2M tokens |
-| **OpenAI** | **GPT-4o** | `GPT-4o` | Complex procedure analysis & visual audits | 128k tokens |
-| **OpenAI** | **GPT-4o Mini** | `OpenAI Mini` | High-speed operational procedure evaluation | 128k tokens |
-| **Ollama (Free / Local)** | **Llama 3.2** | `Free Local` | Free sovereign on-premise local inference | 128k tokens |
-| **Ollama (Free / Local)** | **Mistral 7B** | `Free Local` | Free lightweight local open-source inference | 32k tokens |
+| **OpenAI** | **GPT-4o** | Native API / Conversational Core | High-hazard safety reasoning, precursor analysis, and natural ChatGPT dialogue | 128k tokens |
+| **Deterministic Core** | **Suraksha Engine** | Local Process Safety ML | Instant, offline mathematical scoring and hazard extraction fallback | Sovereign |
 
-*Zero Third-Party Dependency Guarantee:* If external cloud API keys are not supplied, the platform operates seamlessly using **Free Local Ollama** or its built-in **Deterministic Industrial Safety Engine** with zero service interruption.
+*Offline & Standalone Guarantee:* When external OpenAI API keys are not supplied, the platform automatically utilizes its built-in industrial safety reasoning engine with zero downtime or service interruption.
 
 ---
 
@@ -138,16 +134,28 @@ SurakshaAI exclusively supports a curated, purpose-built multi-model selection:
   - **Human Performance:** Work-hour fatigue management and dual-authorization sign-offs.
 - **Barrier Degradation Index:** Quantifies cumulative barrier erosion across operational sites, alerting teams when multiple defensive layers fail simultaneously.
 
-### 3. Interactive HelpDesk & AI Safety Copilot
-- **Instant Operational Assistant:** In-app floating assistant with live model switching (Gemini, OpenAI, or Free Ollama).
-- **One-Click Navigation:** Direct jump links to report creation, triage queues, barrier inspection, and compliance manuals.
-- **Contextual Awareness:** Grounds advice in standard operating procedures, IOGP rules, and facility-specific safety records.
+### 3. Natural HelpDesk Copilot (OpenAI ChatGPT)
+- **Available After Login Only:** The Help Desk floating trigger is an uncluttered, self-explanatory circular Headset icon positioned at the bottom right. It is completely hidden on public routes and active only for authenticated operators.
+- **Single Model Standard (OpenAI Only):** All confusing model selection dropdowns, picker pills, and provider switches have been eliminated.
+- **Natural, Human-Like Conversation:** Users converse naturally just as they do with ChatGPT. Ask open-ended questions about gas leak response, PTW procedures, isolation verifications, or platform features.
+- **Contextual Platform Guidance:** Direct deep links to report logging, triage review, barrier telemetry, and operator settings embedded in responses.
 
-### 4. Physical Evidence Verification & Asset Registry
+### 4. Enterprise User Onboarding & Regional Control
+- **Comprehensive Operator Registration:** Collects structured identity credentials:
+  - First Name (Mandatory), Middle Name (Optional), Last Name (Mandatory)
+  - Age validation (Restricted to 20–100 years)
+  - Date of Birth in standardized format (`DD-MMM-YYYY`)
+  - Gender (`MALE`, `FEMALE`, `OTHER`)
+  - Operational Role (`HSE Analyst`, `Operations Manager`, `Field Inspector`, `Data Scientist`, `System Admin`)
+  - Verified Email Address & Password
+- **Operational Region Selection on Sign-In:** Operators select their active operational region during login (e.g., *Gulf Coast, Mumbai High, Hazira LNG, Digboi Refinery, Paradip Petrochemicals, Permian Basin*).
+- **Live Profile Editor:** Operators can inspect and update their full demographic and operational details anytime in **Account Settings** (`/app/settings`).
+
+### 5. Physical Evidence Verification & Asset Registry
 - Direct visual verification linking high-resolution inspection imagery (LOTO padlock verification, ultrasonic flange testing, relief valve calibration seals, positive pressure habitat integrity, fall protection scaffolds).
 - Tamper-evident asset IDs, inspection timestamps, and engineering standards tag assignments.
 
-### 5. Compliance & Governance Audit Trail
+### 6. Compliance & Governance Audit Trail
 - **Tamper-Evident Records:** Every triage decision, risk rating adjustment, and barrier status override is permanently recorded with the operator's verified identity, email, timestamp, IP address, and cryptographic diff.
 - Aligned with **ISO 27001**, **OSHA 1910.119 (Process Safety Management)**, and **OISD-GDN-145** regulatory requirements.
 
@@ -269,8 +277,8 @@ npm --prefix apps/web run dev
 | `GET` | `/api/v1/precursors` | Identified high-energy precursor clusters across facilities |
 | `GET` | `/api/v1/triage` | Triage queue for expert review and human-in-the-loop validation |
 | `POST` | `/api/v1/triage/{id}/decision` | Submit validated triage decision with audit logging |
-| `GET` | `/api/v1/helpdesk/models` | List active AI models (Gemini, OpenAI, Free Ollama) |
-| `POST` | `/api/v1/helpdesk/chat` | Conversational safety guidance and natural navigation assistant |
+| `GET` | `/api/v1/helpdesk/models` | Return active OpenAI GPT-4o model specification |
+| `POST` | `/api/v1/helpdesk/chat` | Natural conversational ChatGPT safety guidance and deep-link assistant |
 | `GET` | `/api/v1/system/health` | Comprehensive infrastructure diagnostics and database connectivity |
 | `GET` | `/api/v1/audit-log` | Chronological, tamper-evident regulatory compliance log |
 
