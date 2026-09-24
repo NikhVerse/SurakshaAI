@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
+  Headset,
   Bot,
   Sparkles,
   X,
@@ -314,17 +315,20 @@ export default function HelpDesk() {
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            className="group relative flex items-center gap-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-2.5 shadow-lg hover:shadow-xl border border-slate-700/80 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer text-xs font-semibold"
-            aria-label="Open Help Desk"
+            className="group relative flex items-center justify-center h-12 w-12 rounded-full bg-slate-900 hover:bg-slate-800 text-white shadow-xl hover:shadow-2xl border border-slate-700/80 transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
+            aria-label="Help Desk & Support"
+            title="Help Desk & Support"
           >
-            <div className="relative flex items-center justify-center">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
-            </div>
-            <Bot className="h-4 w-4 text-emerald-400" />
-            <span>Help</span>
+            <Headset className="h-5 w-5 text-emerald-400 group-hover:rotate-12 transition-transform duration-200" />
+
+            {/* Live Indicator Pulse Dot */}
+            <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-slate-900" />
+            </span>
 
             {unreadCount > 0 && (
-              <span className="h-4 min-w-4 px-1 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-bold flex items-center justify-center">
+              <span className="absolute -bottom-1 -right-1 h-4.5 min-w-4.5 px-1 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-bold flex items-center justify-center border-2 border-slate-900 shadow-sm">
                 {unreadCount}
               </span>
             )}
@@ -338,7 +342,7 @@ export default function HelpDesk() {
             <div className="px-3.5 py-2.5 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800 select-none">
               <div className="flex items-center gap-2">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                  <Bot className="h-4 w-4" />
+                  <Headset className="h-4 w-4" />
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
