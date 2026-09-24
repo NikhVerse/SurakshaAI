@@ -32,10 +32,11 @@ class Settings(BaseSettings):
     OLLAMA_MODEL: str = "mistral"
     OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
 
-    # Multi-Model Providers (OpenAI, Gemini & Free Ollama)
+    # Multi-Model Providers (OpenAI)
     OPENAI_API_KEY: str = ""
+    OPENAI_MODEL: str = "gpt-4o"
     GEMINI_API_KEY: str = ""
-    DEFAULT_MODEL_PROVIDER: str = "ollama"
+    DEFAULT_MODEL_PROVIDER: str = "openai"
 
     # Security
     JWT_SECRET: str = "surakshaai_development_jwt_secret_key_production_389274982374"

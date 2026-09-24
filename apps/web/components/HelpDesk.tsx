@@ -4,100 +4,31 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Headset,
-  Bot,
-  Sparkles,
   X,
-  ChevronDown,
   Send,
   RotateCcw,
-  Check,
-  ArrowRight,
-  Cpu,
+  Sparkles,
 } from "lucide-react";
-import { helpdeskApi, HelpDeskModel, HelpDeskMessage } from "@/lib/api";
-
-const DEFAULT_MODELS: HelpDeskModel[] = [
-  // Google Gemini
-  {
-    id: "gemini-2.5-flash",
-    name: "Gemini 2.5 Flash",
-    provider: "Google Gemini",
-    description: "Fast & direct safety answers",
-    badge: "Gemini",
-    is_active: true,
-    context_window: "1M",
-  },
-  {
-    id: "gemini-1.5-pro",
-    name: "Gemini 1.5 Pro",
-    provider: "Google Gemini",
-    description: "Deep hazard reasoning & compliance",
-    badge: "Gemini Pro",
-    is_active: true,
-    context_window: "2M",
-  },
-  // OpenAI
-  {
-    id: "gpt-4o",
-    name: "GPT-4o",
-    provider: "OpenAI",
-    description: "Multimodal inspection & procedures",
-    badge: "GPT-4o",
-    is_active: true,
-    context_window: "128k",
-  },
-  {
-    id: "gpt-4o-mini",
-    name: "GPT-4o Mini",
-    provider: "OpenAI",
-    description: "High-speed operational evaluation",
-    badge: "OpenAI Mini",
-    is_active: true,
-    context_window: "128k",
-  },
-  // Free Ollama Models (Local / Open-Source)
-  {
-    id: "llama3.2",
-    name: "Llama 3.2 (Ollama)",
-    provider: "Ollama (Free Local)",
-    description: "Free, sovereign local open-weights model",
-    badge: "Free Local",
-    is_active: true,
-    context_window: "128k",
-  },
-  {
-    id: "mistral",
-    name: "Mistral 7B (Ollama)",
-    provider: "Ollama (Free Local)",
-    description: "Free, fast on-premises safety intelligence",
-    badge: "Free Local",
-    is_active: true,
-    context_window: "32k",
-  },
-];
-
+import { helpdeskApi, HelpDeskMessage } from "@/lib/api";
+import { useAuth } from "@/lib/auth-context";
 
 interface ChatItem extends HelpDeskMessage {
   id: string;
   timestamp: string;
-  modelUsed?: string;
   suggestedActions?: string[];
   navigationLinks?: Array<{ title: string; href: string }>;
 }
 
 const INITIAL_SUGGESTIONS = [
-  "Report incident",
   "What is pSIF?",
-  "Barrier health",
-  "Triage queue",
-  "Search manuals",
+  "How to report an incident?",
+  "Inspect critical barriers",
+  "Triage workflow",
 ];
 
 export default function HelpDesk() {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [models, setModels] = useState<HelpDeskModel[]>(DEFAULT_MODELS);
-  const [selectedModel, setSelectedModel] = useState<string>("gemini-2.5-flash");
-  const [showModelPicker, setShowModelPicker] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -106,36 +37,26 @@ export default function HelpDesk() {
     {
       id: "welcome-1",
       role: "assistant",
-      content: "Hi! How can I help you today? Ask a question or choose a shortcut below.",
+      content:
+        "Hello! I am your AI assistant, powered by **OpenAI**.\n\n" +
+        "You can converse with me naturally about anything: incident investigation, " +
+        "evaluating pSIF risks, monitoring IOGP critical barriers, or navigating this console. How can I help you today?",
       timestamp: "Just now",
-      modelUsed: "Gemini 2.5 Flash",
       suggestedActions: [
-        "Report incident",
         "What is pSIF?",
-        "Barrier health",
+        "Report an incident",
+        "Inspect critical barriers",
       ],
       navigationLinks: [
         { title: "New Report", href: "/app/reports/new" },
+        { title: "Barrier Health", href: "/app/barriers" },
         { title: "Triage", href: "/app/triage" },
-        { title: "Barriers", href: "/app/barriers" },
       ],
     },
   ]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // Fetch available models on mount
-  useEffect(() => {
-    helpdeskApi
-      .getModels()
-      .then((data) => {
-        if (data && data.length > 0) setModels(data);
-      })
-      .catch(() => {
-        setModels(DEFAULT_MODELS);
-      });
-  }, []);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -152,22 +73,22 @@ export default function HelpDesk() {
     }
   }, [isOpen]);
 
-  const activeModelObj =
-    models.find((m) => m.id === selectedModel) || models[0] || DEFAULT_MODELS[0];
+  // Help Desk is available AFTER LOGIN ONLY
+  if (!user) {
+    return null;
+  }
 
-  const handleSelectModel = (modelId: string) => {
-    setSelectedModel(modelId);
-    setShowModelPicker(false);
-    const chosen = models.find((m) => m.id === modelId);
-
-    const systemMsg: ChatItem = {
-      id: `sys-${Date.now()}`,
-      role: "assistant",
-      content: `Switched to **${chosen?.name || modelId}**.`,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      modelUsed: chosen?.name,
-    };
-    setMessages((prev) => [...prev, systemMsg]);
+  const handleClearChat = () => {
+    setMessages([
+      {
+        id: `welcome-${Date.now()}`,
+        role: "assistant",
+        content:
+          "Conversation cleared. I am ready for your questions—feel free to ask anything about safety procedures or platform navigation.",
+        timestamp: "Just now",
+        suggestedActions: ["Report incident", "What is pSIF?", "Barrier health"],
+      },
+    ]);
   };
 
   const handleSend = async (textToSend?: string) => {
@@ -191,14 +112,13 @@ export default function HelpDesk() {
         content: m.content,
       }));
 
-      const res = await helpdeskApi.sendMessage(query, selectedModel, historyPayload);
+      const res = await helpdeskApi.sendMessage(query, "gpt-4o", historyPayload);
 
       const assistantMsg: ChatItem = {
         id: `assistant-${Date.now()}`,
         role: "assistant",
         content: res.reply,
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        modelUsed: res.model_used,
         suggestedActions: res.suggested_actions,
         navigationLinks: res.navigation_links,
       };
@@ -208,21 +128,22 @@ export default function HelpDesk() {
         setUnreadCount((c) => c + 1);
       }
     } catch {
-      // Graceful local fallback
+      // Natural fallback
       const fallbackMsg: ChatItem = {
         id: `assistant-${Date.now()}`,
         role: "assistant",
         content:
-          "Here are quick shortcuts:\n\n" +
-          "• **[New Report](/app/reports/new)** — File an incident\n" +
-          "• **[Triage Queue](/app/triage)** — Review pending cases\n" +
-          "• **[Barrier Health](/app/barriers)** — Inspect safety barriers\n" +
-          "• **[Knowledge Base](/app/knowledge)** — Safety manuals",
+          "I'm here to help. You can navigate the platform using these key sections:\n\n" +
+          "• **[New Report](/app/reports/new)** — File a safety observation or incident\n" +
+          "• **[Barrier Health](/app/barriers)** — Inspect defensive safety barriers\n" +
+          "• **[Triage Queue](/app/triage)** — Review pending high-risk cases\n" +
+          "• **[Account Settings](/app/settings)** — Update your operator profile\n\n" +
+          "Feel free to ask another question anytime.",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        modelUsed: activeModelObj.name,
         navigationLinks: [
           { title: "New Report", href: "/app/reports/new" },
-          { title: "Barriers", href: "/app/barriers" },
+          { title: "Barrier Health", href: "/app/barriers" },
+          { title: "Triage", href: "/app/triage" },
         ],
       };
       setMessages((prev) => [...prev, fallbackMsg]);
@@ -231,34 +152,13 @@ export default function HelpDesk() {
     }
   };
 
-  const handleClearChat = () => {
-    setMessages([
-      {
-        id: `welcome-${Date.now()}`,
-        role: "assistant",
-        content: "Chat cleared. What can I help you with?",
-        timestamp: "Just now",
-        modelUsed: activeModelObj.name,
-        suggestedActions: ["Report incident", "What is pSIF?", "Barrier health"],
-      },
-    ]);
-  };
-
-  // Helper to format simple markdown (bold, lists, links)
   const renderFormattedContent = (content: string) => {
     const lines = content.split("\n");
     return (
-      <div className="space-y-1.5 text-xs text-slate-800 leading-relaxed">
+      <div className="space-y-1.5 leading-relaxed text-xs">
         {lines.map((line, idx) => {
-          if (!line.trim()) return <div key={idx} className="h-0.5" />;
-
-          // Headings
-          if (line.startsWith("### ")) {
-            return (
-              <h4 key={idx} className="text-xs font-bold text-slate-900 mt-1.5 mb-0.5">
-                {line.replace("### ", "")}
-              </h4>
-            );
+          if (!line.trim()) {
+            return <div key={idx} className="h-1" />;
           }
 
           // Bullet points
@@ -316,8 +216,8 @@ export default function HelpDesk() {
           <button
             onClick={() => setIsOpen(true)}
             className="group relative flex items-center justify-center h-12 w-12 rounded-full bg-slate-900 hover:bg-slate-800 text-white shadow-xl hover:shadow-2xl border border-slate-700/80 transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
-            aria-label="Help Desk & Support"
-            title="Help Desk & Support"
+            aria-label="Help Desk"
+            title="Help Desk (Powered by OpenAI)"
           >
             <Headset className="h-5 w-5 text-emerald-400 group-hover:rotate-12 transition-transform duration-200" />
 
@@ -337,19 +237,22 @@ export default function HelpDesk() {
 
         {/* Floating Chat Modal Window */}
         {isOpen && (
-          <div className="w-[370px] sm:w-[385px] max-w-[calc(100vw-2rem)] h-[540px] max-h-[calc(100vh-5rem)] bg-white border border-slate-200/90 shadow-2xl rounded-2xl flex flex-col overflow-hidden transition-all duration-200 animate-in fade-in slide-in-from-bottom-3">
+          <div className="w-[370px] sm:w-[395px] max-w-[calc(100vw-2rem)] h-[540px] max-h-[calc(100vh-5rem)] bg-white border border-slate-200/90 shadow-2xl rounded-2xl flex flex-col overflow-hidden transition-all duration-200 animate-in fade-in slide-in-from-bottom-3 font-sans">
             {/* Window Header */}
-            <div className="px-3.5 py-2.5 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800 select-none">
-              <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            <div className="px-4 py-3 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800 select-none">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                   <Headset className="h-4 w-4" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <h3 className="text-xs font-bold text-white">Help Desk</h3>
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                    <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-950/70 border border-emerald-500/30 px-1.5 py-0.2 rounded-md flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      OpenAI
+                    </span>
                   </div>
-                  <p className="text-[10px] text-slate-400">Quick answers &amp; navigation</p>
+                  <p className="text-[10px] text-slate-400">Natural ChatGPT-style assistant</p>
                 </div>
               </div>
 
@@ -359,7 +262,7 @@ export default function HelpDesk() {
                   type="button"
                   onClick={handleClearChat}
                   title="Clear conversation"
-                  className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
                 </button>
@@ -367,81 +270,15 @@ export default function HelpDesk() {
                   type="button"
                   onClick={() => setIsOpen(false)}
                   title="Close Help Desk"
-                  className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
                 >
                   <X className="h-4 w-4" />
                 </button>
               </div>
             </div>
 
-            {/* Model Selector Pill Bar */}
-            <div className="relative px-3 py-1.5 bg-slate-50 border-b border-slate-200/70 flex items-center justify-between text-xs">
-              <div className="flex items-center gap-1.5">
-                <Cpu className="h-3 w-3 text-slate-400" />
-                <span className="text-[10px] text-slate-500 font-medium">Model:</span>
-                <button
-                  type="button"
-                  onClick={() => setShowModelPicker(!showModelPicker)}
-                  className="flex items-center gap-1 font-semibold text-slate-800 bg-white hover:bg-slate-100 px-2 py-0.5 rounded border border-slate-200 text-[11px] shadow-2xs transition cursor-pointer"
-                >
-                  <span className="truncate max-w-[130px]">{activeModelObj.name}</span>
-                  <ChevronDown className="h-2.5 w-2.5 text-slate-400" />
-                </button>
-              </div>
-
-              <span className="text-[9px] font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/60">
-                {activeModelObj.badge}
-              </span>
-
-              {/* Compact Model Picker Dropdown */}
-              {showModelPicker && (
-                <div className="absolute top-full left-2 right-2 mt-1 z-30 bg-white rounded-xl border border-slate-200 shadow-xl p-1.5 space-y-1 animate-in fade-in">
-                  <div className="px-2 py-1 text-[9px] font-semibold text-slate-400 uppercase tracking-wider">
-                    Select Model
-                  </div>
-                  {models.map((m) => {
-                    const isCurrent = m.id === selectedModel;
-                    return (
-                      <div
-                        key={m.id}
-                        onClick={() => handleSelectModel(m.id)}
-                        className={`px-2.5 py-1.5 rounded-lg cursor-pointer transition flex items-center justify-between gap-2 text-left ${
-                          isCurrent
-                            ? "bg-slate-900 text-white"
-                            : "hover:bg-slate-50 text-slate-800"
-                        }`}
-                      >
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-semibold">{m.name}</span>
-                            <span
-                              className={`text-[9px] px-1 rounded ${
-                                isCurrent
-                                  ? "bg-emerald-400 text-slate-950 font-bold"
-                                  : "bg-slate-100 text-slate-500"
-                              }`}
-                            >
-                              {m.badge}
-                            </span>
-                          </div>
-                          <p
-                            className={`text-[10px] truncate ${
-                              isCurrent ? "text-slate-300" : "text-slate-500"
-                            }`}
-                          >
-                            {m.description}
-                          </p>
-                        </div>
-                        {isCurrent && <Check className="h-3.5 w-3.5 text-emerald-400 shrink-0" />}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
             {/* Chat Messages Scroll Area */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-2.5 text-xs bg-slate-50/50">
+            <div className="flex-1 overflow-y-auto p-3.5 space-y-3 text-xs bg-slate-50/50">
               {messages.map((msg) => {
                 const isUser = msg.role === "user";
                 return (
@@ -450,80 +287,54 @@ export default function HelpDesk() {
                     className={`flex flex-col ${isUser ? "items-end" : "items-start"}`}
                   >
                     <div
-                      className={`max-w-[85%] rounded-2xl px-3 py-2 text-xs shadow-2xs space-y-1.5 ${
+                      className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs shadow-2xs space-y-1.5 ${
                         isUser
                           ? "bg-slate-900 text-white rounded-br-xs font-normal"
                           : "bg-white text-slate-800 border border-slate-200/90 rounded-bl-xs"
                       }`}
                     >
-                      {/* Message Content */}
-                      {isUser ? (
-                        <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
-                      ) : (
-                        renderFormattedContent(msg.content)
-                      )}
+                      {/* Content */}
+                      <div>{renderFormattedContent(msg.content)}</div>
 
-                      {/* Navigation Link Chips (if provided) */}
+                      {/* Navigation Link Buttons (if any) */}
                       {msg.navigationLinks && msg.navigationLinks.length > 0 && (
-                        <div className="pt-1 flex flex-wrap gap-1">
-                          {msg.navigationLinks.map((link, lidx) => (
+                        <div className="pt-1.5 flex flex-wrap gap-1.5 border-t border-slate-100">
+                          {msg.navigationLinks.map((link, idx) => (
                             <Link
-                              key={lidx}
+                              key={idx}
                               href={link.href}
-                              onClick={() => {
-                                if (window.innerWidth < 768) setIsOpen(false);
-                              }}
-                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200/70 text-[10px] font-semibold transition"
+                              onClick={() => setIsOpen(false)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-[11px] border border-blue-200/70 transition"
                             >
                               <span>{link.title}</span>
-                              <ArrowRight className="h-2.5 w-2.5" />
+                              <span>&rarr;</span>
                             </Link>
                           ))}
                         </div>
                       )}
-
-                      {/* Subtle Footer */}
-                      <div
-                        className={`flex items-center justify-between text-[9px] pt-0.5 ${
-                          isUser ? "text-slate-400" : "text-slate-400"
-                        }`}
-                      >
-                        {!isUser && msg.modelUsed && (
-                          <span className="truncate max-w-[120px] text-slate-400">
-                            {msg.modelUsed}
-                          </span>
-                        )}
-                        <span className="ml-auto">{msg.timestamp}</span>
-                      </div>
                     </div>
 
-                    {/* Suggested Follow-up Actions (Only if present) */}
-                    {!isUser && msg.suggestedActions && msg.suggestedActions.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-1 max-w-[85%]">
-                        {msg.suggestedActions.map((action, aidx) => (
-                          <button
-                            key={aidx}
-                            type="button"
-                            onClick={() => handleSend(action)}
-                            className="px-2 py-0.5 rounded-full bg-white hover:bg-slate-100 text-slate-600 text-[10px] font-medium border border-slate-200 shadow-2xs transition cursor-pointer"
-                          >
-                            {action}
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    {/* Timestamp */}
+                    <span className="text-[9px] text-slate-400 px-1 mt-0.5 font-medium">
+                      {msg.timestamp}
+                    </span>
                   </div>
                 );
               })}
 
-              {/* Typing indicator */}
+              {/* Typing / Loading Indicator */}
               {loading && (
                 <div className="flex items-start">
-                  <div className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 shadow-2xs flex items-center gap-1.5">
+                  <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-xs px-3.5 py-2.5 shadow-2xs flex items-center gap-1.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-slate-400 animate-bounce" />
-                    <span className="h-1.5 w-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0.2s]" />
-                    <span className="h-1.5 w-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0.4s]" />
-                    <span className="text-[10px] text-slate-400 ml-1">Thinking...</span>
+                    <span
+                      className="h-1.5 w-1.5 rounded-full bg-slate-400 animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    />
+                    <span
+                      className="h-1.5 w-1.5 rounded-full bg-slate-400 animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    />
                   </div>
                 </div>
               )}
@@ -531,48 +342,53 @@ export default function HelpDesk() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Quick Prompt Chips (Shown cleanly above input) */}
-            {messages.length <= 3 && (
-              <div className="px-3 py-1.5 bg-white border-t border-slate-100 flex items-center gap-1 overflow-x-auto no-scrollbar">
-                {INITIAL_SUGGESTIONS.map((sugg, idx) => (
+            {/* Quick Prompt Starters */}
+            {messages.length <= 2 && (
+              <div className="px-3.5 py-1.5 bg-white border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto scrollbar-none text-[11px]">
+                {INITIAL_SUGGESTIONS.map((sug, idx) => (
                   <button
                     key={idx}
                     type="button"
-                    onClick={() => handleSend(sugg)}
-                    className="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-medium whitespace-nowrap transition cursor-pointer shrink-0"
+                    onClick={() => handleSend(sug)}
+                    className="whitespace-nowrap px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition cursor-pointer shrink-0"
                   >
-                    {sugg}
+                    {sug}
                   </button>
                 ))}
               </div>
             )}
 
-            {/* Chat Input Bar */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSend();
-              }}
-              className="p-2 bg-white border-t border-slate-200 flex items-center gap-1.5"
-            >
-              <input
-                ref={inputRef}
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask a question..."
-                disabled={loading}
-                className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-slate-400 focus:bg-white transition"
-              />
-              <button
-                type="submit"
-                disabled={!input.trim() || loading}
-                className="h-7 w-7 flex items-center justify-center rounded-full bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-white transition cursor-pointer shrink-0"
-                aria-label="Send message"
+            {/* Input Footer Bar */}
+            <div className="p-3 bg-white border-t border-slate-200/80">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSend();
+                }}
+                className="flex items-center gap-2"
               >
-                <Send className="h-3 w-3" />
-              </button>
-            </form>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ask anything naturally..."
+                  disabled={loading}
+                  className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-400 focus:bg-white transition"
+                />
+                <button
+                  type="submit"
+                  disabled={!input.trim() || loading}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition cursor-pointer shrink-0 shadow-2xs"
+                  aria-label="Send message"
+                >
+                  <Send className="h-3.5 w-3.5" />
+                </button>
+              </form>
+              <p className="text-[9px] text-slate-400 text-center pt-1.5">
+                OpenAI &bull; Natural conversational safety intelligence
+              </p>
+            </div>
           </div>
         )}
       </div>

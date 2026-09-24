@@ -60,3 +60,26 @@ def test_barriers_and_rules():
     res_r = client.get("/api/v1/life-saving-rules")
     assert res_r.status_code == 200
     assert len(res_r.json()) == 9
+
+
+def test_helpdesk_single_openai_model():
+    res = client.get("/api/v1/helpdesk/models")
+    assert res.status_code == 200
+    models = res.json()
+    assert len(models) == 1
+    assert models[0]["id"] == "gpt-4o"
+    assert models[0]["provider"] == "OpenAI"
+
+
+def test_helpdesk_natural_chat():
+    res = client.post("/api/v1/helpdesk/chat", json={
+        "message": "Hello, how does pSIF risk assessment work?",
+        "model": "gpt-4o",
+        "history": []
+    })
+    assert res.status_code == 200
+    data = res.json()
+    assert data["provider"] == "OpenAI"
+    assert data["model_used"] == "OpenAI GPT-4o"
+    assert "pSIF" in data["reply"]
+

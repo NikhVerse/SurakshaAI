@@ -294,7 +294,7 @@ class HelpDeskMessage(BaseModel):
 
 class HelpDeskChatRequest(BaseModel):
     message: str
-    model: str = "gemini-2.5-flash"
+    model: str = "gpt-4o"
     history: List[HelpDeskMessage] = []
 
 
