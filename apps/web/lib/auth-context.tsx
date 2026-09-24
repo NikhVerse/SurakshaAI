@@ -8,6 +8,13 @@ export interface UserProfile {
   id: string;
   email: string;
   full_name: string;
+  first_name?: string | null;
+  middle_name?: string | null;
+  last_name?: string | null;
+  age?: number | null;
+  dob?: string | null;
+  gender?: string | null;
+  region?: string | null;
   phone?: string | null;
   role: string;
   account_status?: string;
@@ -16,18 +23,47 @@ export interface UserProfile {
   last_login_at?: string | null;
 }
 
+export interface RegisterPayload {
+  first_name: string;
+  middle_name?: string;
+  last_name: string;
+  age: number;
+  dob: string;
+  gender: string;
+  role: string;
+  email: string;
+  password: string;
+  region?: string;
+  phone?: string;
+  full_name?: string;
+}
+
+export interface UpdateProfilePayload {
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
+  age?: number;
+  dob?: string;
+  gender?: string;
+  role?: string;
+  region?: string;
+  full_name?: string;
+  phone?: string;
+  profile_image?: string;
+}
+
 interface AuthContextType {
   user: UserProfile | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<UserProfile>;
+  login: (email: string, password: string, region?: string) => Promise<UserProfile>;
   register: (
-    fullName: string,
-    email: string,
-    password: string,
+    dataOrFullName: string | RegisterPayload,
+    email?: string,
+    password?: string,
     role?: string,
     phone?: string
   ) => Promise<UserProfile>;
-  updateProfile: (data: { full_name?: string; phone?: string; profile_image?: string }) => Promise<UserProfile>;
+  updateProfile: (data: UpdateProfilePayload) => Promise<UserProfile>;
   logout: () => Promise<void>;
 }
 
@@ -46,12 +82,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .then((userData) => {
           if (userData && userData.id) {
             setUser(userData);
+            if (userData.region) localStorage.setItem("suraksha_region", userData.region);
           } else {
             // Invalid session
             localStorage.removeItem("suraksha_token");
             localStorage.removeItem("suraksha_email");
             localStorage.removeItem("suraksha_name");
             localStorage.removeItem("suraksha_role");
+            localStorage.removeItem("suraksha_region");
             setUser(null);
           }
         })
@@ -61,6 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.removeItem("suraksha_email");
           localStorage.removeItem("suraksha_name");
           localStorage.removeItem("suraksha_role");
+          localStorage.removeItem("suraksha_region");
           setUser(null);
         })
         .finally(() => setLoading(false));
@@ -70,12 +109,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const login = async (email: string, password: string): Promise<UserProfile> => {
+  const login = async (email: string, password: string, region?: string): Promise<UserProfile> => {
     setLoading(true);
     try {
       const res = await fetchApi<{ access_token: string; user: UserProfile }>("/api/v1/auth/login", {
         method: "POST",
-        body: JSON.stringify({ email: email.trim(), password }),
+        body: JSON.stringify({
+          email: email.trim(),
+          password,
+          region: region ? region.trim() : undefined,
+        }),
       });
 
       if (res && res.access_token && res.user) {
@@ -83,6 +126,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem("suraksha_email", res.user.email);
         localStorage.setItem("suraksha_name", res.user.full_name);
         localStorage.setItem("suraksha_role", res.user.role);
+        if (res.user.region || region) {
+          localStorage.setItem("suraksha_region", res.user.region || region || "");
+        }
         setUser(res.user);
         return res.user;
       }
@@ -96,23 +142,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const register = async (
-    fullName: string,
-    email: string,
-    password: string,
+    dataOrFullName: string | RegisterPayload,
+    email?: string,
+    password?: string,
     role: string = "HSE_ANALYST",
     phone?: string
   ): Promise<UserProfile> => {
     setLoading(true);
     try {
-      const res = await fetchApi<{ access_token: string; user: UserProfile }>("/api/v1/auth/register", {
-        method: "POST",
-        body: JSON.stringify({
-          full_name: fullName.trim(),
-          email: email.trim(),
+      let payload: any;
+      if (typeof dataOrFullName === "object") {
+        payload = dataOrFullName;
+      } else {
+        payload = {
+          full_name: dataOrFullName.trim(),
+          first_name: dataOrFullName.trim().split(" ")[0] || "User",
+          last_name: dataOrFullName.trim().split(" ").slice(1).join(" ") || "Member",
+          age: 28,
+          dob: "01-Jan-1998",
+          gender: "Other",
+          email: email?.trim(),
           password,
           role,
           phone: phone ? phone.trim() : undefined,
-        }),
+        };
+      }
+
+      const res = await fetchApi<{ access_token: string; user: UserProfile }>("/api/v1/auth/register", {
+        method: "POST",
+        body: JSON.stringify(payload),
       });
 
       if (res && res.access_token && res.user) {
@@ -120,6 +178,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem("suraksha_email", res.user.email);
         localStorage.setItem("suraksha_name", res.user.full_name);
         localStorage.setItem("suraksha_role", res.user.role);
+        if (res.user.region) localStorage.setItem("suraksha_region", res.user.region);
         setUser(res.user);
         return res.user;
       }
@@ -131,7 +190,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateProfile = async (data: { full_name?: string; phone?: string; profile_image?: string }): Promise<UserProfile> => {
+  const updateProfile = async (data: UpdateProfilePayload): Promise<UserProfile> => {
     const updated = await fetchApi<UserProfile>("/api/v1/users/me", {
       method: "PATCH",
       body: JSON.stringify(data),
@@ -139,6 +198,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (updated) {
       setUser(updated);
       localStorage.setItem("suraksha_name", updated.full_name);
+      if (updated.region) localStorage.setItem("suraksha_region", updated.region);
     }
     return updated;
   };

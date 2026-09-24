@@ -1,19 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Lock, Mail, ArrowRight, AlertCircle } from "lucide-react";
+import { Lock, Mail, ArrowRight, AlertCircle, MapPin } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import Logo from "@/components/Logo";
+
+const REGIONS = [
+  "India - Western Offshore (Mumbai High)",
+  "India - Eastern Asset (Assam / Digboi)",
+  "India - Northern Hub (Hazira / Gujarat)",
+  "India - Southern Basin (KG Basin / Kakinada)",
+  "India - Central Asset (Rajasthan / Barmer)",
+  "Asia-Pacific Regional Hub (Singapore)",
+  "Middle East & Gulf Operations",
+  "Global Enterprise / All Assets",
+];
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [region, setRegion] = useState(REGIONS[0]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("suraksha_region");
+    if (saved && REGIONS.includes(saved)) {
+      setRegion(saved);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +40,7 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      await login(email, password);
+      await login(email, password, region);
       router.push("/app/dashboard");
     } catch (err: any) {
       setError(err.message || "Invalid credentials. Please check your email and password.");
@@ -68,7 +87,7 @@ export default function LoginPage() {
                   placeholder="operator@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition"
                 />
               </div>
             </div>
@@ -92,9 +111,34 @@ export default function LoginPage() {
                   placeholder="Your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition"
                 />
               </div>
+            </div>
+
+            {/* Operational Region Selection */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                Operational Region
+              </label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-slate-400 pointer-events-none" />
+                <select
+                  id="region"
+                  value={region}
+                  onChange={(e) => setRegion(e.target.value)}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition"
+                >
+                  {REGIONS.map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <p className="text-[9px] text-slate-400 mt-1">
+                Scopes your telemetry, local incidents, and barrier alerts
+              </p>
             </div>
 
             <button

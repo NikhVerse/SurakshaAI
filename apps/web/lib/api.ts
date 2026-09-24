@@ -316,6 +316,13 @@ export interface UserItem {
   id: string;
   email: string;
   full_name: string;
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
+  age?: number;
+  dob?: string;
+  gender?: string;
+  region?: string;
   phone?: string;
   role: string;
   account_status: string;

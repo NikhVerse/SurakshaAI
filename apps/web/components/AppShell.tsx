@@ -120,14 +120,23 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </Link>
 
             {/* Profile Tooltip */}
-            <div className="absolute left-[calc(100%+10px)] top-1/2 -translate-y-1/2 pointer-events-none z-50 hidden md:flex flex-col px-3 py-1.5 rounded-xl bg-[#18181b] text-white text-xs shadow-2xl opacity-0 translate-x-[-6px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 whitespace-nowrap">
+            <div className="absolute left-[calc(100%+10px)] top-1/2 -translate-y-1/2 pointer-events-none z-50 hidden md:flex flex-col px-3 py-2 rounded-xl bg-[#18181b] text-white text-xs shadow-2xl opacity-0 translate-x-[-6px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 whitespace-nowrap border border-slate-700/60">
               <span className="font-bold text-white leading-tight">
                 {user?.full_name || user?.email || "Operator"}
               </span>
               <span className="text-[10px] text-neutral-400 font-mono capitalize">
                 {user?.role ? user.role.replace(/_/g, " ").toLowerCase() : "Authorized Operator"}
               </span>
+              {user?.region && (
+                <span className="text-[9px] text-emerald-400 font-medium truncate max-w-[170px] mt-0.5">
+                  📍 {user.region}
+                </span>
+              )}
+              <span className="text-[9px] text-blue-400 font-semibold mt-1 pt-1 border-t border-slate-700/60">
+                Click to Edit Profile &rarr;
+              </span>
             </div>
+
           </div>
 
           {/* Sign out */}

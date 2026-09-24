@@ -7,18 +7,34 @@ from pydantic import BaseModel, EmailStr, Field, ConfigDict
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+    region: Optional[str] = None
 
 
 class UserRegister(BaseModel):
+    first_name: Optional[str] = None
+    middle_name: Optional[str] = None
+    last_name: Optional[str] = None
+    age: Optional[int] = Field(None, ge=20, le=100, description="Age must be between 20 and 100")
+    dob: Optional[str] = Field(None, description="Format: dd-mmm-yyyy")
+    gender: Optional[str] = Field(None, description="MALE, female, Other")
+    role: str = "HSE_ANALYST"
     email: EmailStr
     password: str = Field(..., min_length=8)
-    full_name: str
+    full_name: Optional[str] = None
+    region: Optional[str] = None
     phone: Optional[str] = None
-    role: Optional[str] = "HSE_ANALYST"
     account_status: Optional[str] = "ACTIVE"
 
 
 class UserUpdate(BaseModel):
+    first_name: Optional[str] = None
+    middle_name: Optional[str] = None
+    last_name: Optional[str] = None
+    age: Optional[int] = Field(None, ge=20, le=100)
+    dob: Optional[str] = None
+    gender: Optional[str] = None
+    role: Optional[str] = None
+    region: Optional[str] = None
     full_name: Optional[str] = None
     phone: Optional[str] = None
     profile_image: Optional[str] = None
@@ -28,6 +44,13 @@ class UserResponse(BaseModel):
     id: str
     email: str
     full_name: str
+    first_name: Optional[str] = None
+    middle_name: Optional[str] = None
+    last_name: Optional[str] = None
+    age: Optional[int] = None
+    dob: Optional[str] = None
+    gender: Optional[str] = None
+    region: Optional[str] = None
     phone: Optional[str] = None
     role: str
     account_status: str = "ACTIVE"

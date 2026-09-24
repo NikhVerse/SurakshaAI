@@ -11,16 +11,37 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post("/register", response_model=TokenResponse)
 def register_user(payload: UserRegister, db: Session = Depends(get_db)):
-    existing = db.query(User).filter(User.email == payload.email).first()
+    clean_email = payload.email.lower().strip()
+    existing = db.query(User).filter(User.email == clean_email).first()
     if existing:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="An account with this email already exists."
         )
 
+    # Compute name and personal details with robust fallbacks
+    f_name = payload.first_name.strip() if payload.first_name else (payload.full_name.split(" ")[0] if payload.full_name else "Operator")
+    l_name = payload.last_name.strip() if payload.last_name else (payload.full_name.split(" ")[-1] if payload.full_name and len(payload.full_name.split(" ")) > 1 else "User")
+    m_name = payload.middle_name.strip() if payload.middle_name else None
+
+    computed_name = payload.full_name
+    if not computed_name:
+        parts = [f_name]
+        if m_name:
+            parts.append(m_name)
+        parts.append(l_name)
+        computed_name = " ".join(parts)
+
     new_user = User(
-        email=payload.email.lower().strip(),
-        full_name=payload.full_name.strip(),
+        email=clean_email,
+        full_name=computed_name,
+        first_name=f_name,
+        middle_name=m_name,
+        last_name=l_name,
+        age=payload.age or 28,
+        dob=payload.dob.strip() if payload.dob else "01-Jan-1998",
+        gender=payload.gender.strip() if payload.gender else "Other",
+        region=payload.region.strip() if payload.region else "India - Western Offshore (Mumbai High)",
         phone=payload.phone.strip() if payload.phone else None,
         hashed_password=get_password_hash(payload.password),
         role=payload.role or "HSE_ANALYST",
@@ -35,7 +56,13 @@ def register_user(payload: UserRegister, db: Session = Depends(get_db)):
         action="USER_REGISTERED",
         entity_type="USER",
         entity_id=new_user.id,
-        details={"email": new_user.email, "role": new_user.role, "phone": new_user.phone}
+        details={
+            "email": new_user.email,
+            "role": new_user.role,
+            "region": new_user.region,
+            "age": new_user.age,
+            "gender": new_user.gender,
+        }
     )
     db.add(audit)
     db.commit()
@@ -73,6 +100,8 @@ def login_user(payload: UserLogin, db: Session = Depends(get_db)):
 
     from datetime import datetime, timezone
     user.last_login_at = datetime.now(timezone.utc)
+    if payload.region:
+        user.region = payload.region.strip()
     db.commit()
     db.refresh(user)
 
@@ -83,7 +112,7 @@ def login_user(payload: UserLogin, db: Session = Depends(get_db)):
         action="LOGIN_SUCCESS",
         entity_type="AUTH",
         entity_id=user.id,
-        details={"role": user.role}
+        details={"role": user.role, "region": user.region}
     )
     db.add(audit)
     db.commit()

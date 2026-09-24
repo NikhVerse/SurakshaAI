@@ -22,8 +22,32 @@ def update_current_user_profile(
     current_user: User = Depends(get_current_user),
 ):
     """Update authenticated user's own profile information."""
+    if payload.first_name is not None and payload.first_name.strip():
+        current_user.first_name = payload.first_name.strip()
+    if payload.middle_name is not None:
+        current_user.middle_name = payload.middle_name.strip() if payload.middle_name else None
+    if payload.last_name is not None and payload.last_name.strip():
+        current_user.last_name = payload.last_name.strip()
+    if payload.age is not None:
+        current_user.age = payload.age
+    if payload.dob is not None and payload.dob.strip():
+        current_user.dob = payload.dob.strip()
+    if payload.gender is not None and payload.gender.strip():
+        current_user.gender = payload.gender.strip()
+    if payload.role is not None and payload.role.strip():
+        current_user.role = payload.role.strip()
+    if payload.region is not None and payload.region.strip():
+        current_user.region = payload.region.strip()
+
     if payload.full_name is not None and payload.full_name.strip():
         current_user.full_name = payload.full_name.strip()
+    elif current_user.first_name and current_user.last_name:
+        parts = [current_user.first_name]
+        if current_user.middle_name:
+            parts.append(current_user.middle_name)
+        parts.append(current_user.last_name)
+        current_user.full_name = " ".join(parts)
+
     if payload.phone is not None:
         current_user.phone = payload.phone.strip() if payload.phone else None
     if payload.profile_image is not None:
@@ -37,7 +61,12 @@ def update_current_user_profile(
         action="PROFILE_UPDATED",
         entity_type="USER",
         entity_id=current_user.id,
-        details={"full_name": current_user.full_name, "phone": current_user.phone},
+        details={
+            "full_name": current_user.full_name,
+            "region": current_user.region,
+            "role": current_user.role,
+            "phone": current_user.phone,
+        },
     )
     db.add(audit)
     db.commit()
