@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -92,7 +92,7 @@ export default function NewReportPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+            <label className="block text-[12px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">
               Category
             </label>
             <select
@@ -108,7 +108,7 @@ export default function NewReportPage() {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+            <label className="block text-[12px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">
               Equipment / Asset
             </label>
             <input
@@ -121,7 +121,7 @@ export default function NewReportPage() {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+            <label className="block text-[12px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">
               Personnel Exposure
             </label>
             <select
@@ -136,7 +136,7 @@ export default function NewReportPage() {
         </div>
 
         <div>
-          <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+          <label className="block text-[12px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">
             Observed Outcome / Immediate Actions
           </label>
           <input
@@ -149,7 +149,7 @@ export default function NewReportPage() {
         </div>
 
         <div className="pt-4 flex items-center justify-between border-t border-slate-100">
-          <span className="text-[11px] text-slate-400 font-medium">
+          <span className="text-[12px] text-slate-400 font-medium">
             Automated entity extraction, pSIF probability &amp; IOGP barrier mapping
           </span>
           <button

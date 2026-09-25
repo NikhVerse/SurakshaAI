@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
@@ -90,33 +90,33 @@ export default function PrecursorsPage() {
       {/* Number-First Operational KPI Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Clusters</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Clusters</span>
           <p className="text-2xl font-black text-slate-900 font-mono mt-0.5">
             {clusters.length < 10 ? `0${clusters.length}` : clusters.length}
           </p>
-          <span className="text-[10px] font-semibold text-slate-500">HDBSCAN Semantic</span>
+          <span className="text-[11px] font-semibold text-slate-500">HDBSCAN Semantic</span>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">High Hazard</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">High Hazard</span>
           <p className="text-2xl font-black text-rose-600 font-mono mt-0.5">
             {criticalClusters < 10 ? `0${criticalClusters}` : criticalClusters}
           </p>
-          <span className="text-[10px] font-semibold text-rose-700">Increasing Trend</span>
+          <span className="text-[11px] font-semibold text-rose-700">Increasing Trend</span>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Total Signals</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Total Signals</span>
           <p className="text-2xl font-black text-slate-900 font-mono mt-0.5">{totalOccurrences}</p>
-          <span className="text-[10px] font-semibold text-slate-500">Correlated Records</span>
+          <span className="text-[11px] font-semibold text-slate-500">Correlated Records</span>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Sites Exposed</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Sites Exposed</span>
           <p className="text-2xl font-black text-blue-600 font-mono mt-0.5">
             {uniqueSites.length < 10 ? `0${uniqueSites.length}` : uniqueSites.length}
           </p>
-          <span className="text-[10px] font-semibold text-blue-700">Cross-Plant Patterns</span>
+          <span className="text-[11px] font-semibold text-blue-700">Cross-Plant Patterns</span>
         </div>
       </div>
 
@@ -153,7 +153,7 @@ export default function PrecursorsPage() {
                   <div className="flex items-start gap-3">
                     <div className="flex flex-col items-center justify-center h-12 w-12 rounded-xl bg-slate-900 text-white shrink-0 shadow-2xs">
                       <span className="text-base font-black font-mono leading-none">{coherencePct}%</span>
-                      <span className="text-[8px] font-bold uppercase tracking-wider opacity-70 mt-0.5">Score</span>
+                      <span className="text-[9px] font-bold uppercase tracking-wider opacity-70 mt-0.5">Score</span>
                     </div>
 
                     <div>
@@ -162,7 +162,7 @@ export default function PrecursorsPage() {
                           {c.name}
                         </h2>
                       </div>
-                      <span className="text-[11px] font-mono text-slate-400 block mt-0.5">
+                      <span className="text-[12px] font-mono text-slate-400 block mt-0.5">
                         {c.occurrence_count} linked observations
                       </span>
                     </div>
@@ -180,7 +180,7 @@ export default function PrecursorsPage() {
                 {/* Level 1 Metric Chips: Hazard, Barrier, LSR */}
                 <div className="grid grid-cols-3 gap-2">
                   <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 space-y-0.5">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Hazard</span>
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Hazard</span>
                     <div className="flex items-center gap-1 text-xs font-bold text-slate-800 truncate">
                       <HazardIcon className="h-3 w-3 text-amber-600 shrink-0" />
                       <span className="truncate">{c.primary_hazard.split(" ")[0]}</span>
@@ -188,14 +188,14 @@ export default function PrecursorsPage() {
                   </div>
 
                   <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 space-y-0.5">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Barrier</span>
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Barrier</span>
                     <span className="text-xs font-bold text-slate-800 truncate block">
                       {c.primary_barrier ? c.primary_barrier.split(" ")[0] : "—"}
                     </span>
                   </div>
 
                   <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 space-y-0.5">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rule</span>
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Rule</span>
                     <span className="text-xs font-bold text-slate-800 truncate block">
                       {c.primary_lsr ? c.primary_lsr.split(" ")[0] : "—"}
                     </span>
@@ -208,12 +208,12 @@ export default function PrecursorsPage() {
                     <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                     <div className="flex items-center gap-1 truncate">
                       {c.affected_sites.slice(0, 2).map((site) => (
-                        <span key={site} className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                        <span key={site} className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
                           {site}
                         </span>
                       ))}
                       {c.affected_sites.length > 2 && (
-                        <span className="text-[10px] font-bold text-slate-400">+{c.affected_sites.length - 2}</span>
+                        <span className="text-[11px] font-bold text-slate-400">+{c.affected_sites.length - 2}</span>
                       )}
                     </div>
                   </div>

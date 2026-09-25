@@ -137,10 +137,10 @@ export default function BarriersPage() {
                           <Icon className="h-4 w-4" strokeWidth={1.8} />
                         </div>
                         <div>
-                          <span className="font-bold text-sm text-slate-900 block truncate max-w-[170px]">
+                          <span className="font-bold text-sm text-slate-900 block truncate max-w-[200px]">
                             {b.name.split(" ")[0]} {b.name.split(" ")[1] || ""}
                           </span>
-                          <span className="font-mono text-[10px] text-slate-400 font-bold block">
+                          <span className="font-mono text-[11px] text-slate-400 font-bold block">
                             {b.code}
                           </span>
                         </div>
@@ -170,7 +170,7 @@ export default function BarriersPage() {
                       />
                     </div>
 
-                    <div className="flex items-center justify-between text-[10px] font-mono font-bold text-slate-400">
+                    <div className="flex items-center justify-between text-[11px] font-mono font-bold text-slate-400">
                       <span>{failCount} Failures</span>
                       <span>{total} Evaluated</span>
                     </div>
@@ -178,10 +178,10 @@ export default function BarriersPage() {
 
                   <div className="flex items-center justify-between pt-1 border-t border-slate-100 text-xs">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600 uppercase">
+                      <span className="text-[11px] font-bold font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600 uppercase">
                         {b.category}
                       </span>
-                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-600 bg-slate-100/70 px-1.5 py-0.5 rounded border border-slate-200">
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-600 bg-slate-100/70 px-1.5 py-0.5 rounded border border-slate-200">
                         <Camera className="h-3 w-3 text-slate-500" />
                         <span>Evidence</span>
                       </span>

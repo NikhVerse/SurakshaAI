@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -168,7 +168,7 @@ export default function SignUpPage() {
         <Link href="/" className="inline-block transition hover:opacity-90">
           <Logo size="default" />
         </Link>
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-[10px] font-bold text-blue-700 tracking-wider uppercase mt-1">
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-[11px] font-bold text-blue-700 tracking-wider uppercase mt-1">
           <ShieldCheck className="h-3 w-3 text-blue-600" />
           <span>Sovereign Risk Intelligence Platform</span>
         </div>
@@ -194,16 +194,16 @@ export default function SignUpPage() {
             {/* ---------------- 01. Legal Identity ---------------- */}
             <div className="space-y-3">
               <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-                <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider uppercase text-slate-400">
+                <span className="flex items-center gap-1.5 text-[11px] font-mono font-bold tracking-wider uppercase text-slate-400">
                   <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
                   01 // Legal Identity
                 </span>
-                <span className="text-[10px] text-slate-400 font-medium">* Required</span>
+                <span className="text-[11px] text-slate-400 font-medium">* Required</span>
               </div>
 
               {/* 1. First Name */}
               <div className="space-y-1">
-                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                <label className="flex items-center justify-between text-[12px] font-bold text-slate-700">
                   <span className="flex items-center gap-1.5">
                     <User className="h-3 w-3 text-slate-400" />
                     First Name
@@ -225,11 +225,11 @@ export default function SignUpPage() {
 
               {/* 2. Middle Name (Optional) */}
               <div className="space-y-1">
-                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                <label className="flex items-center justify-between text-[12px] font-bold text-slate-700">
                   <span className="flex items-center gap-1.5">
                     <BadgeCheck className="h-3 w-3 text-slate-400" />
                     Middle Name
-                    <span className="text-[10px] text-slate-400 font-normal">(Optional)</span>
+                    <span className="text-[11px] text-slate-400 font-normal">(Optional)</span>
                   </span>
                 </label>
                 <div className="relative">
@@ -246,7 +246,7 @@ export default function SignUpPage() {
 
               {/* 3. Last Name */}
               <div className="space-y-1">
-                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                <label className="flex items-center justify-between text-[12px] font-bold text-slate-700">
                   <span className="flex items-center gap-1.5">
                     <UserCheck className="h-3 w-3 text-slate-400" />
                     Last Name
@@ -270,7 +270,7 @@ export default function SignUpPage() {
             {/* ---------------- 02. Operator Attributes ---------------- */}
             <div className="space-y-3 pt-2">
               <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-                <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider uppercase text-slate-400">
+                <span className="flex items-center gap-1.5 text-[11px] font-mono font-bold tracking-wider uppercase text-slate-400">
                   <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
                   02 // Operator Attributes
                 </span>
@@ -279,13 +279,13 @@ export default function SignUpPage() {
               {/* 4. Age */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-700">
+                  <label className="flex items-center gap-1.5 text-[12px] font-bold text-slate-700">
                     <Hash className="h-3 w-3 text-slate-400" />
                     Age (20 – 100 yrs)
                     <span className="text-rose-500">*</span>
                   </label>
                   {age !== "" && Number(age) >= 20 && Number(age) <= 100 && (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">
                       <Check className="h-3 w-3" /> Validated
                     </span>
                   )}
@@ -315,13 +315,13 @@ export default function SignUpPage() {
               {/* 5. Date of Birth */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-700">
+                  <label className="flex items-center gap-1.5 text-[12px] font-bold text-slate-700">
                     <CalendarDays className="h-3 w-3 text-slate-400" />
                     Date of Birth
                     <span className="text-rose-500">*</span>
                   </label>
                   {dobFormatted && (
-                    <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                    <span className="text-[11px] font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
                       {dobFormatted}
                     </span>
                   )}
@@ -338,12 +338,12 @@ export default function SignUpPage() {
                     className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-9 pr-3 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 transition-all"
                   />
                 </div>
-                <p className="text-[10px] text-slate-400 font-medium">Formats automatically as dd-mmm-yyyy</p>
+                <p className="text-[11px] text-slate-400 font-medium">Formats automatically as dd-mmm-yyyy</p>
               </div>
 
               {/* 6. Gender */}
               <div className="space-y-1">
-                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                <label className="flex items-center justify-between text-[12px] font-bold text-slate-700">
                   <span className="flex items-center gap-1.5">
                     <Sparkles className="h-3 w-3 text-slate-400" />
                     Gender
@@ -372,7 +372,7 @@ export default function SignUpPage() {
             {/* ---------------- 03. Operations & Role ---------------- */}
             <div className="space-y-3 pt-2">
               <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-                <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider uppercase text-slate-400">
+                <span className="flex items-center gap-1.5 text-[11px] font-mono font-bold tracking-wider uppercase text-slate-400">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                   03 // Operations &amp; Jurisdiction
                 </span>
@@ -380,7 +380,7 @@ export default function SignUpPage() {
 
               {/* 7. Operational Role */}
               <div className="space-y-1">
-                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                <label className="flex items-center justify-between text-[12px] font-bold text-slate-700">
                   <span className="flex items-center gap-1.5">
                     <Shield className="h-3 w-3 text-slate-400" />
                     Operational Role
@@ -406,7 +406,7 @@ export default function SignUpPage() {
 
               {/* 8. Operational Region */}
               <div className="space-y-1">
-                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                <label className="flex items-center justify-between text-[12px] font-bold text-slate-700">
                   <span className="flex items-center gap-1.5">
                     <MapPin className="h-3 w-3 text-slate-400" />
                     Operational Region
@@ -434,7 +434,7 @@ export default function SignUpPage() {
             {/* ---------------- 04. Authentication Credentials ---------------- */}
             <div className="space-y-3 pt-2">
               <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-                <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider uppercase text-slate-400">
+                <span className="flex items-center gap-1.5 text-[11px] font-mono font-bold tracking-wider uppercase text-slate-400">
                   <span className="h-1.5 w-1.5 rounded-full bg-violet-500" />
                   04 // Credentials
                 </span>
@@ -442,7 +442,7 @@ export default function SignUpPage() {
 
               {/* 9. Email Address */}
               <div className="space-y-1">
-                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                <label className="flex items-center justify-between text-[12px] font-bold text-slate-700">
                   <span className="flex items-center gap-1.5">
                     <Mail className="h-3 w-3 text-slate-400" />
                     Email Id (Mandatory)
@@ -464,7 +464,7 @@ export default function SignUpPage() {
 
               {/* 10. Password */}
               <div className="space-y-1">
-                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                <label className="flex items-center justify-between text-[12px] font-bold text-slate-700">
                   <span className="flex items-center gap-1.5">
                     <Lock className="h-3 w-3 text-slate-400" />
                     Password (min 8 chars)
@@ -496,13 +496,13 @@ export default function SignUpPage() {
               {/* 11. Confirm Password */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-700">
+                  <label className="flex items-center gap-1.5 text-[12px] font-bold text-slate-700">
                     <KeyRound className="h-3 w-3 text-slate-400" />
                     Confirm Password
                     <span className="text-rose-500">*</span>
                   </label>
                   {confirmPassword && (
-                    <span className="text-[10px] font-bold">
+                    <span className="text-[11px] font-bold">
                       {password === confirmPassword ? (
                         <span className="text-emerald-600 inline-flex items-center gap-0.5">
                           <Check className="h-3 w-3" /> Match

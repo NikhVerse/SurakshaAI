@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 
@@ -36,7 +36,7 @@ export function Tooltip({
       {visible && content && (
         <div
           role="tooltip"
-          className={`absolute z-50 pointer-events-none px-2.5 py-1 rounded-md bg-[#18181b] text-white text-[11px] font-medium tracking-wide shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-100 ${positionClasses[position]}`}
+          className={`absolute z-50 pointer-events-none px-2.5 py-1 rounded-md bg-[#18181b] text-white text-[12px] font-medium tracking-wide shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-100 ${positionClasses[position]}`}
         >
           {content}
         </div>

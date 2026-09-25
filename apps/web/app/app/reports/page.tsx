@@ -148,7 +148,7 @@ export default function ReportsPage() {
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0 pr-1">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">
+          <span className="text-[12px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">
             Status:
           </span>
           <select
@@ -167,7 +167,7 @@ export default function ReportsPage() {
       <div className="rounded-2xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
-            <thead className="border-b border-slate-200 bg-slate-50/80 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            <thead className="border-b border-slate-200 bg-slate-50/80 text-[11px] font-bold uppercase tracking-wider text-slate-400">
               <tr>
                 <th className="px-4 py-3">UID</th>
                 <th className="px-4 py-3">Type</th>
@@ -198,7 +198,7 @@ export default function ReportsPage() {
                       </td>
 
                       <td className="px-4 py-3">
-                        <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200/80">
+                        <span className="text-[11px] font-bold font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200/80">
                           {r.report_type.replace(/_/g, " ")}
                         </span>
                       </td>
@@ -216,7 +216,7 @@ export default function ReportsPage() {
 
                       <td className="px-4 py-3">
                         <Tooltip content={r.primary_barrier || "—"}>
-                          <span className="font-semibold text-slate-800 text-xs truncate max-w-[130px] block">
+                          <span className="font-semibold text-slate-800 text-xs truncate max-w-[150px] block">
                             {r.primary_barrier || "—"}
                           </span>
                         </Tooltip>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useState, use } from "react";
 import Link from "next/link";
@@ -89,7 +89,7 @@ export default function BarrierDetailPage({
             />
             <div className="p-4 bg-slate-900/90 text-xs text-slate-300 space-y-1">
               <p className="font-medium text-slate-200">{previewImage.caption}</p>
-              <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-slate-400 pt-1">
+              <div className="flex flex-wrap items-center gap-3 text-[12px] font-mono text-slate-400 pt-1">
                 {previewImage.assetId && (
                   <span>Asset: {previewImage.assetId}</span>
                 )}
@@ -123,10 +123,10 @@ export default function BarrierDetailPage({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
+              <span className="text-[12px] font-mono font-bold uppercase tracking-wider text-slate-400">
                 {b.code}
               </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
                 <CheckCircle2 className="h-3 w-3" />
                 Active Monitored Barrier
               </span>
@@ -154,7 +154,7 @@ export default function BarrierDetailPage({
         {/* Operational Indicators */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
               Classification
             </span>
             <p className="font-bold text-slate-900 text-xs sm:text-sm">
@@ -162,7 +162,7 @@ export default function BarrierDetailPage({
             </p>
           </div>
           <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
               Governing Code
             </span>
             <p className="font-bold text-slate-900 text-xs sm:text-sm font-mono">
@@ -170,7 +170,7 @@ export default function BarrierDetailPage({
             </p>
           </div>
           <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
               Verification Proof
             </span>
             <p className="font-bold text-emerald-700 text-xs sm:text-sm flex items-center gap-1 font-mono">
@@ -179,7 +179,7 @@ export default function BarrierDetailPage({
             </p>
           </div>
           <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
               Regulatory References
             </span>
             <p className="font-bold text-slate-900 text-xs sm:text-sm font-mono">
@@ -200,12 +200,12 @@ export default function BarrierDetailPage({
               <h2 className="text-sm font-bold text-slate-900">
                 Verified Photographic Inspection Proofs
               </h2>
-              <p className="text-[11px] text-slate-400 font-medium">
+              <p className="text-[12px] text-slate-400 font-medium">
                 High-resolution field documentation showing installed barrier compliance
               </p>
             </div>
           </div>
-          <span className="text-[11px] font-mono font-bold text-slate-500">
+          <span className="text-[12px] font-mono font-bold text-slate-500">
             Chain of Custody Active
           </span>
         </div>
@@ -231,7 +231,7 @@ export default function BarrierDetailPage({
                   <Maximize2 className="h-4 w-4" />
                 </div>
                 {item.tag && (
-                  <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-slate-900/80 backdrop-blur-xs text-white text-[10px] font-mono font-bold">
+                  <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-slate-900/80 backdrop-blur-xs text-white text-[11px] font-mono font-bold">
                     {item.tag}
                   </span>
                 )}
@@ -241,11 +241,11 @@ export default function BarrierDetailPage({
                 <h3 className="text-xs font-bold text-slate-900 leading-snug">
                   {item.title}
                 </h3>
-                <p className="text-[11px] text-slate-600 leading-relaxed font-normal">
+                <p className="text-[12px] text-slate-600 leading-relaxed font-normal">
                   {item.caption}
                 </p>
 
-                <div className="pt-2 border-t border-slate-200/70 flex flex-wrap items-center justify-between text-[10px] font-mono text-slate-400">
+                <div className="pt-2 border-t border-slate-200/70 flex flex-wrap items-center justify-between text-[11px] font-mono text-slate-400">
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
                     {item.timestamp || "2026-09-24 UTC"}
@@ -272,12 +272,12 @@ export default function BarrierDetailPage({
               <h2 className="text-sm font-bold text-slate-900">
                 Governing Standards &amp; External Regulatory Authorities
               </h2>
-              <p className="text-[11px] text-slate-400 font-medium">
+              <p className="text-[12px] text-slate-400 font-medium">
                 Official source repositories and compliance regulations where rules originate
               </p>
             </div>
           </div>
-          <span className="text-[11px] font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+          <span className="text-[12px] font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
             Authoritative Links
           </span>
         </div>
@@ -293,7 +293,7 @@ export default function BarrierDetailPage({
             >
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
+                  <span className="text-[11px] font-mono font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
                     {src.code || "REGULATION"}
                   </span>
                   <ExternalLink className="h-3.5 w-3.5 text-slate-400 group-hover:text-blue-600 transition" />
@@ -303,7 +303,7 @@ export default function BarrierDetailPage({
                 </h4>
               </div>
 
-              <div className="pt-2 border-t border-slate-200/70 flex items-center gap-1.5 text-[10px] text-slate-500 font-medium">
+              <div className="pt-2 border-t border-slate-200/70 flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
                 <Building className="h-3 w-3 text-slate-400 shrink-0" />
                 <span className="truncate">{src.authority}</span>
               </div>

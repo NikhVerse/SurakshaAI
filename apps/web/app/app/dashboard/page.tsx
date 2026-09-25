@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
@@ -155,7 +155,7 @@ export default function DashboardPage() {
         {/* Total Reports */}
         <div className="p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
               Reports
             </span>
             <FileText className="h-3.5 w-3.5 text-slate-300" />
@@ -163,7 +163,7 @@ export default function DashboardPage() {
           <span className={`text-3xl font-black font-mono tracking-tight mt-1.5 ${loading ? "text-slate-300 animate-pulse" : "text-slate-900"}`}>
             {loading ? "—" : String(totalReports).padStart(2, "0")}
           </span>
-          <span className="text-[10px] font-bold text-slate-500 mt-1">
+          <span className="text-[11px] font-bold text-slate-500 mt-1">
             Total Submissions
           </span>
         </div>
@@ -171,7 +171,7 @@ export default function DashboardPage() {
         {/* Critical SIF Signals */}
         <div className="p-4 rounded-xl border border-rose-200/80 bg-rose-50/20 flex flex-col justify-between shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-rose-700">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-rose-700">
               SIF Priority
             </span>
             <StatusDot status="CRITICAL" pulse size="sm" />
@@ -179,7 +179,7 @@ export default function DashboardPage() {
           <span className={`text-3xl font-black font-mono text-rose-600 tracking-tight mt-1.5 ${loading ? "animate-pulse opacity-40" : ""}`}>
             {loading ? "—" : String(psifPriority).padStart(2, "0")}
           </span>
-          <span className="text-[10px] font-bold text-rose-600/90 mt-1">
+          <span className="text-[11px] font-bold text-rose-600/90 mt-1">
             pSIF ≥ 0.60
           </span>
         </div>
@@ -187,7 +187,7 @@ export default function DashboardPage() {
         {/* Pending Reviews */}
         <div className="p-4 rounded-xl border border-amber-200/80 bg-amber-50/20 flex flex-col justify-between shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800">
               Pending
             </span>
             <StatusDot status="HIGH" size="sm" />
@@ -195,7 +195,7 @@ export default function DashboardPage() {
           <span className={`text-3xl font-black font-mono text-amber-600 tracking-tight mt-1.5 ${loading ? "animate-pulse opacity-40" : ""}`}>
             {loading ? "—" : String(pendingReviews).padStart(2, "0")}
           </span>
-          <span className="text-[10px] font-bold text-amber-700 mt-1">
+          <span className="text-[11px] font-bold text-amber-700 mt-1">
             Awaiting Review
           </span>
         </div>
@@ -203,7 +203,7 @@ export default function DashboardPage() {
         {/* Active Barriers */}
         <div className="p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
               Barriers
             </span>
             <StatusDot status="HEALTHY" size="sm" />
@@ -211,7 +211,7 @@ export default function DashboardPage() {
           <span className={`text-3xl font-black font-mono text-emerald-600 tracking-tight mt-1.5 ${loading ? "animate-pulse opacity-40" : ""}`}>
             {loading ? "—" : String(activeBarriers).padStart(2, "0")}
           </span>
-          <span className="text-[10px] font-bold text-emerald-700 mt-1">
+          <span className="text-[11px] font-bold text-emerald-700 mt-1">
             Active Barriers
           </span>
         </div>
@@ -219,7 +219,7 @@ export default function DashboardPage() {
         {/* Unacknowledged Alerts */}
         <div className="p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between shadow-2xs col-span-2 sm:col-span-1">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
               Alerts
             </span>
             <StatusDot status={unackAlerts > 0 ? "CRITICAL" : "NEUTRAL"} pulse={unackAlerts > 0} size="sm" />
@@ -227,7 +227,7 @@ export default function DashboardPage() {
           <span className={`text-3xl font-black font-mono tracking-tight mt-1.5 ${unackAlerts > 0 ? "text-rose-600" : "text-slate-900"} ${loading ? "animate-pulse opacity-40" : ""}`}>
             {loading ? "—" : String(unackAlerts).padStart(2, "0")}
           </span>
-          <span className="text-[10px] font-bold text-slate-500 mt-1">
+          <span className="text-[11px] font-bold text-slate-500 mt-1">
             Unacknowledged
           </span>
         </div>
@@ -244,7 +244,7 @@ export default function DashboardPage() {
                 Active Alerts
               </h2>
               {topAlerts.length > 0 && (
-                <span className="ml-1 text-[10px] font-mono font-bold bg-rose-100 text-rose-700 rounded-full px-2 py-0.5">
+                <span className="ml-1 text-[11px] font-mono font-bold bg-rose-100 text-rose-700 rounded-full px-2 py-0.5">
                   {topAlerts.length}
                 </span>
               )}
@@ -283,7 +283,7 @@ export default function DashboardPage() {
                         </span>
                         <SeverityBadge severity={alert.severity} />
                       </div>
-                      <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+                      <p className="text-[12px] text-slate-500 font-medium truncate mt-0.5">
                         {alert.message}
                       </p>
                     </div>
@@ -405,7 +405,7 @@ export default function DashboardPage() {
                         style={{ height: `${psifHeightPct}%` }}
                       />
                     </div>
-                    <span className="text-[9px] font-bold text-slate-400">{m.month}</span>
+                    <span className="text-[10px] font-bold text-slate-400">{m.month}</span>
                   </div>
                 </Tooltip>
               );
@@ -413,7 +413,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <div className="flex items-center gap-4 text-[10px] font-bold text-slate-400 pt-1">
+        <div className="flex items-center gap-4 text-[11px] font-bold text-slate-400 pt-1">
           <span className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-slate-200" />
             Total Reports
@@ -463,7 +463,7 @@ export default function DashboardPage() {
                   {log.action.replace(/_/g, " ")} — {log.entity_type}
                   {log.entity_id ? ` #${String(log.entity_id).slice(0, 8)}` : ""}
                 </span>
-                <span className="text-[10px] text-slate-400 font-mono shrink-0">
+                <span className="text-[11px] text-slate-400 font-mono shrink-0">
                   {log.timestamp
                     ? new Date(log.timestamp).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })
                     : "—"}

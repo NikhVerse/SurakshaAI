@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Shield, AlertCircle } from "lucide-react";
 
 export default function Footer() {
@@ -12,7 +12,7 @@ export default function Footer() {
                 <Shield className="h-3.5 w-3.5" />
               </div>
               <span className="font-semibold text-slate-900">SurakshaAI</span>
-              <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-mono text-slate-600">
+              <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[11px] font-mono text-slate-600">
                 v1.0-enterprise
               </span>
             </div>
@@ -21,7 +21,7 @@ export default function Footer() {
               Designed for Health, Safety, and Environment (HSE) organizations to transform unstructured
               incident narratives into calibrated pSIF priorities, barrier health analytics, and recurring precursor discovery.
             </p>
-            <div className="flex items-start gap-2 rounded border border-amber-200 bg-amber-50/50 p-2 text-[11px] text-amber-800">
+            <div className="flex items-start gap-2 rounded border border-amber-200 bg-amber-50/50 p-2 text-[12px] text-amber-800">
               <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5 text-amber-600" />
               <span>
                 <strong>Non-Negotiable Boundary:</strong> SurakshaAI is a decision-support platform, not an accident predictor or autonomous authority.
@@ -55,7 +55,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-slate-100 pt-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-400 gap-2">
+        <div className="mt-8 border-t border-slate-100 pt-6 flex flex-col sm:flex-row items-center justify-between text-[12px] text-slate-400 gap-2">
           <span>&copy; {new Date().getFullYear()} SurakshaAI Project. Built for SIH Problem Statement SIH26165.</span>
           <span className="font-mono">Engineered for Zero Cloud Dependency</span>
         </div>

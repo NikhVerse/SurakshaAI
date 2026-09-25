@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import {
@@ -96,11 +96,11 @@ export default function LandingPage() {
 
                 <div className="grid grid-cols-2 gap-4 pt-2">
                   <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase">Degraded Barrier</p>
+                    <p className="text-[11px] font-bold text-slate-400 uppercase">Degraded Barrier</p>
                     <p className="text-xs font-bold text-slate-900">Energy Isolation (LOTO)</p>
                   </div>
                   <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase">Violated Rule</p>
+                    <p className="text-[11px] font-bold text-slate-400 uppercase">Violated Rule</p>
                     <p className="text-xs font-bold text-slate-900">IOGP #2 Bypass Controls</p>
                   </div>
                 </div>

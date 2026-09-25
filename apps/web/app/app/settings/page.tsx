@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useState } from "react";
 import {
@@ -244,7 +244,7 @@ export default function SettingsPage() {
           <form onSubmit={handleSaveProfile} className="space-y-4 text-xs">
             {/* Name Fields */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                 Full Legal Name
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -283,7 +283,7 @@ export default function SettingsPage() {
             {/* Age, DOB, Gender */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                   Age (20 – 100)
                 </label>
                 <input
@@ -301,7 +301,7 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                   Date of Birth (dd-mmm-yyyy)
                 </label>
                 <input
@@ -314,7 +314,7 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                   Gender
                 </label>
                 <div className="grid grid-cols-3 gap-1">
@@ -323,7 +323,7 @@ export default function SettingsPage() {
                       key={g}
                       type="button"
                       onClick={() => setEditGender(g)}
-                      className={`py-2 rounded-xl text-[11px] font-bold border transition cursor-pointer text-center ${
+                      className={`py-2 rounded-xl text-[12px] font-bold border transition cursor-pointer text-center ${
                         editGender === g
                           ? "bg-slate-900 text-white border-slate-900"
                           : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
@@ -339,7 +339,7 @@ export default function SettingsPage() {
             {/* Role & Region */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                   Operational Role
                 </label>
                 <select
@@ -356,7 +356,7 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                   Operational Region
                 </label>
                 <select
@@ -375,7 +375,7 @@ export default function SettingsPage() {
 
             {/* Phone */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                 Phone Number
               </label>
               <input
@@ -415,15 +415,15 @@ export default function SettingsPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-1">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Name</span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Name</span>
                   <p className="text-sm font-bold text-slate-900 mt-0.5">{user?.full_name || "—"}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Email Address</span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Email Address</span>
                   <p className="text-sm font-mono font-medium text-slate-700 mt-0.5">{user?.email || "—"}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Assigned Role</span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Assigned Role</span>
                   <span className="inline-block mt-0.5 px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 font-bold text-xs border border-slate-200">
                     {roleLabel(user?.role)}
                   </span>
@@ -433,25 +433,25 @@ export default function SettingsPage() {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-100 text-xs">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Region</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Region</span>
                 <p className="text-xs font-semibold text-slate-800 mt-0.5 truncate" title={user?.region || "—"}>
                   {user?.region || "—"}
                 </p>
               </div>
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Age / Gender</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Age / Gender</span>
                 <p className="text-xs font-semibold text-slate-800 mt-0.5">
                   {user?.age ? `${user.age} yrs` : "—"} &bull; {user?.gender || "—"}
                 </p>
               </div>
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Date of Birth</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Date of Birth</span>
                 <p className="text-xs font-mono font-semibold text-slate-800 mt-0.5">
                   {user?.dob || "—"}
                 </p>
               </div>
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Phone</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Phone</span>
                 <p className="text-xs font-semibold text-slate-800 mt-0.5">
                   {user?.phone || "—"}
                 </p>
@@ -487,7 +487,7 @@ export default function SettingsPage() {
                     </div>
                     <div>
                       <p className="text-xs font-bold text-slate-900">{u.full_name}</p>
-                      <p className="text-[11px] font-mono text-slate-500">{u.email}</p>
+                      <p className="text-[12px] font-mono text-slate-500">{u.email}</p>
                     </div>
                   </div>
 
@@ -505,7 +505,7 @@ export default function SettingsPage() {
                     <button
                       type="button"
                       onClick={() => handleStatusToggle(u.id, u.account_status)}
-                      className={`text-[11px] font-bold px-2 py-1 rounded-lg border transition ${
+                      className={`text-[12px] font-bold px-2 py-1 rounded-lg border transition ${
                         u.account_status === "ACTIVE"
                           ? "bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100"
                           : "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200"
@@ -540,12 +540,12 @@ export default function SettingsPage() {
           <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
             <div className="flex items-center gap-1.5 text-slate-500">
               <Database className="h-3.5 w-3.5" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Database Engine</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider">Database Engine</span>
             </div>
             <p className="text-xs font-bold text-slate-900 font-mono">
               SQLite / PostgreSQL Core
             </p>
-            <span className="text-[10px] text-emerald-700 font-semibold block">
+            <span className="text-[11px] text-emerald-700 font-semibold block">
               {systemHealth?.database === "connected" ? "Connected & Indexed" : "Active Local Instance"}
             </span>
           </div>
@@ -553,12 +553,12 @@ export default function SettingsPage() {
           <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
             <div className="flex items-center gap-1.5 text-slate-500">
               <Cpu className="h-3.5 w-3.5" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Vector Index</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider">Vector Index</span>
             </div>
             <p className="text-xs font-bold text-slate-900 font-mono">
               In-Process Hybrid Index
             </p>
-            <span className="text-[10px] text-emerald-700 font-semibold block">
+            <span className="text-[11px] text-emerald-700 font-semibold block">
               BM25 + Semantic Embeddings
             </span>
           </div>
@@ -566,12 +566,12 @@ export default function SettingsPage() {
           <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 space-y-1">
             <div className="flex items-center gap-1.5 text-slate-500">
               <Clock className="h-3.5 w-3.5" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Uptime</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider">Uptime</span>
             </div>
             <p className="text-xs font-bold text-slate-900 font-mono">
               {systemHealth?.uptime_seconds ? `${Math.round(systemHealth.uptime_seconds)}s` : "Online"}
             </p>
-            <span className="text-[10px] text-slate-500 font-semibold block">
+            <span className="text-[11px] text-slate-500 font-semibold block">
               Version {systemHealth?.app_version || "1.0.0"}
             </span>
           </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -177,7 +177,7 @@ export default function HelpDesk() {
           if (numMatch) {
             return (
               <div key={idx} className="flex items-start gap-1.5 ml-0.5">
-                <span className="font-semibold text-slate-500 font-mono text-[11px]">
+                <span className="font-semibold text-slate-500 font-mono text-[12px]">
                   {numMatch[1]}.
                 </span>
                 <span
@@ -204,7 +204,7 @@ export default function HelpDesk() {
     return text
       .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-slate-900">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
-      .replace(/`([^`]+)`/g, '<code class="font-mono bg-slate-100 px-1 py-0.5 rounded text-[11px] text-slate-800">$1</code>')
+      .replace(/`([^`]+)`/g, '<code class="font-mono bg-slate-100 px-1 py-0.5 rounded text-[12px] text-slate-800">$1</code>')
       .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-blue-600 font-medium hover:underline">$1</a>');
   };
 
@@ -228,7 +228,7 @@ export default function HelpDesk() {
             </span>
 
             {unreadCount > 0 && (
-              <span className="absolute -bottom-1 -right-1 h-4.5 min-w-4.5 px-1 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-bold flex items-center justify-center border-2 border-slate-900 shadow-sm">
+              <span className="absolute -bottom-1 -right-1 h-4.5 min-w-4.5 px-1 rounded-full bg-emerald-500 text-slate-950 text-[11px] font-bold flex items-center justify-center border-2 border-slate-900 shadow-sm">
                 {unreadCount}
               </span>
             )}
@@ -247,12 +247,12 @@ export default function HelpDesk() {
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="text-xs font-bold text-white">Help Desk</h3>
-                    <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-950/70 border border-emerald-500/30 px-1.5 py-0.2 rounded-md flex items-center gap-1">
+                    <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-950/70 border border-emerald-500/30 px-1.5 py-0.2 rounded-md flex items-center gap-1">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                       OpenAI
                     </span>
                   </div>
-                  <p className="text-[10px] text-slate-400">Natural ChatGPT-style assistant</p>
+                  <p className="text-[11px] text-slate-400">Natural ChatGPT-style assistant</p>
                 </div>
               </div>
 
@@ -304,7 +304,7 @@ export default function HelpDesk() {
                               key={idx}
                               href={link.href}
                               onClick={() => setIsOpen(false)}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-[11px] border border-blue-200/70 transition"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-[12px] border border-blue-200/70 transition"
                             >
                               <span>{link.title}</span>
                               <span>&rarr;</span>
@@ -315,7 +315,7 @@ export default function HelpDesk() {
                     </div>
 
                     {/* Timestamp */}
-                    <span className="text-[9px] text-slate-400 px-1 mt-0.5 font-medium">
+                    <span className="text-[10px] text-slate-400 px-1 mt-0.5 font-medium">
                       {msg.timestamp}
                     </span>
                   </div>
@@ -344,7 +344,7 @@ export default function HelpDesk() {
 
             {/* Quick Prompt Starters */}
             {messages.length <= 2 && (
-              <div className="px-3.5 py-1.5 bg-white border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto scrollbar-none text-[11px]">
+              <div className="px-3.5 py-1.5 bg-white border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto scrollbar-none text-[12px]">
                 {INITIAL_SUGGESTIONS.map((sug, idx) => (
                   <button
                     key={idx}
@@ -385,7 +385,7 @@ export default function HelpDesk() {
                   <Send className="h-3.5 w-3.5" />
                 </button>
               </form>
-              <p className="text-[9px] text-slate-400 text-center pt-1.5">
+              <p className="text-[10px] text-slate-400 text-center pt-1.5">
                 OpenAI &bull; Natural conversational safety intelligence
               </p>
             </div>

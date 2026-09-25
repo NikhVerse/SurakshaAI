@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { AlertCircle, AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react";
@@ -76,7 +76,7 @@ export function RiskScore({
     size === "lg"
       ? "text-xl font-black px-2.5 py-1"
       : size === "sm"
-      ? "text-[11px] font-bold px-1.5 py-0.5"
+      ? "text-[12px] font-bold px-1.5 py-0.5"
       : "text-xs font-extrabold px-2 py-0.5";
 
   return (
@@ -86,7 +86,7 @@ export function RiskScore({
       >
         <span>{score.toFixed(2)}</span>
         {showLabel && (
-          <span className="text-[10px] font-sans font-bold uppercase tracking-wider">
+          <span className="text-[11px] font-sans font-bold uppercase tracking-wider">
             {isCritical ? "Crit" : isMedium ? "Med" : "Low"}
           </span>
         )}
@@ -107,7 +107,7 @@ export function SeverityBadge({
   if (norm === "CRITICAL" || norm === "FAILED") {
     return (
       <span
-        className={`inline-flex items-center gap-1 text-[11px] font-extrabold font-mono px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 ${className}`}
+        className={`inline-flex items-center gap-1 text-[12px] font-extrabold font-mono px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 ${className}`}
       >
         <XCircle className="h-3 w-3 text-rose-600" strokeWidth={2.5} />
         <span>CRITICAL</span>
@@ -118,7 +118,7 @@ export function SeverityBadge({
   if (norm === "HIGH" || norm === "DEGRADED") {
     return (
       <span
-        className={`inline-flex items-center gap-1 text-[11px] font-extrabold font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 ${className}`}
+        className={`inline-flex items-center gap-1 text-[12px] font-extrabold font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 ${className}`}
       >
         <AlertTriangle className="h-3 w-3 text-amber-600" strokeWidth={2.5} />
         <span>{norm === "DEGRADED" ? "DEGRADED" : "HIGH"}</span>
@@ -128,7 +128,7 @@ export function SeverityBadge({
 
   return (
     <span
-      className={`inline-flex items-center gap-1 text-[11px] font-extrabold font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 ${className}`}
+      className={`inline-flex items-center gap-1 text-[12px] font-extrabold font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 ${className}`}
     >
       <CheckCircle2 className="h-3 w-3 text-emerald-600" strokeWidth={2.5} />
       <span>{norm === "VERIFIED" ? "VERIFIED" : "HEALTHY"}</span>

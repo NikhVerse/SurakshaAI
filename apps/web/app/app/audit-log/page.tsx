@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useState } from "react";
 import {
@@ -123,29 +123,29 @@ export default function AuditLogPage() {
       {/* Number-First Operational Metrics Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Total Events</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Total Events</span>
           <p className="text-2xl font-black text-slate-900 font-mono mt-0.5">{logs.length}</p>
-          <span className="text-[10px] font-semibold text-slate-500">Verified Append-Only</span>
+          <span className="text-[11px] font-semibold text-slate-500">Verified Append-Only</span>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Integrity</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Integrity</span>
           <p className="text-2xl font-black text-emerald-600 font-mono mt-0.5">100%</p>
-          <span className="text-[10px] font-semibold text-emerald-700">Tamper-Proof</span>
+          <span className="text-[11px] font-semibold text-emerald-700">Tamper-Proof</span>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Active Actors</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Active Actors</span>
           <p className="text-2xl font-black text-slate-900 font-mono mt-0.5">
             {uniqueActors.length < 10 ? `0${uniqueActors.length}` : uniqueActors.length}
           </p>
-          <span className="text-[10px] font-semibold text-slate-500">Role-Gated</span>
+          <span className="text-[11px] font-semibold text-slate-500">Role-Gated</span>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Compliance</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Compliance</span>
           <p className="text-lg font-black text-slate-900 font-mono mt-1">ISO 27001</p>
-          <span className="text-[10px] font-semibold text-slate-500">OISD-145 Certified</span>
+          <span className="text-[11px] font-semibold text-slate-500">OISD-145 Certified</span>
         </div>
       </div>
 
@@ -189,10 +189,10 @@ export default function AuditLogPage() {
       {/* Visual Operational Timeline */}
       <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-2xs">
         <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+          <span className="text-[12px] font-bold uppercase tracking-wider text-slate-500">
             Timeline ({filteredLogs.length})
           </span>
-          <span className="text-[11px] font-mono text-emerald-700 font-bold flex items-center gap-1">
+          <span className="text-[12px] font-mono text-emerald-700 font-bold flex items-center gap-1">
             <Lock className="h-3 w-3" />
             <span>Cryptographic Trail</span>
           </span>
@@ -225,7 +225,7 @@ export default function AuditLogPage() {
                       <span className="text-xs font-mono font-bold text-slate-800 block">
                         {formatTime(log.timestamp)}
                       </span>
-                      <span className="text-[10px] font-mono text-slate-400 block">
+                      <span className="text-[11px] font-mono text-slate-400 block">
                         {formatDate(log.timestamp)}
                       </span>
                     </div>
@@ -237,12 +237,12 @@ export default function AuditLogPage() {
                         <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition truncate">
                           {getShortAction(log.action)}
                         </span>
-                        <span className="text-[10px] font-bold font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200 uppercase shrink-0">
+                        <span className="text-[11px] font-bold font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200 uppercase shrink-0">
                           {log.entity_type}
                         </span>
                       </div>
                       {log.entity_id && (
-                        <span className="text-[11px] font-mono text-slate-400 block truncate">
+                        <span className="text-[12px] font-mono text-slate-400 block truncate">
                           ID: {log.entity_id.length > 22 ? log.entity_id.slice(0, 22) + "..." : log.entity_id}
                         </span>
                       )}
@@ -253,10 +253,10 @@ export default function AuditLogPage() {
                   <div className="flex items-center gap-3 shrink-0">
                     <Tooltip content={`${userName} (${log.user_role || "Analyst"})${log.ip_address ? ` · IP: ${log.ip_address}` : ""}`}>
                       <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
-                        <span className="h-5 w-5 rounded-md bg-slate-200 text-[10px] font-bold flex items-center justify-center text-slate-700">
+                        <span className="h-5 w-5 rounded-md bg-slate-200 text-[11px] font-bold flex items-center justify-center text-slate-700">
                           {userInitials}
                         </span>
-                        <span className="hidden md:inline text-[11px]">{userName}</span>
+                        <span className="hidden md:inline text-[12px]">{userName}</span>
                       </div>
                     </Tooltip>
 
@@ -264,7 +264,7 @@ export default function AuditLogPage() {
                       type="button"
                       className="text-xs font-bold text-slate-400 group-hover:text-slate-900 flex items-center gap-1 transition"
                     >
-                      <span className="hidden sm:inline text-[11px]">Inspect</span>
+                      <span className="hidden sm:inline text-[12px]">Inspect</span>
                       <ArrowRight className="h-3.5 w-3.5" />
                     </button>
                   </div>
@@ -298,24 +298,24 @@ export default function AuditLogPage() {
             content: (
               <div className="space-y-4">
                 <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 space-y-3">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
                     Execution Profile
                   </span>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div>
-                      <span className="text-slate-400 block text-[10px]">Action Code</span>
+                      <span className="text-slate-400 block text-[11px]">Action Code</span>
                       <span className="font-mono font-bold text-slate-900">{selectedLog?.action}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 block text-[10px]">Target Type</span>
+                      <span className="text-slate-400 block text-[11px]">Target Type</span>
                       <span className="font-mono font-bold text-slate-900">{selectedLog?.entity_type}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 block text-[10px]">Actor Role</span>
+                      <span className="text-slate-400 block text-[11px]">Actor Role</span>
                       <span className="font-bold text-slate-900">{selectedLog?.user_role || "Analyst"}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 block text-[10px]">Compliance State</span>
+                      <span className="text-slate-400 block text-[11px]">Compliance State</span>
                       <span className="font-bold text-emerald-700">OISD-145 Certified</span>
                     </div>
                   </div>
@@ -323,7 +323,7 @@ export default function AuditLogPage() {
 
                 {selectedLog?.details && Object.keys(selectedLog.details).length > 0 && (
                   <div className="rounded-xl border border-slate-200 p-4 space-y-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
                       Payload Attributes
                     </span>
                     <div className="space-y-1.5">
@@ -349,12 +349,12 @@ export default function AuditLogPage() {
                     <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                     <span>Cryptographic Block Signature Valid</span>
                   </div>
-                  <p className="text-[11px] font-mono text-emerald-700 break-all">
+                  <p className="text-[12px] font-mono text-emerald-700 break-all">
                     {selectedLog?.id ? `sha256:${selectedLog.id}` : "Verified SHA-256 Record"}
                   </p>
                 </div>
-                <div className="rounded-xl border border-slate-200 p-3 bg-slate-900 text-white font-mono text-[11px] space-y-1">
-                  <span className="text-slate-400 block text-[10px]">RAW AUDIT BLOB:</span>
+                <div className="rounded-xl border border-slate-200 p-3 bg-slate-900 text-white font-mono text-[12px] space-y-1">
+                  <span className="text-slate-400 block text-[11px]">RAW AUDIT BLOB:</span>
                   <pre className="overflow-x-auto whitespace-pre-wrap text-slate-300">
                     {JSON.stringify(selectedLog, null, 2)}
                   </pre>

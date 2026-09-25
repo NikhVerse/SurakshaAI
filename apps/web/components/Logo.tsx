@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 
@@ -129,8 +129,8 @@ export default function Logo({
                 size === "large" || size === "lg"
                   ? "text-xs"
                   : size === "small" || size === "sm"
-                  ? "text-[10px]"
-                  : "text-[11px]"
+                  ? "text-[11px]"
+                  : "text-[12px]"
               }`}
             >
               AI
@@ -138,7 +138,7 @@ export default function Logo({
           </div>
           {size !== "sm" && size !== "small" && (
             <span
-              className={`text-[8.5px] font-bold uppercase tracking-[0.24em] ${subtextColor} font-mono mt-1`}
+              className={`text-[9.5px] font-bold uppercase tracking-[0.24em] ${subtextColor} font-mono mt-1`}
             >
               Industrial Safety Intelligence
             </span>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
@@ -177,37 +177,37 @@ export default function KnowledgePage() {
       {/* Number-First Operational KPI Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
             Documents
           </span>
           <p className="text-2xl font-black text-slate-900 font-mono mt-0.5">
             {docs.length < 10 ? `0${docs.length}` : docs.length}
           </p>
-          <span className="text-[10px] font-semibold text-slate-500">Governed Standards</span>
+          <span className="text-[11px] font-semibold text-slate-500">Governed Standards</span>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
             Chunks Indexed
           </span>
           <p className="text-2xl font-black text-slate-900 font-mono mt-0.5">{totalChunks}</p>
-          <span className="text-[10px] font-semibold text-slate-500">Vector Embeddings</span>
+          <span className="text-[11px] font-semibold text-slate-500">Vector Embeddings</span>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
             Verification
           </span>
           <p className="text-2xl font-black text-emerald-600 font-mono mt-0.5">100%</p>
-          <span className="text-[10px] font-semibold text-emerald-700">Zero Hallucination</span>
+          <span className="text-[11px] font-semibold text-emerald-700">Zero Hallucination</span>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
             Framework
           </span>
           <p className="text-lg font-black text-slate-900 font-mono mt-1">IOGP 459</p>
-          <span className="text-[10px] font-semibold text-slate-500">OISD / OSHA</span>
+          <span className="text-[11px] font-semibold text-slate-500">OISD / OSHA</span>
         </div>
       </div>
 
@@ -236,10 +236,10 @@ export default function KnowledgePage() {
         {ragResult && (
           <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 Grounded Result
               </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
                 Evidence Verified
               </span>
             </div>
@@ -247,7 +247,7 @@ export default function KnowledgePage() {
               {ragResult.answer}
             </p>
             {ragResult.citations && ragResult.citations.length > 0 && (
-              <div className="pt-2 border-t border-slate-200 flex flex-wrap gap-2 text-[11px]">
+              <div className="pt-2 border-t border-slate-200 flex flex-wrap gap-2 text-[12px]">
                 {ragResult.citations.map((c: any, idx: number) => (
                   <span
                     key={idx}
@@ -268,7 +268,7 @@ export default function KnowledgePage() {
           <h2 className="text-sm font-bold text-slate-900">
             Governed Standard Documents ({docs.length})
           </h2>
-          <span className="text-[11px] font-mono text-slate-400">
+          <span className="text-[12px] font-mono text-slate-400">
             Real Photographic Field Proofs Linked
           </span>
         </div>
@@ -304,19 +304,19 @@ export default function KnowledgePage() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                      <span className="rounded bg-slate-900/80 backdrop-blur-xs text-white border border-white/20 px-2 py-0.5 text-[10px] font-mono font-bold">
+                      <span className="rounded bg-slate-900/80 backdrop-blur-xs text-white border border-white/20 px-2 py-0.5 text-[11px] font-mono font-bold">
                         {d.document_type || "MANDATORY"}
                       </span>
                     </div>
                     <div className="absolute top-2.5 right-2.5">
-                      <span className="rounded bg-emerald-500/90 text-white px-2 py-0.5 text-[10px] font-bold flex items-center gap-1">
+                      <span className="rounded bg-emerald-500/90 text-white px-2 py-0.5 text-[11px] font-bold flex items-center gap-1">
                         <CheckCircle2 className="h-3 w-3" />
                         Verified
                       </span>
                     </div>
 
                     <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
-                      <span className="text-[10px] font-mono text-emerald-300 block">
+                      <span className="text-[11px] font-mono text-emerald-300 block">
                         {d.source_org}
                       </span>
                       <p className="text-xs font-bold truncate text-white">
@@ -328,10 +328,10 @@ export default function KnowledgePage() {
                   {/* Body Content */}
                   <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
                     <div className="space-y-1">
-                      <p className="text-[11px] text-slate-500 leading-snug font-medium line-clamp-2">
+                      <p className="text-[12px] text-slate-500 leading-snug font-medium line-clamp-2">
                         {d.source_authority}
                       </p>
-                      <div className="flex items-center gap-2 text-[10px] font-mono text-slate-400 pt-1">
+                      <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400 pt-1">
                         <span>Ver. {d.version || "1.0"}</span>
                         <span>•</span>
                         <span>{d.chunk_count} Chunks</span>
@@ -344,12 +344,12 @@ export default function KnowledgePage() {
                     </div>
 
                     <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                      <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                      <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
                         {standards[0]?.code || "REGULATION"}
                       </span>
 
                       <div className="flex items-center gap-1 font-bold text-slate-700 group-hover:text-blue-600 transition">
-                        <span className="text-[11px]">Audit &amp; Evidence</span>
+                        <span className="text-[12px]">Audit &amp; Evidence</span>
                         <ArrowRight className="h-3 w-3" />
                       </div>
                     </div>
@@ -372,12 +372,12 @@ export default function KnowledgePage() {
               <h2 className="text-sm font-bold text-slate-900">
                 Official Regulatory Portals &amp; Source Document Repositories
               </h2>
-              <p className="text-[11px] text-slate-400 font-medium">
+              <p className="text-[12px] text-slate-400 font-medium">
                 Verified external links to statutory bodies where engineering standards and safety mandates originate
               </p>
             </div>
           </div>
-          <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 self-start sm:self-auto">
+          <span className="text-[11px] font-bold font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 self-start sm:self-auto">
             100% External Verified
           </span>
         </div>
@@ -393,7 +393,7 @@ export default function KnowledgePage() {
             >
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                  <span className="text-[11px] font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
                     {p.code}
                   </span>
                   <ExternalLink className="h-3.5 w-3.5 text-slate-400 group-hover:text-blue-600 transition" />
@@ -401,12 +401,12 @@ export default function KnowledgePage() {
                 <h4 className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition leading-snug">
                   {p.name}
                 </h4>
-                <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
+                <p className="text-[12px] text-slate-500 leading-relaxed font-normal">
                   {p.desc}
                 </p>
               </div>
 
-              <div className="pt-2 border-t border-slate-200/70 text-[10px] text-slate-400 font-medium flex items-center gap-1 truncate">
+              <div className="pt-2 border-t border-slate-200/70 text-[11px] text-slate-400 font-medium flex items-center gap-1 truncate">
                 <span className="truncate">{p.authority}</span>
               </div>
             </a>

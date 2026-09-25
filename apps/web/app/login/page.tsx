@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -74,7 +74,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                 Email Address
               </label>
               <div className="relative">
@@ -94,10 +94,10 @@ export default function LoginPage() {
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500">
                   Password
                 </label>
-                <Link href="/forgot-password" className="text-[11px] font-bold text-slate-500 hover:text-slate-800">
+                <Link href="/forgot-password" className="text-[12px] font-bold text-slate-500 hover:text-slate-800">
                   Forgot?
                 </Link>
               </div>
@@ -118,7 +118,7 @@ export default function LoginPage() {
 
             {/* Operational Region Selection */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                 Operational Region
               </label>
               <div className="relative">
@@ -136,7 +136,7 @@ export default function LoginPage() {
                   ))}
                 </select>
               </div>
-              <p className="text-[9px] text-slate-400 mt-1">
+              <p className="text-[10px] text-slate-400 mt-1">
                 Scopes your telemetry, local incidents, and barrier alerts
               </p>
             </div>

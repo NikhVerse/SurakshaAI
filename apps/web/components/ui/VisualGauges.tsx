@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
@@ -60,7 +60,7 @@ export function TrendIndicator({
 
     return (
       <span
-        className={`inline-flex items-center gap-1 text-[11px] font-bold font-mono px-2 py-0.5 rounded-full ${
+        className={`inline-flex items-center gap-1 text-[12px] font-bold font-mono px-2 py-0.5 rounded-full ${
           isGood
             ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
             : "bg-rose-50 text-rose-700 border border-rose-200"
@@ -77,7 +77,7 @@ export function TrendIndicator({
   const num = change || 0;
   if (num > 0) {
     return (
-      <span className="inline-flex items-center gap-0.5 text-[11px] font-bold font-mono text-rose-600">
+      <span className="inline-flex items-center gap-0.5 text-[12px] font-bold font-mono text-rose-600">
         <ArrowUpRight className="h-3 w-3" strokeWidth={2.5} />
         <span>+{num.toFixed(1)}%</span>
       </span>
@@ -85,14 +85,14 @@ export function TrendIndicator({
   }
   if (num < 0) {
     return (
-      <span className="inline-flex items-center gap-0.5 text-[11px] font-bold font-mono text-emerald-600">
+      <span className="inline-flex items-center gap-0.5 text-[12px] font-bold font-mono text-emerald-600">
         <ArrowDownRight className="h-3 w-3" strokeWidth={2.5} />
         <span>{num.toFixed(1)}%</span>
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-0.5 text-[11px] font-bold font-mono text-slate-400">
+    <span className="inline-flex items-center gap-0.5 text-[12px] font-bold font-mono text-slate-400">
       <Minus className="h-3 w-3" strokeWidth={2} />
       <span>0.0%</span>
     </span>
@@ -122,12 +122,12 @@ export function LiveValue({
   return (
     <div className="flex flex-col p-3 rounded-xl border border-slate-200 bg-white shadow-2xs hover:border-slate-300 transition">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+        <span className="text-[12px] font-bold uppercase tracking-wider text-slate-400">
           {label}
         </span>
         <span className="flex items-center gap-1.5">
           <span className={`h-1.5 w-1.5 rounded-full ${dotColor} animate-pulse`} />
-          <span className="text-[9.5px] font-mono font-bold uppercase tracking-widest text-slate-400">
+          <span className="text-[10.5px] font-mono font-bold uppercase tracking-widest text-slate-400">
             LIVE
           </span>
         </span>

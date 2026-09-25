@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
@@ -141,7 +141,7 @@ export default function TriagePage() {
       {/* Filters Toolbar */}
       <div className="flex items-center justify-between gap-3 p-2 rounded-xl border border-slate-200 bg-white shadow-2xs">
         <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2">
+          <span className="text-[12px] font-bold text-slate-400 uppercase tracking-wider px-2">
             Filter:
           </span>
           {["PENDING", "CONFIRMED", "ALL"].map((f) => (
@@ -160,7 +160,7 @@ export default function TriagePage() {
         </div>
 
         <div className="flex items-center gap-1.5 pr-2">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">
+          <span className="text-[12px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">
             Sort:
           </span>
           <select
@@ -216,7 +216,7 @@ export default function TriagePage() {
                 </div>
 
                 <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-                  <span className="text-[11px] font-semibold text-slate-500 font-mono truncate max-w-[170px]">
+                  <span className="text-[12px] font-semibold text-slate-500 font-mono truncate max-w-[170px]">
                     {t.primary_barrier || "—"}
                   </span>
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useState, use } from "react";
 import Link from "next/link";
@@ -107,13 +107,13 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                   : "bg-slate-900 text-white"
               }`}
             >
-              <span className="text-[10px] font-black uppercase tracking-wider opacity-80">
+              <span className="text-[11px] font-black uppercase tracking-wider opacity-80">
                 {severityLabel}
               </span>
               <span className="text-2xl sm:text-3xl font-black font-mono leading-none mt-0.5">
                 {psifProb.toFixed(2)}
               </span>
-              <span className="text-[9px] font-bold uppercase tracking-wider opacity-75 mt-0.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider opacity-75 mt-0.5">
                 pSIF
               </span>
             </div>
@@ -124,7 +124,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                   {report.report_uid}
                 </span>
                 <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                  className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${
                     report.review_status === "CONFIRMED"
                       ? "bg-emerald-50 text-emerald-800 border-emerald-200"
                       : "bg-amber-50 text-amber-800 border-amber-200"
@@ -163,31 +163,31 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
         {/* 4 Compact Operational Metric Tiles */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-100">
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-0.5">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Priority Score</span>
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Priority Score</span>
             <p className="text-lg font-black text-slate-900 font-mono">
               {psif?.priority_score != null ? psif.priority_score.toFixed(1) : "—"}<span className="text-xs font-normal text-slate-400">/100</span>
             </p>
           </div>
 
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-0.5">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Critical Barrier</span>
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Critical Barrier</span>
             <p className="text-xs font-bold text-slate-900 truncate">
               {psif?.primary_barrier || "Unassigned"}
             </p>
-            <span className="text-[10px] font-semibold text-amber-700 block truncate">
+            <span className="text-[11px] font-semibold text-amber-700 block truncate">
               {psif?.barrier_state || "Pending"}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-0.5">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Model Confidence</span>
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Model Confidence</span>
             <p className="text-lg font-black text-emerald-600 font-mono">
               {psif?.confidence != null ? `${(psif.confidence * 100).toFixed(0)}%` : "—"}
             </p>
           </div>
 
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-0.5">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Actual Outcome</span>
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Actual Outcome</span>
             <p className="text-xs font-bold text-slate-900 truncate mt-1">
               {report.actual_outcome || "No outcome reported"}
             </p>
@@ -228,7 +228,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900">
                 Factor Attribution (SHAP)
               </h2>
-              <span className="text-[10px] font-mono text-slate-400">Gradient Booster Explainability</span>
+              <span className="text-[11px] font-mono text-slate-400">Gradient Booster Explainability</span>
             </div>
 
             {psif?.shap_values ? (
@@ -255,7 +255,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
             {/* Extracted Safety Factors */}
             {report.entities && report.entities.length > 0 && (
               <div className="pt-3 border-t border-slate-100 space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
                   Extracted Operational Entities
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -264,7 +264,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                       key={idx}
                       className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800"
                     >
-                      <span className="text-[9px] font-mono font-bold text-sky-700 uppercase">{e.entity_type}</span>
+                      <span className="text-[10px] font-mono font-bold text-sky-700 uppercase">{e.entity_type}</span>
                       <span>{e.value}</span>
                     </span>
                   ))}
@@ -291,11 +291,11 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                         <span className="font-bold font-mono text-slate-900 group-hover:text-blue-600 transition">
                           {sim.report_uid}
                         </span>
-                        <span className="font-bold text-[10px] text-sky-700 bg-sky-50 border border-sky-200 px-1.5 py-0.5 rounded">
+                        <span className="font-bold text-[11px] text-sky-700 bg-sky-50 border border-sky-200 px-1.5 py-0.5 rounded">
                           {(sim.similarity_score * 100).toFixed(0)}%
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-500 truncate mt-0.5 max-w-[200px]">{sim.narrative_snippet}</p>
+                      <p className="text-[12px] text-slate-500 truncate mt-0.5 max-w-[200px]">{sim.narrative_snippet}</p>
                     </div>
                     <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-slate-900 transition" />
                   </Link>
@@ -313,7 +313,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
           {/* Narrative & Hypothesis Section */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-2xs space-y-4">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
                 Field Incident Narrative
               </span>
               <p className="text-sm font-medium text-slate-800 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200">
@@ -322,7 +322,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
             </div>
 
             <div className="pt-3 border-t border-slate-100">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
                 Synthesized Consequence Hypothesis
               </span>
               <p className="text-xs text-slate-600 leading-relaxed font-medium">
@@ -340,7 +340,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                   Field Photographic Evidence &amp; Physical Inspection Records
                 </h2>
               </div>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
                 <CheckCircle2 className="h-3 w-3" />
                 <span>Chain of Custody Verified</span>
               </span>
@@ -392,7 +392,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                       className="h-full w-full object-cover object-center group-hover:scale-[1.02] transition duration-300"
                       loading="lazy"
                     />
-                    <span className="absolute top-2.5 left-2.5 rounded bg-slate-900/85 backdrop-blur-xs px-2 py-0.5 text-[9px] font-mono font-bold text-white uppercase tracking-wider border border-white/20">
+                    <span className="absolute top-2.5 left-2.5 rounded bg-slate-900/85 backdrop-blur-xs px-2 py-0.5 text-[10px] font-mono font-bold text-white uppercase tracking-wider border border-white/20">
                       {ev.type}
                     </span>
                   </div>
@@ -402,15 +402,15 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                       <div className="flex items-center justify-between text-xs font-bold text-slate-900">
                         <span>{ev.title}</span>
                       </div>
-                      <span className="text-[10px] font-mono text-slate-400 block mt-0.5">
+                      <span className="text-[11px] font-mono text-slate-400 block mt-0.5">
                         {ev.asset} • {ev.timestamp}
                       </span>
-                      <p className="text-[11px] text-slate-600 font-medium leading-relaxed mt-1">
+                      <p className="text-[12px] text-slate-600 font-medium leading-relaxed mt-1">
                         {ev.caption}
                       </p>
                     </div>
 
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-400">
+                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-400">
                       <span>Hash: sha256:{report.id.slice(0, 12)}...</span>
                       <span className="text-emerald-700 font-bold">Verified</span>
                     </div>
@@ -429,7 +429,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                   Governing Regulatory Standards &amp; External Document Citations
                 </h2>
               </div>
-              <span className="text-[10px] font-semibold text-slate-400">
+              <span className="text-[11px] font-semibold text-slate-400">
                 Official Regulatory References
               </span>
             </div>
@@ -488,7 +488,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                 >
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-800">
+                      <span className="font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-800">
                         {doc.code}
                       </span>
                       <ExternalLink className="h-3.5 w-3.5 text-slate-400 group-hover:text-blue-600 transition" />
@@ -496,12 +496,12 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                     <h3 className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition leading-snug">
                       {doc.title}
                     </h3>
-                    <p className="text-[11px] text-slate-500 font-medium">
+                    <p className="text-[12px] text-slate-500 font-medium">
                       {doc.authority}
                     </p>
                   </div>
 
-                  <div className="pt-2 border-t border-slate-200/80 flex items-center justify-between text-[10px] text-slate-400">
+                  <div className="pt-2 border-t border-slate-200/80 flex items-center justify-between text-[11px] text-slate-400">
                     <span>{doc.scope}</span>
                     <span className="font-bold text-blue-600 flex items-center gap-0.5">
                       <span>View Source</span>
@@ -527,7 +527,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                 <div key={lsr.lsr_id} className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between">
                   <div>
                     <span className="text-xs font-bold text-slate-900 block">{lsr.name}</span>
-                    <span className="text-[10px] font-mono text-slate-400">{lsr.code}</span>
+                    <span className="text-[11px] font-mono text-slate-400">{lsr.code}</span>
                   </div>
                   <span className="px-2 py-0.5 rounded bg-white border border-slate-200 font-bold font-mono text-xs text-slate-900">
                     {(lsr.confidence * 100).toFixed(0)}%
@@ -545,7 +545,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
         <div className="max-w-xl rounded-2xl border-2 border-slate-900 bg-white p-6 shadow-xs space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h2 className="text-sm font-bold text-slate-900">Human-in-the-Loop Sign-Off</h2>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
               Verified Analyst Sign-off
             </span>
           </div>
@@ -558,7 +558,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
           ) : (
             <form onSubmit={handleReviewSubmit} className="space-y-4 text-xs">
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                   Decision Code
                 </label>
                 <select
@@ -574,7 +574,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                   Corrective Directive
                 </label>
                 <textarea

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useState } from "react";
 import {
@@ -147,7 +147,7 @@ export function DetailDrawer({
                 )}
                 {displayStatus && (
                   <span
-                    className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
+                    className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
                       displayStatusVariant === "critical"
                         ? "bg-rose-50 text-rose-700 border-rose-200"
                         : displayStatusVariant === "healthy"
@@ -187,7 +187,7 @@ export function DetailDrawer({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
                 {displayMetrics.map((m) => (
                   <div key={m.label} className="p-2 rounded-xl border border-slate-200 bg-white">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block truncate">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block truncate">
                       {m.label}
                     </span>
                     <span className="text-xs font-black font-mono text-slate-900 mt-0.5 block truncate">
@@ -315,7 +315,7 @@ export function DetailDrawer({
                                 loading="lazy"
                               />
                               {img.tag && (
-                                <span className="absolute top-2.5 left-2.5 rounded bg-slate-900/85 backdrop-blur-xs px-2 py-0.5 text-[9px] font-mono font-bold text-white uppercase tracking-wider border border-white/20">
+                                <span className="absolute top-2.5 left-2.5 rounded bg-slate-900/85 backdrop-blur-xs px-2 py-0.5 text-[10px] font-mono font-bold text-white uppercase tracking-wider border border-white/20">
                                   {img.tag}
                                 </span>
                               )}
@@ -324,11 +324,11 @@ export function DetailDrawer({
                               <div className="flex items-center justify-between text-xs font-bold text-slate-900">
                                 <span>{img.title}</span>
                                 {img.assetId && (
-                                  <span className="font-mono text-[10px] text-slate-400">{img.assetId}</span>
+                                  <span className="font-mono text-[11px] text-slate-400">{img.assetId}</span>
                                 )}
                               </div>
                               {img.caption && (
-                                <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+                                <p className="text-[12px] text-slate-500 font-medium leading-relaxed">
                                   {img.caption}
                                 </p>
                               )}
@@ -374,14 +374,14 @@ export function DetailDrawer({
                           >
                             <div className="min-w-0">
                               <div className="flex items-center gap-1.5">
-                                <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700">
+                                <span className="font-mono text-[11px] font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700">
                                   {src.code || "STD"}
                                 </span>
                                 <span className="font-bold text-slate-900 group-hover:text-blue-600 transition truncate">
                                   {src.name}
                                 </span>
                               </div>
-                              <span className="text-[10px] text-slate-500 block truncate mt-0.5">
+                              <span className="text-[11px] text-slate-500 block truncate mt-0.5">
                                 {src.authority}
                               </span>
                             </div>
@@ -410,7 +410,7 @@ export function DetailDrawer({
                       ).map((t, idx) => (
                         <div key={idx} className="relative space-y-0.5">
                           <span className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full bg-slate-900" />
-                          <span className="text-[10px] font-mono font-bold text-slate-400 block">
+                          <span className="text-[11px] font-mono font-bold text-slate-400 block">
                             {t.time}
                           </span>
                           <span className="text-xs font-medium text-slate-800 block">{t.event}</span>

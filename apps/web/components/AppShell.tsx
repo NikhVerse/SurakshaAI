@@ -124,15 +124,15 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <span className="font-bold text-white leading-tight">
                 {user?.full_name || user?.email || "Operator"}
               </span>
-              <span className="text-[10px] text-neutral-400 font-mono capitalize">
+              <span className="text-[11px] text-neutral-400 font-mono capitalize">
                 {user?.role ? user.role.replace(/_/g, " ").toLowerCase() : "Authorized Operator"}
               </span>
               {user?.region && (
-                <span className="text-[9px] text-emerald-400 font-medium truncate max-w-[170px] mt-0.5">
+                <span className="text-[10px] text-emerald-400 font-medium truncate max-w-[200px] mt-0.5">
                   📍 {user.region}
                 </span>
               )}
-              <span className="text-[9px] text-blue-400 font-semibold mt-1 pt-1 border-t border-slate-700/60">
+              <span className="text-[10px] text-blue-400 font-semibold mt-1 pt-1 border-t border-slate-700/60">
                 Click to Edit Profile &rarr;
               </span>
             </div>
@@ -268,7 +268,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-semibold">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="hidden sm:inline">Telemetry Active</span>
-              <span className="text-[10px] font-mono text-emerald-700 bg-emerald-100/70 px-1 rounded">5 Sites</span>
+              <span className="text-[11px] font-mono text-emerald-700 bg-emerald-100/70 px-1 rounded">5 Sites</span>
             </div>
 
             <Link

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -414,7 +414,7 @@ print(f"Primary Barrier: {report['primary_barrier']}")`}</pre>
                         <span className="text-base font-bold leading-tight">{sec.title}</span>
                         {sec.badge && (
                           <span
-                            className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                            className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${
                               isActive
                                 ? "bg-sky-500/20 text-sky-300 border border-sky-400/30"
                                 : "bg-slate-100 text-slate-600"
