@@ -1482,11 +1482,12 @@ export const FALLBACK_DASHBOARD_SUMMARY: DashboardSummary = {
     FAILED: 3,
   },
   monthly_trend: [
-    { month: "May 2026", total_reports: 18, psif_priority: 3, psif_density: 0.16 },
-    { month: "Jun 2026", total_reports: 24, psif_priority: 5, psif_density: 0.20 },
-    { month: "Jul 2026", total_reports: 29, psif_priority: 6, psif_density: 0.21 },
-    { month: "Aug 2026", total_reports: 31, psif_priority: 7, psif_density: 0.22 },
-    { month: "Sep 2026", total_reports: 33, psif_priority: 8, psif_density: 0.24 },
+    { month: "Apr 2026", total_reports: 16, psif_priority: 3, psif_density: 0.19 },
+    { month: "May 2026", total_reports: 22, psif_priority: 4, psif_density: 0.18 },
+    { month: "Jun 2026", total_reports: 27, psif_priority: 6, psif_density: 0.22 },
+    { month: "Jul 2026", total_reports: 34, psif_priority: 7, psif_density: 0.21 },
+    { month: "Aug 2026", total_reports: 38, psif_priority: 8, psif_density: 0.21 },
+    { month: "Sep 2026", total_reports: 42, psif_priority: 10, psif_density: 0.24 },
   ],
   barrier_health: [
     { name: "Double Block & Bleed Isolation", code: "BAR-ENG-01", verified: 28, unverified: 3, failed: 2 },

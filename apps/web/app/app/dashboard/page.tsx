@@ -497,72 +497,198 @@ export default function DashboardPage() {
       </div>
 
       {/* Monthly Trend (from real DB) */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 space-y-4 shadow-2xs min-w-0">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-blue-500" />
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800">
-              6-Month Report Trend
-            </h2>
-          </div>
-          <Link
-            href="/app/reports"
-            className="text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-1"
-          >
-            <span>All Reports</span>
-            <ArrowRight className="h-3 w-3" />
-          </Link>
-        </div>
+      {/* Monthly Trend (from real DB) — Big, High-Visibility, Executive Grade */}
+      {(() => {
+        const trendTotalVolume = monthlyTrend.reduce((acc: number, m: any) => acc + (m.total_reports || 0), 0);
+        const trendTotalPsif = monthlyTrend.reduce((acc: number, m: any) => acc + (m.psif_priority || 0), 0);
+        const trendAvgDensity = trendTotalVolume > 0 ? Math.round((trendTotalPsif / trendTotalVolume) * 100) : 0;
+        const trendPeak = monthlyTrend.reduce((max: any, m: any) => ((m.total_reports || 0) > (max?.total_reports || 0) ? m : max), monthlyTrend[0] || null);
+        const rawMaxVal = Math.max(...monthlyTrend.map((x: any) => x.total_reports || 0), 10);
+        const yMax = Math.ceil(rawMaxVal / 10) * 10;
+        const yTicks = [yMax, Math.round(yMax * 0.75), Math.round(yMax * 0.5), Math.round(yMax * 0.25), 0];
 
-        {loading ? (
-          <div className="flex gap-4 h-24 items-end">
-            {[40, 60, 35, 75, 50, 65].map((h, i) => (
-              <div key={i} className="flex-1 rounded-t-lg bg-slate-100 animate-pulse" style={{ height: `${h}%` }} />
-            ))}
-          </div>
-        ) : monthlyTrend.length === 0 ? (
-          <EmptyState label="No reports yet. Submit incident reports to see monthly trends." />
-        ) : (
-          <div className="flex items-end gap-1.5 sm:gap-2 h-24 min-w-0 w-full overflow-x-auto pb-1">
-            {monthlyTrend.map((m: any) => {
-              const maxVal = Math.max(...monthlyTrend.map((x: any) => x.total_reports), 1);
-              const heightPct = Math.round((m.total_reports / maxVal) * 100);
-              const psifHeightPct = Math.round(((m.psif_priority || 0) / maxVal) * 100);
-              return (
-                <Tooltip
-                  key={m.month}
-                  content={`${m.month}: ${m.total_reports} reports, ${m.psif_priority} SIF-priority (${m.psif_density}%)`}
+        return (
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 md:p-8 space-y-6 shadow-xs min-w-0">
+            {/* Header with Title, Telemetry pill, and Link */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
+              <div className="flex items-center gap-3">
+                <span className="h-3 w-3 rounded-full bg-blue-600 ring-4 ring-blue-100 shrink-0" />
+                <div>
+                  <h2 className="text-base sm:text-lg font-black uppercase tracking-wider text-slate-900">
+                    6-Month Report &amp; SIF Precursor Trend
+                  </h2>
+                  <p className="text-xs font-semibold text-slate-500">
+                    Temporal trend analysis tracking total incident submissions against high-consequence potential severity
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 self-end sm:self-auto">
+                <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-blue-50 text-blue-700 border border-blue-200">
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse" />
+                  Live Operational Telemetry
+                </span>
+                <Link
+                  href="/app/reports"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-800 transition"
                 >
-                  <div className="flex-1 flex flex-col items-center gap-1 cursor-default">
-                    <div className="w-full flex items-end gap-0.5 h-20">
-                      <div
-                        className="flex-1 rounded-t-md bg-slate-200 transition-all duration-500"
-                        style={{ height: `${heightPct}%` }}
-                      />
-                      <div
-                        className="flex-1 rounded-t-md bg-rose-400 transition-all duration-500"
-                        style={{ height: `${psifHeightPct}%` }}
-                      />
-                    </div>
-                    <span className="text-[10px] font-bold text-slate-400">{m.month}</span>
-                  </div>
-                </Tooltip>
-              );
-            })}
-          </div>
-        )}
+                  <span>All Reports</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </div>
 
-        <div className="flex items-center gap-4 text-[11px] font-bold text-slate-400 pt-1">
-          <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-slate-200" />
-            Total Reports
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-rose-400" />
-            SIF Priority
-          </span>
-        </div>
-      </div>
+            {/* 4-Item Executive KPI Summary Strip */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 p-4 rounded-xl bg-slate-50/70 border border-slate-200/80">
+              <div className="space-y-0.5">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Total 6-Month Volume</span>
+                <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                  {trendTotalVolume} <span className="text-xs font-bold text-slate-500">Reports</span>
+                </div>
+                <span className="text-[11px] font-medium text-slate-500">All high-hazard assets</span>
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-rose-700">SIF Precursors</span>
+                <div className="text-xl sm:text-2xl font-black text-rose-600 tracking-tight">
+                  {trendTotalPsif} <span className="text-xs font-bold text-rose-500">High Risk</span>
+                </div>
+                <span className="text-[11px] font-medium text-slate-500">Fatality potential identified</span>
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-700">SIF Exposure Rate</span>
+                <div className="text-xl sm:text-2xl font-black text-indigo-600 tracking-tight">
+                  {trendAvgDensity}% <span className="text-xs font-bold text-indigo-400">Ratio</span>
+                </div>
+                <span className="text-[11px] font-medium text-slate-500">Precursor-to-incident ratio</span>
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-amber-700">Peak Reporting Month</span>
+                <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight truncate">
+                  {trendPeak?.month || "—"}
+                </div>
+                <span className="text-[11px] font-medium text-slate-500">{trendPeak?.total_reports || 0} incidents recorded</span>
+              </div>
+            </div>
+
+            {loading ? (
+              <div className="flex gap-4 h-72 sm:h-80 items-end p-6 bg-slate-50/50 rounded-2xl">
+                {[40, 60, 35, 75, 50, 65].map((h, i) => (
+                  <div key={i} className="flex-1 rounded-t-xl bg-slate-200 animate-pulse" style={{ height: `${h}%` }} />
+                ))}
+              </div>
+            ) : monthlyTrend.length === 0 ? (
+              <EmptyState label="No reports yet. Submit incident reports to see monthly trends." />
+            ) : (
+              /* Big, High-Visibility Responsive Chart */
+              <div className="relative pt-6 pb-2 min-w-0">
+                {/* Main Graph Grid with Y-Axis and Columns */}
+                <div className="flex items-stretch h-72 sm:h-80 md:h-96 min-w-0">
+                  {/* Left Y-Axis Labels */}
+                  <div className="flex flex-col justify-between items-end pr-3 pb-8 text-xs font-mono font-bold text-slate-400 select-none shrink-0 w-8 sm:w-10">
+                    <span>{yTicks[0]}</span>
+                    <span>{yTicks[1]}</span>
+                    <span>{yTicks[2]}</span>
+                    <span>{yTicks[3]}</span>
+                    <span>0</span>
+                  </div>
+
+                  {/* Chart Body Container */}
+                  <div className="relative flex-1 flex flex-col justify-between min-w-0">
+                    {/* Background Grid Lines */}
+                    <div className="absolute inset-0 pb-8 flex flex-col justify-between pointer-events-none">
+                      <div className="w-full border-b border-dashed border-slate-200" />
+                      <div className="w-full border-b border-dashed border-slate-200" />
+                      <div className="w-full border-b border-dashed border-slate-200" />
+                      <div className="w-full border-b border-dashed border-slate-200" />
+                      <div className="w-full border-b-2 border-slate-300" />
+                    </div>
+
+                    {/* Bars Grid Area spanning 100% width */}
+                    <div className="relative z-10 flex-1 flex items-end justify-between gap-2 sm:gap-4 md:gap-8 pb-8 px-1 sm:px-4 min-w-0">
+                      {monthlyTrend.map((m: any) => {
+                        const totalCount = m.total_reports || 0;
+                        const psifCount = m.psif_priority || 0;
+                        const heightPct = Math.min(100, Math.max(Math.round((totalCount / yMax) * 100), totalCount > 0 ? 8 : 0));
+                        const psifHeightPct = Math.min(100, Math.max(Math.round((psifCount / yMax) * 100), psifCount > 0 ? 8 : 0));
+                        const densityVal = Math.round((m.psif_density > 1 ? m.psif_density : (m.psif_density * 100)) || (totalCount > 0 ? (psifCount / totalCount * 100) : 0));
+
+                        return (
+                          <div
+                            key={m.month}
+                            className="flex-1 flex flex-col items-center justify-end h-full group transition-all min-w-0 hover:bg-slate-50/80 rounded-2xl p-1"
+                          >
+                            {/* Top SIF Density Pill Badge */}
+                            <div className="mb-2 transition-all transform group-hover:-translate-y-1">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-black bg-rose-50 text-rose-700 border border-rose-200/90 shadow-2xs whitespace-nowrap">
+                                {densityVal}% SIF
+                              </span>
+                            </div>
+
+                            {/* Dual Side-by-Side Bars Container */}
+                            <div className="w-full flex items-end justify-center gap-1.5 sm:gap-2.5 md:gap-3 h-full max-h-[85%]">
+                              {/* Total Reports Bar (Deep Slate) */}
+                              <div
+                                className="relative flex flex-col items-center justify-start flex-1 max-w-[48px] rounded-t-xl bg-gradient-to-t from-slate-800 to-slate-600 border border-slate-700 shadow-xs group-hover:from-slate-900 group-hover:to-slate-700 transition-all duration-300"
+                                style={{ height: `${heightPct}%` }}
+                              >
+                                <span className="absolute -top-5 sm:-top-6 text-[11px] sm:text-xs font-black text-slate-800 font-mono tracking-tight group-hover:scale-110 transition-transform">
+                                  {totalCount}
+                                </span>
+                              </div>
+
+                              {/* SIF Priority Bar (Vibrant Crimson/Rose) */}
+                              <div
+                                className="relative flex flex-col items-center justify-start flex-1 max-w-[48px] rounded-t-xl bg-gradient-to-t from-rose-600 via-rose-500 to-rose-400 border border-rose-500 shadow-xs group-hover:from-rose-700 group-hover:to-rose-500 transition-all duration-300"
+                                style={{ height: `${psifHeightPct}%` }}
+                              >
+                                <span className="absolute -top-5 sm:-top-6 text-[11px] sm:text-xs font-black text-rose-600 font-mono tracking-tight group-hover:scale-110 transition-transform">
+                                  {psifCount}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Month Label below baseline */}
+                            <div className="pt-2 text-center w-full">
+                              <div className="text-xs sm:text-sm font-extrabold text-slate-900 truncate">
+                                {m.month}
+                              </div>
+                              <div className="text-[11px] font-semibold text-slate-400 hidden sm:block">
+                                {psifCount}/{totalCount} SIF
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Bottom Legend & Methodology Footer */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-slate-100 gap-3">
+              <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs font-bold text-slate-700">
+                <span className="flex items-center gap-2">
+                  <span className="h-3.5 w-6 rounded-md bg-gradient-to-r from-slate-800 to-slate-600 border border-slate-700 shadow-2xs" />
+                  <span>Total Incidents (All Severities)</span>
+                </span>
+                <span className="flex items-center gap-2">
+                  <span className="h-3.5 w-6 rounded-md bg-gradient-to-r from-rose-600 to-rose-400 border border-rose-500 shadow-2xs" />
+                  <span>SIF Priority (Fatality / Severe Precursors)</span>
+                </span>
+                <span className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-50 text-rose-700 border border-rose-200">
+                    % SIF
+                  </span>
+                  <span>Precursor Severity Density Rate</span>
+                </span>
+              </div>
+              <div className="text-xs font-semibold text-slate-400 self-end sm:self-auto">
+                Calibrated against IOGP 459 &amp; 501 Barrier Taxonomy
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Recent Activity Feed */}
       <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 space-y-4 shadow-2xs min-w-0">
