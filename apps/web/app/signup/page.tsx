@@ -10,10 +10,20 @@ import {
   Shield,
   ArrowRight,
   AlertCircle,
-  Calendar,
+  CalendarDays,
   MapPin,
   CheckCircle2,
   Sparkles,
+  Hash,
+  KeyRound,
+  Eye,
+  EyeOff,
+  UserCheck,
+  BadgeCheck,
+  ChevronDown,
+  ShieldCheck,
+  Check,
+  Sparkle,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import Logo from "@/components/Logo";
@@ -52,8 +62,8 @@ export default function SignUpPage() {
   const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
   const [age, setAge] = useState<number | "">("");
-  const [dobRaw, setDobRaw] = useState(""); // YYYY-MM-DD from HTML date input
-  const [dobFormatted, setDobFormatted] = useState(""); // dd-mmm-yyyy
+  const [dobRaw, setDobRaw] = useState("");
+  const [dobFormatted, setDobFormatted] = useState("");
   const [gender, setGender] = useState<"M" | "F" | "Other">("M");
   const [role, setRole] = useState("HSE_ANALYST");
   const [region, setRegion] = useState(REGIONS[0]);
@@ -61,6 +71,9 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // UI state
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -109,7 +122,7 @@ export default function SignUpPage() {
       return;
     }
     if (!dobFormatted) {
-      setError("Date of Birth (DOB) is mandatory in dd-mmm-yyyy format.");
+      setError("Date of Birth (DOB) is mandatory.");
       return;
     }
     if (!email.trim() || !email.includes("@")) {
@@ -149,114 +162,172 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col justify-center bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="sm:mx-auto sm:w-full sm:max-w-xl text-center space-y-1.5">
+    <div className="flex min-h-screen flex-col justify-center bg-linear-to-b from-slate-50 via-slate-100/50 to-slate-100 py-12 px-4 sm:px-6 lg:px-8 font-sans">
+      {/* Header & Logo */}
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-2">
         <Link href="/" className="inline-block transition hover:opacity-90">
           <Logo size="default" />
         </Link>
-        <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 pt-2">
-          Create Authorized Operator Account
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-[10px] font-bold text-blue-700 tracking-wider uppercase mt-1">
+          <ShieldCheck className="h-3 w-3 text-blue-600" />
+          <span>Sovereign Risk Intelligence Platform</span>
+        </div>
+        <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 pt-1">
+          Create Operator Account
         </h1>
-        <p className="text-xs text-slate-500 font-medium">
-          Register for critical-risk evaluation &amp; precursor intelligence console
+        <p className="text-xs text-slate-500 font-medium max-w-sm mx-auto">
+          Register credentials to access the critical-risk evaluation &amp; precursor intelligence console.
         </p>
       </div>
 
-      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-xl">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-5">
+      {/* Main Slim Form Card */}
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="rounded-3xl border border-slate-200/90 bg-white/95 backdrop-blur-sm p-6 sm:p-7 shadow-xl shadow-slate-200/50 space-y-5">
           {error && (
-            <div className="flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs font-semibold text-rose-800 animate-in fade-in">
+            <div className="flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50/90 p-3.5 text-xs font-semibold text-rose-800 animate-in fade-in">
               <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
               <span>{error}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4 text-xs">
-            {/* 1. Name Row: First, Middle, Last */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                  Full Legal Identity
-                </label>
-                <span className="text-[10px] text-slate-400">* Required fields</span>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* ---------------- 01. Legal Identity ---------------- */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider uppercase text-slate-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                  01 // Legal Identity
+                </span>
+                <span className="text-[10px] text-slate-400 font-medium">* Required</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <div>
-                  <div className="relative">
-                    <User className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
-                    <input
-                      type="text"
-                      required
-                      placeholder="First Name *"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-8 pr-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition"
-                    />
-                  </div>
-                </div>
 
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Middle Name (Optional)"
-                    value={middleName}
-                    onChange={(e) => setMiddleName(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition"
-                  />
-                </div>
-
-                <div>
+              {/* 1. First Name */}
+              <div className="space-y-1">
+                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                  <span className="flex items-center gap-1.5">
+                    <User className="h-3 w-3 text-slate-400" />
+                    First Name
+                    <span className="text-rose-500">*</span>
+                  </span>
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
                   <input
                     type="text"
                     required
-                    placeholder="Last Name *"
+                    placeholder="e.g. Nikhil"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-9 pr-3 text-xs font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* 2. Middle Name (Optional) */}
+              <div className="space-y-1">
+                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                  <span className="flex items-center gap-1.5">
+                    <BadgeCheck className="h-3 w-3 text-slate-400" />
+                    Middle Name
+                    <span className="text-[10px] text-slate-400 font-normal">(Optional)</span>
+                  </span>
+                </label>
+                <div className="relative">
+                  <BadgeCheck className="absolute left-3 top-3 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
+                  <input
+                    type="text"
+                    placeholder="e.g. Kumar"
+                    value={middleName}
+                    onChange={(e) => setMiddleName(e.target.value)}
+                    className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-9 pr-3 text-xs font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* 3. Last Name */}
+              <div className="space-y-1">
+                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                  <span className="flex items-center gap-1.5">
+                    <UserCheck className="h-3 w-3 text-slate-400" />
+                    Last Name
+                    <span className="text-rose-500">*</span>
+                  </span>
+                </label>
+                <div className="relative">
+                  <UserCheck className="absolute left-3 top-3 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Sahu"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition"
+                    className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-9 pr-3 text-xs font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 transition-all"
                   />
                 </div>
               </div>
             </div>
 
-            {/* 2. Personal Details Row: Age (20-100), DOB (dd-mmm-yyyy), Gender */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {/* Age */}
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
-                  Age (20 – 100) *
-                </label>
-                <input
-                  type="number"
-                  required
-                  min={20}
-                  max={100}
-                  placeholder="e.g. 32"
-                  value={age}
-                  onChange={(e) => {
-                    const val = e.target.value === "" ? "" : parseInt(e.target.value, 10);
-                    setAge(val);
-                  }}
-                  className={`w-full rounded-xl border bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:bg-white transition ${
-                    age !== "" && (Number(age) < 20 || Number(age) > 100)
-                      ? "border-rose-400 bg-rose-50/50"
-                      : "border-slate-200 focus:border-slate-400"
-                  }`}
-                />
+            {/* ---------------- 02. Operator Attributes ---------------- */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider uppercase text-slate-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                  02 // Operator Attributes
+                </span>
               </div>
 
-              {/* DOB */}
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                    DOB *
+              {/* 4. Age */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-700">
+                    <Hash className="h-3 w-3 text-slate-400" />
+                    Age (20 – 100 yrs)
+                    <span className="text-rose-500">*</span>
+                  </label>
+                  {age !== "" && Number(age) >= 20 && Number(age) <= 100 && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">
+                      <Check className="h-3 w-3" /> Validated
+                    </span>
+                  )}
+                </div>
+                <div className="relative">
+                  <Hash className="absolute left-3 top-3 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
+                  <input
+                    type="number"
+                    required
+                    min={20}
+                    max={100}
+                    placeholder="Enter operator age (e.g. 28)"
+                    value={age}
+                    onChange={(e) => {
+                      const val = e.target.value === "" ? "" : parseInt(e.target.value, 10);
+                      setAge(val);
+                    }}
+                    className={`h-10 w-full rounded-xl border bg-slate-50/70 pl-9 pr-3 text-xs font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:bg-white transition-all ${
+                      age !== "" && (Number(age) < 20 || Number(age) > 100)
+                        ? "border-rose-400 bg-rose-50/50 focus:border-rose-500"
+                        : "border-slate-200 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
+                    }`}
+                  />
+                </div>
+              </div>
+
+              {/* 5. Date of Birth */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-700">
+                    <CalendarDays className="h-3 w-3 text-slate-400" />
+                    Date of Birth
+                    <span className="text-rose-500">*</span>
                   </label>
                   {dobFormatted && (
-                    <span className="text-[10px] font-mono font-bold text-emerald-600 bg-emerald-50 px-1 rounded">
+                    <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
                       {dobFormatted}
                     </span>
                   )}
                 </div>
                 <div className="relative">
+                  <CalendarDays className="absolute left-3 top-3 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
                   <input
                     type="date"
                     required
@@ -264,48 +335,64 @@ export default function SignUpPage() {
                     onChange={(e) => handleDateChange(e.target.value)}
                     max={new Date(Date.now() - 20 * 365.25 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]}
                     min={new Date(Date.now() - 100 * 365.25 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition"
+                    className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-9 pr-3 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 transition-all"
                   />
                 </div>
-                <p className="text-[9px] text-slate-400 mt-0.5">Formats as dd-mmm-yyyy</p>
+                <p className="text-[10px] text-slate-400 font-medium">Formats automatically as dd-mmm-yyyy</p>
               </div>
 
-              {/* Gender */}
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
-                  Gender *
+              {/* 6. Gender */}
+              <div className="space-y-1">
+                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                  <span className="flex items-center gap-1.5">
+                    <Sparkles className="h-3 w-3 text-slate-400" />
+                    Gender
+                    <span className="text-rose-500">*</span>
+                  </span>
                 </label>
-                <div className="grid grid-cols-3 gap-1">
+                <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-100/90 border border-slate-200/80">
                   {(["M", "F", "Other"] as const).map((g) => (
                     <button
                       key={g}
                       type="button"
                       onClick={() => setGender(g)}
-                      className={`py-2 rounded-xl text-[11px] font-bold border transition cursor-pointer text-center ${
+                      className={`h-8 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 ${
                         gender === g
-                          ? "bg-slate-900 text-white border-slate-900"
-                          : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
+                          ? "bg-slate-900 text-white shadow-xs scale-[1.01]"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white/70"
                       }`}
                     >
-                      {g}
+                      <span>{g}</span>
                     </button>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* 3. Role & Region */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
-                  Operational Role *
+            {/* ---------------- 03. Operations & Role ---------------- */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider uppercase text-slate-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  03 // Operations &amp; Jurisdiction
+                </span>
+              </div>
+
+              {/* 7. Operational Role */}
+              <div className="space-y-1">
+                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                  <span className="flex items-center gap-1.5">
+                    <Shield className="h-3 w-3 text-slate-400" />
+                    Operational Role
+                    <span className="text-rose-500">*</span>
+                  </span>
                 </label>
                 <div className="relative">
-                  <Shield className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
+                  <Shield className="absolute left-3 top-3 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
                   <select
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-8 pr-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition"
+                    className="h-10 w-full appearance-none rounded-xl border border-slate-200 bg-slate-50/70 pl-9 pr-8 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 transition-all cursor-pointer"
                   >
                     {ROLES.map((r) => (
                       <option key={r.value} value={r.value}>
@@ -313,19 +400,25 @@ export default function SignUpPage() {
                       </option>
                     ))}
                   </select>
+                  <ChevronDown className="absolute right-3 top-3.5 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
-                  Operational Region *
+              {/* 8. Operational Region */}
+              <div className="space-y-1">
+                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="h-3 w-3 text-slate-400" />
+                    Operational Region
+                    <span className="text-rose-500">*</span>
+                  </span>
                 </label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
+                  <MapPin className="absolute left-3 top-3 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
                   <select
                     value={region}
                     onChange={(e) => setRegion(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-8 pr-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition"
+                    className="h-10 w-full appearance-none rounded-xl border border-slate-200 bg-slate-50/70 pl-9 pr-8 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 transition-all cursor-pointer"
                   >
                     {REGIONS.map((reg) => (
                       <option key={reg} value={reg}>
@@ -333,83 +426,139 @@ export default function SignUpPage() {
                       </option>
                     ))}
                   </select>
+                  <ChevronDown className="absolute right-3 top-3.5 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
                 </div>
               </div>
             </div>
 
-            {/* 4. Email Address */}
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
-                Email Id (Mandatory) *
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
-                <input
-                  type="email"
-                  required
-                  placeholder="operator.name@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-8 pr-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition"
-                />
+            {/* ---------------- 04. Authentication Credentials ---------------- */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider uppercase text-slate-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-violet-500" />
+                  04 // Credentials
+                </span>
               </div>
-            </div>
 
-            {/* 5. Password & Confirm Password */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
-                  Password (min 8 chars) *
+              {/* 9. Email Address */}
+              <div className="space-y-1">
+                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                  <span className="flex items-center gap-1.5">
+                    <Mail className="h-3 w-3 text-slate-400" />
+                    Email Id (Mandatory)
+                    <span className="text-rose-500">*</span>
+                  </span>
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                  <Mail className="absolute left-3 top-3 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
                   <input
-                    type="password"
+                    type="email"
+                    required
+                    placeholder="operator.name@company.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-9 pr-3 text-xs font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* 10. Password */}
+              <div className="space-y-1">
+                <label className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                  <span className="flex items-center gap-1.5">
+                    <Lock className="h-3 w-3 text-slate-400" />
+                    Password (min 8 chars)
+                    <span className="text-rose-500">*</span>
+                  </span>
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
+                  <input
+                    type={showPassword ? "text" : "password"}
                     required
                     minLength={8}
-                    placeholder="Create a strong password"
+                    placeholder="Create a strong security password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-8 pr-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition"
+                    className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-9 pr-10 text-xs font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 transition-all"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    tabIndex={-1}
+                    className="absolute right-3 top-2.5 p-0.5 text-slate-400 hover:text-slate-700 cursor-pointer transition"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
-                  Confirm Password *
-                </label>
+              {/* 11. Confirm Password */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-700">
+                    <KeyRound className="h-3 w-3 text-slate-400" />
+                    Confirm Password
+                    <span className="text-rose-500">*</span>
+                  </label>
+                  {confirmPassword && (
+                    <span className="text-[10px] font-bold">
+                      {password === confirmPassword ? (
+                        <span className="text-emerald-600 inline-flex items-center gap-0.5">
+                          <Check className="h-3 w-3" /> Match
+                        </span>
+                      ) : (
+                        <span className="text-rose-500">Does not match</span>
+                      )}
+                    </span>
+                  )}
+                </div>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                  <KeyRound className="absolute left-3 top-3 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
                   <input
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     required
                     minLength={8}
-                    placeholder="Re-enter password"
+                    placeholder="Re-enter password to verify"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-8 pr-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition"
+                    className={`h-10 w-full rounded-xl border bg-slate-50/70 pl-9 pr-10 text-xs font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:bg-white transition-all ${
+                      confirmPassword && password !== confirmPassword
+                        ? "border-rose-400 bg-rose-50/50 focus:border-rose-500"
+                        : "border-slate-200 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
+                    }`}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    tabIndex={-1}
+                    className="absolute right-3 top-2.5 p-0.5 text-slate-400 hover:text-slate-700 cursor-pointer transition"
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
             </div>
 
             {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-slate-900 py-3 text-xs font-bold text-white hover:bg-slate-800 disabled:opacity-40 transition cursor-pointer mt-3 shadow-2xs"
-            >
-              <span>{loading ? "Registering Authorized Profile..." : "Create Account & Enter Console"}</span>
-              <ArrowRight className="h-3.5 w-3.5" />
-            </button>
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3.5 px-4 shadow-lg shadow-slate-900/15 hover:shadow-slate-900/25 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-50"
+              >
+                <ShieldCheck className="h-4 w-4 text-emerald-400" />
+                <span>{loading ? "Authorizing Operator Credentials..." : "Create Account & Enter Console"}</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
           </form>
 
-          {/* Already have an account? Sign In */}
+          {/* Footer Link */}
           <div className="pt-3 border-t border-slate-100 text-center">
             <p className="text-xs text-slate-500 font-medium">
               Already have an authorized account?{" "}
-              <Link href="/login" className="font-bold text-blue-600 hover:text-blue-700 underline">
+              <Link href="/login" className="font-bold text-slate-900 hover:text-blue-600 underline underline-offset-4">
                 Sign In
               </Link>
             </p>
