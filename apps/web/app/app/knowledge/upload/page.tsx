@@ -30,7 +30,9 @@ export default function KnowledgeUploadPage() {
       const blob = new Blob([fileContent], { type: "text/plain" });
       formData.append("file", blob, `${title.replace(/\s+/g, "_")}.txt`);
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const apiUrl =
+        process.env.NEXT_PUBLIC_API_URL ||
+        (typeof window !== "undefined" ? "" : "http://localhost:8000");
       const token = typeof window !== "undefined" ? localStorage.getItem("suraksha_token") : null;
       const res = await fetch(`${apiUrl}/api/v1/knowledge/upload`, {
         method: "POST",

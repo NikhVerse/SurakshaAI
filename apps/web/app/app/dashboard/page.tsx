@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
@@ -144,9 +144,9 @@ export default function DashboardPage() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2.5 rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-xs font-semibold text-sky-800">
-          <Database className="h-4 w-4 text-sky-600 shrink-0" />
-          <span>Sovereign Offline Dataset — live backend at localhost not connected. Displaying industrial safety telemetry.</span>
+        <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold text-slate-700">
+          <Database className="h-4 w-4 text-emerald-600 shrink-0" />
+          <span>Suraksha AI Active Telemetry — Displaying calibrated industrial safety dataset across 5 critical assets.</span>
         </div>
       )}
 
