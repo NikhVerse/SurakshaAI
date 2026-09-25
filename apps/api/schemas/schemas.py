@@ -16,7 +16,7 @@ class UserRegister(BaseModel):
     last_name: Optional[str] = None
     age: Optional[int] = Field(None, ge=20, le=100, description="Age must be between 20 and 100")
     dob: Optional[str] = Field(None, description="Format: dd-mmm-yyyy")
-    gender: Optional[str] = Field(None, description="MALE, female, Other")
+    gender: Optional[str] = Field(None, description="MALE, FEMALE, OTHER")
     role: str = "HSE_ANALYST"
     email: EmailStr
     password: str = Field(..., min_length=8)
