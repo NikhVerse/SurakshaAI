@@ -214,12 +214,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main Canvas Area (Offset by 72px on desktop) */}
       <div className="flex flex-1 flex-col md:pl-[72px]">
         {/* Sleek Topbar */}
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between px-6 lg:px-8 bg-white/95 backdrop-blur-md border-b border-slate-200">
-          <div className="flex items-center gap-4">
+        <header className="sticky top-0 z-30 flex h-14 sm:h-16 items-center justify-between px-3 sm:px-6 lg:px-8 bg-white/95 backdrop-blur-md border-b border-slate-200">
+          <div className="flex items-center gap-2 sm:gap-4">
             <button
               type="button"
-              className="md:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100"
+              className="md:hidden p-1.5 -ml-1 rounded-xl text-slate-700 hover:bg-slate-100 transition cursor-pointer"
               onClick={() => setMobileOpen(true)}
+              aria-label="Open navigation menu"
             >
               <Menu className="h-5 w-5" />
             </button>
@@ -263,17 +264,17 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {/* Clean Genuine Status Indicator */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-semibold">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[11px] sm:text-xs font-semibold shrink-0">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="hidden sm:inline">Telemetry Active</span>
-              <span className="text-[11px] font-mono text-emerald-700 bg-emerald-100/70 px-1 rounded">5 Sites</span>
+              <span className="text-[10px] sm:text-[11px] font-mono text-emerald-700 bg-emerald-100/70 px-1 rounded">5 Sites</span>
             </div>
 
             <Link
               href="/docs"
-              className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition px-2.5 py-1.5 rounded-lg hover:bg-slate-100"
+              className="flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-900 transition px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg hover:bg-slate-100 shrink-0"
             >
               <span>Docs</span>
               <ExternalLink className="h-3 w-3" strokeWidth={1.6} />
@@ -282,9 +283,61 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Spacious Main Page Content */}
-        <main className="flex-1 p-6 md:p-8 lg:p-10 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-3 sm:p-6 md:p-8 lg:p-10 max-w-7xl w-full mx-auto pb-20 md:pb-10">
           {children}
         </main>
+
+        {/* Mobile Pinned Bottom Navigation Bar */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1.5 flex items-center justify-around shadow-[0_-2px_10px_rgba(0,0,0,0.04)]">
+          <Link
+            href="/app/dashboard"
+            className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition ${
+              pathname.includes("/app/dashboard") ? "text-slate-900 font-bold" : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <LayoutDashboard className="h-4 w-4" strokeWidth={pathname.includes("/app/dashboard") ? 2.2 : 1.6} />
+            <span className="text-[10px]">Dashboard</span>
+          </Link>
+
+          <Link
+            href="/app/reports"
+            className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition ${
+              pathname.includes("/app/reports") ? "text-slate-900 font-bold" : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <FileText className="h-4 w-4" strokeWidth={pathname.includes("/app/reports") ? 2.2 : 1.6} />
+            <span className="text-[10px]">Incidents</span>
+          </Link>
+
+          <Link
+            href="/app/triage"
+            className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition ${
+              pathname.includes("/app/triage") ? "text-slate-900 font-bold" : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <AlertTriangle className="h-4 w-4 text-amber-500" strokeWidth={pathname.includes("/app/triage") ? 2.2 : 1.6} />
+            <span className="text-[10px]">Triage</span>
+          </Link>
+
+          <Link
+            href="/app/barriers"
+            className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition ${
+              pathname.includes("/app/barriers") ? "text-slate-900 font-bold" : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <ShieldCheck className="h-4 w-4" strokeWidth={pathname.includes("/app/barriers") ? 2.2 : 1.6} />
+            <span className="text-[10px]">Barriers</span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setMobileOpen(true)}
+            className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl text-slate-500 hover:text-slate-800 transition cursor-pointer"
+          >
+            <Menu className="h-4 w-4" strokeWidth={1.6} />
+            <span className="text-[10px]">Menu</span>
+          </button>
+        </nav>
       </div>
     </div>
   );

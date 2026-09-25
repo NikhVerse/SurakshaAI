@@ -113,7 +113,7 @@ export default function DashboardPage() {
       />
 
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
             Command Center
@@ -123,7 +123,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 self-start sm:self-auto">
           <button
             type="button"
             onClick={loadData}
@@ -272,25 +272,27 @@ export default function DashboardPage() {
                 <div
                   key={alert.id}
                   onClick={() => openAlertDrawer(alert)}
-                  className={`p-3.5 rounded-xl border hover:bg-white hover:border-slate-300 transition cursor-pointer flex items-center justify-between gap-3 group shadow-2xs ${getSeverityClass(alert.severity)}`}
+                  className={`p-3.5 rounded-xl border hover:bg-white hover:border-slate-300 transition cursor-pointer flex items-center justify-between gap-2.5 group shadow-2xs ${getSeverityClass(alert.severity)}`}
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
                     <StatusDot status={alert.severity} size="sm" pulse={alert.severity === "CRITICAL"} />
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-xs text-slate-900 truncate">
                           {alert.title}
                         </span>
-                        <SeverityBadge severity={alert.severity} />
+                        <div className="shrink-0">
+                          <SeverityBadge severity={alert.severity} />
+                        </div>
                       </div>
                       <p className="text-[12px] text-slate-500 font-medium truncate mt-0.5">
                         {alert.message}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex items-center gap-1 shrink-0">
                     <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition flex items-center gap-0.5">
-                      Detail
+                      <span className="hidden sm:inline">Detail</span>
                       <ArrowUpRight className="h-3.5 w-3.5" />
                     </span>
                   </div>

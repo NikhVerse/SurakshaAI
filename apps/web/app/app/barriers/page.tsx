@@ -88,8 +88,8 @@ export default function BarriersPage() {
         data={drawerData}
       />
 
-      {/* Header — 1-2 words */}
-      <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
             Barrier Matrix
@@ -99,7 +99,7 @@ export default function BarriersPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold font-mono">
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold font-mono self-start sm:self-auto">
           <StatusDot status="HEALTHY" size="sm" />
           <span>{barriers.length} Monitored Barriers</span>
         </div>

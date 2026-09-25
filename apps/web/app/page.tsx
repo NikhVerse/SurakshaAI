@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import {
@@ -11,46 +11,48 @@ export default function LandingPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-white pt-20 pb-28 border-b border-slate-200">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+      <section className="relative overflow-hidden bg-white pt-10 sm:pt-20 pb-16 sm:pb-28 border-b border-slate-200">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
             {/* Left Content */}
-            <div className="lg:col-span-7 space-y-8">
-              <div className="inline-flex items-center gap-2.5 rounded-full bg-blue-50 border border-blue-200/70 px-4 py-1.5 text-xs font-bold text-blue-700">
-                <span className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
-                <span>Deterministic Industrial Safety Intelligence · IOGP 501 / 502</span>
+            <div className="lg:col-span-7 space-y-6 sm:space-y-8">
+              <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-200/70 px-3.5 py-1.5 text-xs font-bold text-blue-700">
+                <span className="h-2 w-2 rounded-full bg-blue-600 animate-pulse shrink-0" />
+                <span className="truncate">Deterministic Safety Intelligence · IOGP 501 / 502</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.12]">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.15]">
                 Detect Critical Precursors. <br />
                 <span className="text-blue-600">Before Incident Escalation.</span>
               </h1>
 
-              <p className="text-base sm:text-lg text-slate-600 font-medium max-w-2xl leading-relaxed">
+              <p className="text-sm sm:text-lg text-slate-600 font-medium max-w-2xl leading-relaxed">
                 SurakshaAI transforms industrial safety incident narratives into calibrated pSIF risk probabilities,
                 IOGP barrier health analytics, and deterministic human-in-the-loop triage. Air-gapped and sovereign.
               </p>
 
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-2">
                 <Link
                   href="/app/dashboard"
-                  className="flex items-center gap-2.5 rounded-xl bg-slate-900 px-6 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-slate-800 transition active:scale-[0.99]"
+                  className="flex items-center justify-center gap-2.5 rounded-xl bg-slate-900 px-5 sm:px-6 py-3 sm:py-3.5 text-sm font-bold text-white shadow-sm hover:bg-slate-800 transition active:scale-[0.99]"
                 >
                   <span>Launch Safety Console</span>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
-                <Link
-                  href="/signup"
-                  className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-blue-700 transition active:scale-[0.99]"
-                >
-                  <span>Sign Up Free</span>
-                </Link>
-                <Link
-                  href="/login"
-                  className="rounded-xl border border-slate-300 bg-white px-5 py-3.5 text-sm font-bold text-slate-700 hover:border-slate-400 hover:text-slate-900 transition"
-                >
-                  Log In
-                </Link>
+                <div className="grid grid-cols-2 sm:flex sm:items-center gap-2.5 sm:gap-3">
+                  <Link
+                    href="/signup"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 sm:px-6 py-3 sm:py-3.5 text-sm font-bold text-white shadow-sm hover:bg-blue-700 transition active:scale-[0.99]"
+                  >
+                    <span>Sign Up Free</span>
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 sm:px-5 py-3 sm:py-3.5 text-sm font-bold text-slate-700 hover:border-slate-400 hover:text-slate-900 transition"
+                  >
+                    Log In
+                  </Link>
+                </div>
               </div>
 
               {/* Trust Badges */}

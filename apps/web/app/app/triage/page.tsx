@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
@@ -111,8 +111,8 @@ export default function TriagePage() {
         </div>
       )}
 
-      {/* Header — 1-2 words */}
-      <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
@@ -130,7 +130,7 @@ export default function TriagePage() {
         {tasks.length > 0 && statusFilter === "PENDING" && (
           <button
             onClick={handleBatchVerify}
-            className="flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-1.5 text-xs font-bold text-white hover:bg-slate-800 transition shadow-xs cursor-pointer"
+            className="flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-1.5 text-xs font-bold text-white hover:bg-slate-800 transition shadow-xs cursor-pointer self-start sm:self-auto"
           >
             <Play className="h-3.5 w-3.5 fill-current" />
             <span>Verify Top 3</span>
@@ -139,7 +139,7 @@ export default function TriagePage() {
       </div>
 
       {/* Filters Toolbar */}
-      <div className="flex items-center justify-between gap-3 p-2 rounded-xl border border-slate-200 bg-white shadow-2xs">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 p-2 sm:p-2.5 rounded-xl border border-slate-200 bg-white shadow-2xs">
         <div className="flex items-center gap-1.5">
           <span className="text-[12px] font-bold text-slate-400 uppercase tracking-wider px-2">
             Filter:
