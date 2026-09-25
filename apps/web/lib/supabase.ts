@@ -7,6 +7,7 @@ export const isSupabaseConfigured = Boolean(
   supabaseUrl &&
   supabaseAnonKey &&
   !supabaseUrl.includes("[YOUR-PROJECT-REF]") &&
+  !supabaseUrl.includes("YOUR_PROJECT_ID") &&
   !supabaseAnonKey.includes("your-supabase-anon-key")
 );
 
