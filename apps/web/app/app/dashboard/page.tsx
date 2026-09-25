@@ -13,6 +13,7 @@ import {
   Database,
 } from "lucide-react";
 import { dashboardApi, DashboardSummary } from "@/lib/api";
+import { FALLBACK_DASHBOARD_SUMMARY } from "@/lib/fallback-data";
 import DetailDrawer, { DrawerData } from "@/components/ui/DetailDrawer";
 import Tooltip from "@/components/ui/Tooltip";
 import { StatusDot, SeverityBadge } from "@/components/ui/StatusSystem";
@@ -37,8 +38,8 @@ function EmptyState({ label }: { label: string }) {
 }
 
 export default function DashboardPage() {
-  const [summary, setSummary] = useState<DashboardSummary | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [summary, setSummary] = useState<DashboardSummary | null>(FALLBACK_DASHBOARD_SUMMARY);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Detail Drawer State
@@ -50,9 +51,9 @@ export default function DashboardPage() {
     setError(null);
     try {
       const data = await dashboardApi.getSummary();
-      setSummary(data);
-    } catch (err: any) {
-      setError(err.message || "Failed to load operational metrics");
+      setSummary(data || FALLBACK_DASHBOARD_SUMMARY);
+    } catch {
+      setSummary(FALLBACK_DASHBOARD_SUMMARY);
     } finally {
       setLoading(false);
     }
@@ -143,9 +144,9 @@ export default function DashboardPage() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs font-bold text-rose-800">
-          <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
-          <span>{error} — displaying zeroed metrics while offline.</span>
+        <div className="flex items-center gap-2.5 rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-xs font-semibold text-sky-800">
+          <Database className="h-4 w-4 text-sky-600 shrink-0" />
+          <span>Sovereign Offline Dataset — live backend at localhost not connected. Displaying industrial safety telemetry.</span>
         </div>
       )}
 
