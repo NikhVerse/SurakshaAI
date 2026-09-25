@@ -52,7 +52,7 @@ export default function SettingsPage() {
   const [editLastName, setEditLastName] = useState("");
   const [editAge, setEditAge] = useState<number | "">("");
   const [editDob, setEditDob] = useState("");
-  const [editGender, setEditGender] = useState<"MALE" | "FEMALE" | "OTHER">("MALE");
+  const [editGender, setEditGender] = useState<"M" | "F" | "Other">("M");
   const [editRole, setEditRole] = useState("HSE_ANALYST");
   const [editRegion, setEditRegion] = useState(REGIONS[0]);
   const [editPhone, setEditPhone] = useState("");
@@ -74,8 +74,9 @@ export default function SettingsPage() {
     setEditLastName(user.last_name || (nameParts.length > 1 ? nameParts[nameParts.length - 1] : "") || "");
     setEditAge(user.age || "");
     setEditDob(user.dob || "");
-    const gNormalized = (user.gender || "MALE").toUpperCase();
-    setEditGender((gNormalized === "FEMALE" ? "FEMALE" : gNormalized === "OTHER" ? "OTHER" : "MALE"));
+    const gUpper = (user.gender || "M").trim().toUpperCase();
+    const normalized: "M" | "F" | "Other" = (gUpper === "F" || gUpper === "FEMALE") ? "F" : (gUpper === "M" || gUpper === "MALE") ? "M" : "Other";
+    setEditGender(normalized);
     setEditRole(user.role || "HSE_ANALYST");
     setEditRegion(user.region || REGIONS[0]);
     setEditPhone(user.phone || "");
@@ -317,7 +318,7 @@ export default function SettingsPage() {
                   Gender
                 </label>
                 <div className="grid grid-cols-3 gap-1">
-                  {(["MALE", "FEMALE", "OTHER"] as const).map((g) => (
+                  {(["M", "F", "Other"] as const).map((g) => (
                     <button
                       key={g}
                       type="button"

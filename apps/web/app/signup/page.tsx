@@ -54,7 +54,7 @@ export default function SignUpPage() {
   const [age, setAge] = useState<number | "">("");
   const [dobRaw, setDobRaw] = useState(""); // YYYY-MM-DD from HTML date input
   const [dobFormatted, setDobFormatted] = useState(""); // dd-mmm-yyyy
-  const [gender, setGender] = useState<"MALE" | "FEMALE" | "OTHER">("MALE");
+  const [gender, setGender] = useState<"M" | "F" | "Other">("M");
   const [role, setRole] = useState("HSE_ANALYST");
   const [region, setRegion] = useState(REGIONS[0]);
   const [email, setEmail] = useState("");
@@ -276,7 +276,7 @@ export default function SignUpPage() {
                   Gender *
                 </label>
                 <div className="grid grid-cols-3 gap-1">
-                  {(["MALE", "FEMALE", "OTHER"] as const).map((g) => (
+                  {(["M", "F", "Other"] as const).map((g) => (
                     <button
                       key={g}
                       type="button"

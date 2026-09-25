@@ -160,7 +160,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           last_name: dataOrFullName.trim().split(" ").slice(1).join(" ") || "Member",
           age: 28,
           dob: "01-Jan-1998",
-          gender: "OTHER",
+          gender: "Other",
           email: email?.trim(),
           password,
           role,
