@@ -11,6 +11,9 @@ import {
   AlertCircle,
   ArrowUpRight,
   Database,
+  ShieldCheck,
+  Clock,
+  Bell,
 } from "lucide-react";
 import { dashboardApi, DashboardSummary } from "@/lib/api";
 import { FALLBACK_DASHBOARD_SUMMARY } from "@/lib/fallback-data";
@@ -150,93 +153,227 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* 5-Card KPI Strip — all numbers from real database */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        {/* Total Reports */}
-        <div className="p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+      {/* 5-Card Highlighting KPI Grid — Big, Vibrant & Fully Responsive on Mobile & iPhones */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">
+        {/* Card 1: Total Reports */}
+        <Link
+          href="/app/reports"
+          className="group relative p-4 sm:p-5 rounded-2xl border-2 border-indigo-200/90 bg-gradient-to-br from-indigo-50/90 via-white to-blue-50/50 shadow-sm hover:shadow-md hover:border-indigo-400 transition-all duration-200 active:scale-[0.99] flex flex-row lg:flex-col justify-between items-center lg:items-start min-h-[96px] lg:min-h-[160px]"
+        >
+          <div className="flex items-center lg:justify-between w-auto lg:w-full gap-3 lg:gap-0">
+            <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 border border-indigo-200 shadow-2xs group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-200">
+              <FileText className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2} />
+            </div>
+            <div className="flex flex-col lg:hidden">
+              <span className="text-xs font-black uppercase tracking-wider text-indigo-900">
+                Reports
+              </span>
+              <span className="text-xs font-bold text-slate-500">
+                Total Submissions
+              </span>
+            </div>
+            <span className="hidden lg:inline text-xs font-black uppercase tracking-wider text-indigo-900">
               Reports
             </span>
-            <FileText className="h-3.5 w-3.5 text-slate-300" />
           </div>
-          <span className={`text-3xl font-black font-mono tracking-tight mt-1.5 ${loading ? "text-slate-300 animate-pulse" : "text-slate-900"}`}>
-            {loading ? "—" : String(totalReports).padStart(2, "0")}
-          </span>
-          <span className="text-[11px] font-bold text-slate-500 mt-1">
-            Total Submissions
-          </span>
-        </div>
 
-        {/* Critical SIF Signals */}
-        <div className="p-4 rounded-xl border border-rose-200/80 bg-rose-50/20 flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-rose-700">
-              SIF Priority
+          <div className="my-0 lg:my-2 text-right lg:text-left">
+            <span className={`text-4xl sm:text-5xl font-black font-mono tracking-tight ${loading ? "text-slate-300 animate-pulse" : "text-slate-900"}`}>
+              {loading ? "—" : String(totalReports).padStart(2, "0")}
             </span>
-            <StatusDot status="CRITICAL" pulse size="sm" />
           </div>
-          <span className={`text-3xl font-black font-mono text-rose-600 tracking-tight mt-1.5 ${loading ? "animate-pulse opacity-40" : ""}`}>
-            {loading ? "—" : String(psifPriority).padStart(2, "0")}
-          </span>
-          <span className="text-[11px] font-bold text-rose-600/90 mt-1">
-            pSIF ≥ 0.60
-          </span>
-        </div>
 
-        {/* Pending Reviews */}
-        <div className="p-4 rounded-xl border border-amber-200/80 bg-amber-50/20 flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800">
-              Pending
+          <div className="hidden lg:flex items-center justify-between w-full pt-1.5 border-t border-indigo-100">
+            <span className="text-xs font-bold text-indigo-800/80">
+              Total Submissions
             </span>
-            <StatusDot status="HIGH" size="sm" />
+            <span className="text-[10px] font-extrabold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-md font-mono">
+              Database
+            </span>
           </div>
-          <span className={`text-3xl font-black font-mono text-amber-600 tracking-tight mt-1.5 ${loading ? "animate-pulse opacity-40" : ""}`}>
-            {loading ? "—" : String(pendingReviews).padStart(2, "0")}
-          </span>
-          <span className="text-[11px] font-bold text-amber-700 mt-1">
-            Awaiting Review
-          </span>
-        </div>
+        </Link>
 
-        {/* Active Barriers */}
-        <div className="p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-              Barriers
-            </span>
-            <StatusDot status="HEALTHY" size="sm" />
+        {/* Card 2: Critical SIF Signals */}
+        <Link
+          href="/app/triage"
+          className="group relative p-4 sm:p-5 rounded-2xl border-2 border-rose-400 bg-gradient-to-br from-rose-50 via-white to-red-100/60 shadow-sm hover:shadow-md hover:border-rose-500 ring-2 ring-rose-500/10 transition-all duration-200 active:scale-[0.99] flex flex-row lg:flex-col justify-between items-center lg:items-start min-h-[96px] lg:min-h-[160px]"
+        >
+          <div className="flex items-center lg:justify-between w-auto lg:w-full gap-3 lg:gap-0">
+            <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0 border border-rose-300 shadow-2xs group-hover:bg-rose-600 group-hover:text-white transition-colors duration-200">
+              <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2} />
+            </div>
+            <div className="flex flex-col lg:hidden">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-black uppercase tracking-wider text-rose-900">
+                  SIF Priority
+                </span>
+                <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
+              </div>
+              <span className="text-xs font-bold text-rose-600">
+                pSIF ≥ 0.60
+              </span>
+            </div>
+            <div className="hidden lg:flex items-center gap-1.5">
+              <span className="text-xs font-black uppercase tracking-wider text-rose-900">
+                SIF Priority
+              </span>
+              <StatusDot status="CRITICAL" pulse size="sm" />
+            </div>
           </div>
-          <span className={`text-3xl font-black font-mono text-emerald-600 tracking-tight mt-1.5 ${loading ? "animate-pulse opacity-40" : ""}`}>
-            {loading ? "—" : String(activeBarriers).padStart(2, "0")}
-          </span>
-          <span className="text-[11px] font-bold text-emerald-700 mt-1">
-            Active Barriers
-          </span>
-        </div>
 
-        {/* Unacknowledged Alerts */}
-        <div className="p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between shadow-2xs col-span-2 sm:col-span-1">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-              Alerts
+          <div className="my-0 lg:my-2 text-right lg:text-left">
+            <span className={`text-4xl sm:text-5xl font-black font-mono tracking-tight text-rose-600 ${loading ? "animate-pulse opacity-40" : ""}`}>
+              {loading ? "—" : String(psifPriority).padStart(2, "0")}
             </span>
-            <StatusDot status={unackAlerts > 0 ? "CRITICAL" : "NEUTRAL"} pulse={unackAlerts > 0} size="sm" />
           </div>
-          <span className={`text-3xl font-black font-mono tracking-tight mt-1.5 ${unackAlerts > 0 ? "text-rose-600" : "text-slate-900"} ${loading ? "animate-pulse opacity-40" : ""}`}>
-            {loading ? "—" : String(unackAlerts).padStart(2, "0")}
-          </span>
-          <span className="text-[11px] font-bold text-slate-500 mt-1">
-            Unacknowledged
-          </span>
-        </div>
+
+          <div className="hidden lg:flex items-center justify-between w-full pt-1.5 border-t border-rose-200/80">
+            <span className="text-xs font-bold text-rose-700">
+              pSIF ≥ 0.60
+            </span>
+            <span className="text-[10px] font-extrabold text-white bg-rose-600 px-2 py-0.5 rounded-md uppercase font-mono shadow-2xs">
+              Critical
+            </span>
+          </div>
+        </Link>
+
+        {/* Card 3: Pending Reviews */}
+        <Link
+          href="/app/triage"
+          className="group relative p-4 sm:p-5 rounded-2xl border-2 border-amber-400 bg-gradient-to-br from-amber-50 via-white to-orange-100/60 shadow-sm hover:shadow-md hover:border-amber-500 ring-2 ring-amber-500/10 transition-all duration-200 active:scale-[0.99] flex flex-row lg:flex-col justify-between items-center lg:items-start min-h-[96px] lg:min-h-[160px]"
+        >
+          <div className="flex items-center lg:justify-between w-auto lg:w-full gap-3 lg:gap-0">
+            <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 border border-amber-300 shadow-2xs group-hover:bg-amber-600 group-hover:text-white transition-colors duration-200">
+              <Clock className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2} />
+            </div>
+            <div className="flex flex-col lg:hidden">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-black uppercase tracking-wider text-amber-900">
+                  Pending
+                </span>
+                <span className="h-2 w-2 rounded-full bg-amber-500" />
+              </div>
+              <span className="text-xs font-bold text-amber-700">
+                Awaiting Review
+              </span>
+            </div>
+            <div className="hidden lg:flex items-center gap-1.5">
+              <span className="text-xs font-black uppercase tracking-wider text-amber-900">
+                Pending
+              </span>
+              <StatusDot status="HIGH" size="sm" />
+            </div>
+          </div>
+
+          <div className="my-0 lg:my-2 text-right lg:text-left">
+            <span className={`text-4xl sm:text-5xl font-black font-mono tracking-tight text-amber-600 ${loading ? "animate-pulse opacity-40" : ""}`}>
+              {loading ? "—" : String(pendingReviews).padStart(2, "0")}
+            </span>
+          </div>
+
+          <div className="hidden lg:flex items-center justify-between w-full pt-1.5 border-t border-amber-200/80">
+            <span className="text-xs font-bold text-amber-800">
+              Awaiting Review
+            </span>
+            <span className="text-[10px] font-extrabold text-white bg-amber-500 px-2 py-0.5 rounded-md uppercase font-mono shadow-2xs">
+              Review
+            </span>
+          </div>
+        </Link>
+
+        {/* Card 4: Active Barriers */}
+        <Link
+          href="/app/barriers"
+          className="group relative p-4 sm:p-5 rounded-2xl border-2 border-emerald-400 bg-gradient-to-br from-emerald-50 via-white to-teal-100/60 shadow-sm hover:shadow-md hover:border-emerald-500 ring-2 ring-emerald-500/10 transition-all duration-200 active:scale-[0.99] flex flex-row lg:flex-col justify-between items-center lg:items-start min-h-[96px] lg:min-h-[160px]"
+        >
+          <div className="flex items-center lg:justify-between w-auto lg:w-full gap-3 lg:gap-0">
+            <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-300 shadow-2xs group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-200">
+              <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2} />
+            </div>
+            <div className="flex flex-col lg:hidden">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-black uppercase tracking-wider text-emerald-900">
+                  Barriers
+                </span>
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              </div>
+              <span className="text-xs font-bold text-emerald-700">
+                Active Barriers
+              </span>
+            </div>
+            <div className="hidden lg:flex items-center gap-1.5">
+              <span className="text-xs font-black uppercase tracking-wider text-emerald-900">
+                Barriers
+              </span>
+              <StatusDot status="HEALTHY" size="sm" />
+            </div>
+          </div>
+
+          <div className="my-0 lg:my-2 text-right lg:text-left">
+            <span className={`text-4xl sm:text-5xl font-black font-mono tracking-tight text-emerald-600 ${loading ? "animate-pulse opacity-40" : ""}`}>
+              {loading ? "—" : String(activeBarriers).padStart(2, "0")}
+            </span>
+          </div>
+
+          <div className="hidden lg:flex items-center justify-between w-full pt-1.5 border-t border-emerald-200/80">
+            <span className="text-xs font-bold text-emerald-800">
+              Active Barriers
+            </span>
+            <span className="text-[10px] font-extrabold text-white bg-emerald-600 px-2 py-0.5 rounded-md uppercase font-mono shadow-2xs">
+              IOGP 459
+            </span>
+          </div>
+        </Link>
+
+        {/* Card 5: Unacknowledged Alerts */}
+        <Link
+          href="/app/triage"
+          className="group relative p-4 sm:p-5 rounded-2xl border-2 border-red-500 bg-gradient-to-br from-red-50 via-white to-rose-100/60 shadow-sm hover:shadow-md hover:border-red-600 ring-2 ring-red-500/10 transition-all duration-200 active:scale-[0.99] flex flex-row lg:flex-col justify-between items-center lg:items-start min-h-[96px] lg:min-h-[160px]"
+        >
+          <div className="flex items-center lg:justify-between w-auto lg:w-full gap-3 lg:gap-0">
+            <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0 border border-red-300 shadow-2xs group-hover:bg-red-600 group-hover:text-white transition-colors duration-200">
+              <Bell className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2} />
+            </div>
+            <div className="flex flex-col lg:hidden">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-black uppercase tracking-wider text-red-900">
+                  Alerts
+                </span>
+                <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+              </div>
+              <span className="text-xs font-bold text-red-600">
+                Unacknowledged
+              </span>
+            </div>
+            <div className="hidden lg:flex items-center gap-1.5">
+              <span className="text-xs font-black uppercase tracking-wider text-red-900">
+                Alerts
+              </span>
+              <StatusDot status={unackAlerts > 0 ? "CRITICAL" : "NEUTRAL"} pulse={unackAlerts > 0} size="sm" />
+            </div>
+          </div>
+
+          <div className="my-0 lg:my-2 text-right lg:text-left">
+            <span className={`text-4xl sm:text-5xl font-black font-mono tracking-tight ${unackAlerts > 0 ? "text-red-600" : "text-slate-900"} ${loading ? "animate-pulse opacity-40" : ""}`}>
+              {loading ? "—" : String(unackAlerts).padStart(2, "0")}
+            </span>
+          </div>
+
+          <div className="hidden lg:flex items-center justify-between w-full pt-1.5 border-t border-red-200/80">
+            <span className="text-xs font-bold text-red-700">
+              Unacknowledged
+            </span>
+            <span className="text-[10px] font-extrabold text-white bg-red-600 px-2 py-0.5 rounded-md uppercase font-mono shadow-2xs animate-pulse">
+              Live
+            </span>
+          </div>
+        </Link>
       </div>
 
       {/* Main Content: Active Alerts + Barrier Health */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-w-0">
         {/* LEFT: Live Alerts from DB */}
-        <div className="lg:col-span-7 rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
+        <div className="lg:col-span-7 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 space-y-4 shadow-2xs min-w-0">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-rose-500" />
@@ -303,7 +440,7 @@ export default function DashboardPage() {
         </div>
 
         {/* RIGHT: Barrier Health from DB */}
-        <div className="lg:col-span-5 rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
+        <div className="lg:col-span-5 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 space-y-4 shadow-2xs min-w-0">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
@@ -360,7 +497,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Monthly Trend (from real DB) */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 space-y-4 shadow-2xs min-w-0">
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-blue-500" />
@@ -386,7 +523,7 @@ export default function DashboardPage() {
         ) : monthlyTrend.length === 0 ? (
           <EmptyState label="No reports yet. Submit incident reports to see monthly trends." />
         ) : (
-          <div className="flex items-end gap-2 h-24">
+          <div className="flex items-end gap-1.5 sm:gap-2 h-24 min-w-0 w-full overflow-x-auto pb-1">
             {monthlyTrend.map((m: any) => {
               const maxVal = Math.max(...monthlyTrend.map((x: any) => x.total_reports), 1);
               const heightPct = Math.round((m.total_reports / maxVal) * 100);
@@ -428,7 +565,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Activity Feed */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-2xs">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 space-y-4 shadow-2xs min-w-0">
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />

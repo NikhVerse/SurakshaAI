@@ -212,7 +212,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       )}
 
       {/* Main Canvas Area (Offset by 72px on desktop) */}
-      <div className="flex flex-1 flex-col md:pl-[72px]">
+      <div className="flex flex-1 flex-col md:pl-[72px] min-w-0 w-full max-w-full overflow-x-hidden">
         {/* Sleek Topbar */}
         <header className="sticky top-0 z-30 flex h-14 sm:h-16 items-center justify-between px-3 sm:px-6 lg:px-8 bg-white/95 backdrop-blur-md border-b border-slate-200">
           <div className="flex items-center gap-2 sm:gap-4">
