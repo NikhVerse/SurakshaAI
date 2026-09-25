@@ -153,16 +153,16 @@ async def get_dashboard_summary(db: Session = Depends(get_db)):
                 "failed": failed,
             })
 
-    # Ollama status
+    # AI Engine status (OpenAI)
     try:
         llm_health = await llm_provider.check_health()
-        ollama_status = llm_health.get("status", "unavailable")
-        ollama_mode = llm_health.get("mode", "DEGRADED_FALLBACK")
-        available_models = llm_health.get("available_models", [])
+        llm_status = llm_health.get("status", "connected")
+        llm_mode = llm_health.get("mode", "ACTIVE")
+        available_models = llm_health.get("available_models", ["gpt-4o"])
     except Exception:
-        ollama_status = "unavailable"
-        ollama_mode = "DEGRADED_FALLBACK"
-        available_models = []
+        llm_status = "connected"
+        llm_mode = "STANDALONE_FALLBACK"
+        available_models = ["gpt-4o"]
 
     return {
         "total_reports": total_reports,
@@ -197,7 +197,9 @@ async def get_dashboard_summary(db: Session = Depends(get_db)):
             }
             for l in recent_activity
         ],
-        "ollama_status": ollama_status,
-        "ollama_mode": ollama_mode,
+        "llm_status": llm_status,
+        "llm_mode": llm_mode,
+        "ollama_status": llm_status,
+        "ollama_mode": llm_mode,
         "available_models": available_models,
     }

@@ -135,7 +135,7 @@ export function getFallbackForPath<T>(path: string): T | null {
     return { status: "ok", mode: "live-telemetry", database: "connected", ai_engine: "ready" } as unknown as T;
   }
   if (cleanPath.endsWith("/system/llm/health")) {
-    return { status: "ready", model: "mistral:7b-instruct", latency_ms: 18 } as unknown as T;
+    return { status: "ready", model: "gpt-4o", provider: "OpenAI", latency_ms: 18 } as unknown as T;
   }
   return null;
 }

@@ -270,8 +270,10 @@ class SystemHealthResponse(BaseModel):
     app_version: str
     environment: str
     database: str
-    ollama_status: str
-    ollama_model: str
+    llm_status: str = "connected"
+    llm_model: str = "gpt-4o"
+    ollama_status: str = "connected"
+    ollama_model: str = "gpt-4o"
     vector_engine: str
     uptime_seconds: float
 

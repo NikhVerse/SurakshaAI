@@ -178,8 +178,7 @@ export async function GET(
   // 12. HelpDesk Models
   if (path === "helpdesk/models") {
     return NextResponse.json([
-      { id: "gpt-4o", name: "Suraksha Lead Safety Intelligence (GPT-4o)", description: "Calibrated industrial reasoning model" },
-      { id: "mistral", name: "Sovereign Private AI (Mistral 7B)", description: "Air-gapped on-premise model" },
+      { id: "gpt-4o", name: "OpenAI GPT-4o Safety Intelligence", description: "Frontier OpenAI reasoning model for industrial process safety" },
     ]);
   }
 
@@ -195,7 +194,7 @@ export async function GET(
     });
   }
   if (path === "system/llm/health") {
-    return NextResponse.json({ status: "ready", model: "mistral:7b-instruct", latency_ms: 16 });
+    return NextResponse.json({ status: "ready", model: "gpt-4o", provider: "OpenAI", latency_ms: 16 });
   }
 
   // 14. Auth Current User
@@ -382,7 +381,7 @@ export async function POST(
       source_authority: body.source_authority || "HSE Operations Directorate",
       version: body.version || "1.0",
       chunk_count: Math.floor(40 + Math.random() * 80),
-      embedding_model: "nomic-embed-text",
+      embedding_model: "text-embedding-3-small",
       uploaded_at: new Date().toISOString(),
       status: "INDEXED",
       vector_count: Math.floor(40 + Math.random() * 80),

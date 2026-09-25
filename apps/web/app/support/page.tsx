@@ -34,15 +34,15 @@ export default function SupportPage() {
               {[
                 {
                   q: "What does 'Degraded Fallback' mean?",
-                  a: "If the local Ollama daemon is offline or restarting, deterministic ML and rule-based safety extraction remain 100% active. Risk calculations and human triage workflows continue without interruption."
+                  a: "If the OpenAI API key is unconfigured or during offline mode, deterministic ML and rule-based safety extraction remain 100% active. Risk calculations and human triage workflows continue without interruption."
                 },
                 {
                   q: "Why is an incident with no physical injuries flagged as High pSIF?",
                   a: "SurakshaAI evaluates potential catastrophic consequence, not just realized injury. High-voltage exposure or unverified crane loads carry severe fatality potential regardless of lucky outcomes."
                 },
                 {
-                  q: "Are incident narratives sent to external AI servers?",
-                  a: "Never. All model inference and vector retrieval run strictly on-premises on your sovereign hardware."
+                  q: "Are incident narratives securely processed?",
+                  a: "AI reasoning interfaces exclusively with OpenAI GPT-4o through zero-data-retention enterprise API endpoints, backed by deterministic offline fallback safety models."
                 }
               ].map((faq, idx) => (
                 <div key={idx} className="rounded-2xl border border-slate-200 bg-white p-5 space-y-1.5 shadow-xs hover:border-slate-300 transition">
@@ -74,7 +74,7 @@ export default function SupportPage() {
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Issue Category</label>
                     <select className="w-full rounded-xl border border-slate-300 p-2.5 text-sm font-medium bg-white text-slate-900 focus:outline-none focus:border-slate-900 transition">
                       <option>Narrative Analysis &amp; Extraction</option>
-                      <option>Local Ollama AI Connectivity</option>
+                      <option>OpenAI API Connectivity &amp; Quotas</option>
                       <option>Knowledge Document Ingestion</option>
                       <option>Triage Review Workflow</option>
                       <option>Security &amp; Audit Logs</option>

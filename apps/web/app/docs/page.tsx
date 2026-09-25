@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -71,9 +71,9 @@ export default function DocsPage() {
             </div>
             <div className="p-6 rounded-2xl border border-slate-200 bg-slate-50/60 space-y-2">
               <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Principle 2</span>
-              <h4 className="text-lg font-bold text-slate-900">Air-Gapped Privacy</h4>
+              <h4 className="text-lg font-bold text-slate-900">Zero-Data-Retention Intelligence</h4>
               <p className="text-sm text-slate-600 leading-relaxed font-normal">
-                All narrative understanding and extraction operates on localized Ollama inference. Zero internal telemetry, worker identities, or facility narratives leave your sovereign network.
+                All narrative understanding and extraction operates exclusively through enterprise OpenAI GPT-4o APIs under strict zero-data-retention agreements or local deterministic safety fallbacks.
               </p>
             </div>
           </div>

@@ -68,7 +68,7 @@ class SafetyReasoningGraph:
         state["knowledge_snippets"] = knowledge_snippets
 
         # Stage 9: Generate Grounded Explanation
-        # If Ollama is connected, prompt it with strict grounded context; otherwise use deterministic summary
+        # If OpenAI is connected, prompt it with strict grounded context; otherwise use deterministic summary
         explanation = risk_result["explanation_summary"]
         health = await self.llm.check_health()
         if health.get("status") == "connected":

@@ -42,7 +42,7 @@ def get_system_health(db: Session = Depends(get_db)):
 
 @router.get("/system/llm/health")
 async def get_llm_health():
-    """Ollama connection health check with available model list."""
+    """OpenAI connection health check and operational status."""
     return await llm_provider.check_health()
 
 

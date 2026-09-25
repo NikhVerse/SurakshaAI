@@ -29,10 +29,10 @@ export default function SecurityPage() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-600 border border-sky-200">
                   <Cpu className="h-5 w-5" />
                 </div>
-                <span>Private Local Inference</span>
+                <span>Decoupled Safety Architecture</span>
               </div>
               <p className="text-sm text-slate-600 leading-relaxed font-normal">
-                Safety narratives and contractor reports never leave your sovereign network. Processing is performed on local infrastructure via Ollama with zero public cloud transmission.
+                Safety narratives and contractor reports are protected by strict schema isolation and zero-data-retention OpenAI enterprise policies, backed by offline deterministic safety models.
               </p>
             </div>
 

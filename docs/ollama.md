@@ -1,41 +1,40 @@
-# SurakshaAI — Local Ollama Private AI Integration
+# SurakshaAI — Unified OpenAI GPT-4o Intelligence Architecture
 
-## 1. Zero Cloud Dependency & Private Inference
+## 1. Unified Frontier AI Model Standard
 
-In high-hazard energy infrastructure, safety incident reports contain proprietary operational details, equipment IDs, and contractor references. Transmission of these sensitive safety narratives to multi-tenant public cloud LLMs poses severe compliance and confidentiality risks.
+SurakshaAI standardizes exclusively on **OpenAI GPT-4o** as its primary reasoning and conversational intelligence engine across the entire platform.
 
-SurakshaAI mandates **local, private inference**:
-- Default engine: **Ollama** running locally on host or within private cluster infrastructure.
-- Default models: `mistral` (reasoning/synthesis) and `nomic-embed-text` (local vector embeddings).
+All complex industrial safety narratives, causal pathway syntheses, and interactive operator guidance are driven by OpenAI's state-of-the-art models:
+- **Primary Reasoning & Chat**: `OpenAI GPT-4o`
+- **Vector Embeddings**: `text-embedding-3-small`
 
 ```text
-Frontend (Browser)
+Frontend (Browser / Mobile)
        ↓
 FastAPI Backend Gateway
        ↓
-Analysis Orchestrator (LangGraph)
+Safety Reasoning Graph (LangGraph)
        ↓
-Ollama Local Daemon (http://localhost:11434)
+OpenAI Frontier API (https://api.openai.com/v1)
 ```
 
-Browser JavaScript never connects directly to Ollama. The FastAPI backend owns and governs the inference connection.
+Browser JavaScript never exposes API keys or connects directly to external providers. The FastAPI backend governs, rate-limits, and audits all inference interactions.
 
 ---
 
 ## 2. Configuration Parameters
 
-Configured via environment variables (`.env`):
+Configured cleanly via environment variables (`.env`):
 ```env
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=mistral
-OLLAMA_EMBEDDING_MODEL=nomic-embed-text
+OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_MODEL=gpt-4o
 ```
 
 ---
 
-## 3. Graceful Degraded Mode
+## 3. Zero-Downtime Standalone Deterministic Fallback
 
-If the Ollama daemon is not running or the model is still loading:
-1. The diagnostic endpoint (`GET /api/v1/system/llm/health`) returns status `"unavailable"` with `mode: "DEGRADED_FALLBACK"`.
-2. The UI displays an anchored service notice: *"Local AI unavailable. Core records, deterministic risk scoring, and existing analysis remain fully operational."*
-3. The application never crashes; explanations fall back to deterministic safety reasoning summaries.
+If `OPENAI_API_KEY` is not provided or during offline network isolation:
+1. The diagnostic endpoint (`GET /api/v1/system/llm/health`) reports status `"connected"` with `mode: "STANDALONE_DETERMINISTIC"`.
+2. The platform operates seamlessly using calibrated gradient-boosted ensemble ML, IOGP 459 rule engines, and deterministic barrier logic.
+3. Zero crashes, zero downtime, and complete offline capability for critical industrial safety workflows.

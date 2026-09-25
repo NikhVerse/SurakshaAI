@@ -27,15 +27,9 @@ class Settings(BaseSettings):
     MINIO_BUCKET: str = "suraksha-documents"
     STORAGE_LOCAL_DIR: str = "./storage"
 
-    # Ollama Private AI
-    OLLAMA_BASE_URL: str = "http://localhost:11434"
-    OLLAMA_MODEL: str = "mistral"
-    OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
-
-    # Multi-Model Providers (OpenAI)
+    # Artificial Intelligence Engine — Exclusively OpenAI
     OPENAI_API_KEY: str = ""
     OPENAI_MODEL: str = "gpt-4o"
-    GEMINI_API_KEY: str = ""
     DEFAULT_MODEL_PROVIDER: str = "openai"
 
     # Security
