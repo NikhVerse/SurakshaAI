@@ -1,10 +1,26 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseAnonKey =
+// Production project defaults ensuring auth always works even in deployments where env vars aren't injected
+const DEFAULT_SUPABASE_URL = "https://tngtkjozfhnjnwvsjnyw.supabase.co";
+const DEFAULT_SUPABASE_KEY = "sb_publishable_ySKCgOZaholzm14A_QN3zQ_KOrQttq1";
+
+const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const rawKey =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
   "";
+
+const supabaseUrl =
+  rawUrl && !rawUrl.includes("[YOUR-PROJECT-REF]") && !rawUrl.includes("YOUR_PROJECT_ID")
+    ? rawUrl
+    : DEFAULT_SUPABASE_URL;
+
+const supabaseAnonKey =
+  rawKey &&
+  !rawKey.includes("your-supabase-anon-key") &&
+  !rawKey.includes("your-supabase-publishable-key")
+    ? rawKey
+    : DEFAULT_SUPABASE_KEY;
 
 export const isSupabaseConfigured = Boolean(
   supabaseUrl &&
@@ -14,15 +30,13 @@ export const isSupabaseConfigured = Boolean(
   !supabaseAnonKey.includes("your-supabase-anon-key")
 );
 
-export const supabase: SupabaseClient | null = isSupabaseConfigured
-  ? createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-      },
-    })
-  : null;
+export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+  },
+});
 
 // ==============================================================================
 // Supabase Authentication Helper Functions
