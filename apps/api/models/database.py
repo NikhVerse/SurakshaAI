@@ -8,14 +8,17 @@ settings = get_settings()
 
 database_url = settings.DATABASE_URL
 
+import urllib.parse
+
 # Exclusively configure Supabase PostgreSQL as database
 if not database_url and settings.SUPABASE_URL:
     ref = settings.SUPABASE_URL.replace("https://", "").replace("http://", "").split(".")[0]
     db_pass = getattr(settings, "SUPABASE_DB_PASSWORD", "") or "postgres"
-    database_url = f"postgresql://postgres:{db_pass}@db.{ref}.supabase.co:5432/postgres"
+    encoded_pass = urllib.parse.quote_plus(db_pass)
+    database_url = f"postgresql://postgres.{ref}:{encoded_pass}@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require"
 
 if not database_url:
-    database_url = "postgresql+psycopg2://postgres:postgres@db.tngtkjozfhjnwvsjnyw.supabase.co:5432/postgres"
+    database_url = "postgresql+psycopg2://postgres.tngtkjozfhnjnwvsjnyw:Abhishek%4012345%40@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require"
 
 # Normalize Supabase / PostgreSQL URLs for SQLAlchemy psycopg2 driver
 if database_url.startswith("postgres://"):

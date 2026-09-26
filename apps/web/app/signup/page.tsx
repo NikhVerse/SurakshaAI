@@ -74,7 +74,7 @@ export default function SignUpPage() {
         const diffYears = Math.floor(
           (Date.now() - birthDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25)
         );
-        if (diffYears >= 20 && diffYears <= 100) {
+        if (diffYears >= 18 && diffYears <= 100) {
           setAge(diffYears);
         }
       }
@@ -95,8 +95,8 @@ export default function SignUpPage() {
       return;
     }
     const numAge = Number(age);
-    if (isNaN(numAge) || numAge < 20 || numAge > 100) {
-      setError("Age must be between 20 and 100.");
+    if (isNaN(numAge) || numAge < 18 || numAge > 100) {
+      setError("Age must be between 18 and 100.");
       return;
     }
     if (!dobFormatted) {
@@ -226,7 +226,7 @@ export default function SignUpPage() {
                   <input
                     type="number"
                     required
-                    min={20}
+                    min={18}
                     max={100}
                     placeholder="28"
                     value={age}
@@ -235,7 +235,7 @@ export default function SignUpPage() {
                       setAge(val);
                     }}
                     className={`h-11 w-full rounded-xl border bg-slate-50/50 px-3 text-sm sm:text-base font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white transition-all ${
-                      age !== "" && (Number(age) < 20 || Number(age) > 100)
+                      age !== "" && (Number(age) < 18 || Number(age) > 100)
                         ? "border-rose-400 bg-rose-50/50 focus:border-rose-500"
                         : "border-slate-200 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
                     }`}
@@ -280,7 +280,7 @@ export default function SignUpPage() {
                     required
                     value={dobRaw}
                     onChange={(e) => handleDateChange(e.target.value)}
-                    max={new Date(Date.now() - 20 * 365.25 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]}
+                    max={new Date(Date.now() - 18 * 365.25 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]}
                     min={new Date(Date.now() - 100 * 365.25 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]}
                     className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 text-sm sm:text-base font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 transition-all"
                   />

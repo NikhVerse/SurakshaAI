@@ -14,7 +14,7 @@ class UserRegister(BaseModel):
     first_name: Optional[str] = None
     middle_name: Optional[str] = None
     last_name: Optional[str] = None
-    age: Optional[int] = Field(None, ge=20, le=100, description="Age must be between 20 and 100")
+    age: Optional[int] = Field(None, ge=18, le=100, description="Age must be between 18 and 100")
     dob: Optional[str] = Field(None, description="Format: dd-mmm-yyyy")
     gender: Optional[str] = Field(None, description="M, F, Other")
     role: str = "HSE_ANALYST"
@@ -30,7 +30,7 @@ class UserUpdate(BaseModel):
     first_name: Optional[str] = None
     middle_name: Optional[str] = None
     last_name: Optional[str] = None
-    age: Optional[int] = Field(None, ge=20, le=100)
+    age: Optional[int] = Field(None, ge=18, le=100)
     dob: Optional[str] = None
     gender: Optional[str] = None
     role: Optional[str] = None

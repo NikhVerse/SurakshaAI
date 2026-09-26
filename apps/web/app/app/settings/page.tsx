@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState } from "react";
 import {
@@ -142,8 +142,8 @@ export default function SettingsPage() {
       return;
     }
     const numAge = Number(editAge);
-    if (editAge !== "" && (isNaN(numAge) || numAge < 20 || numAge > 100)) {
-      setToast("Age must be between 20 and 100.");
+    if (editAge !== "" && (isNaN(numAge) || numAge < 18 || numAge > 100)) {
+      setToast("Age must be between 18 and 100.");
       setTimeout(() => setToast(null), 3500);
       return;
     }
@@ -284,11 +284,11 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
-                  Age (20 – 100)
+                  Age (18 – 100)
                 </label>
                 <input
                   type="number"
-                  min={20}
+                  min={18}
                   max={100}
                   placeholder="e.g. 34"
                   value={editAge}
