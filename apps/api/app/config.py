@@ -8,11 +8,12 @@ class Settings(BaseSettings):
     APP_NAME: str = "SurakshaAI"
     APP_VERSION: str = "1.0.0"
 
-    # Database (Supabase / PostgreSQL or local SQLite)
-    DATABASE_URL: str = "sqlite:///./surakshaai.db"
+    # Database Configuration — Exclusively Supabase (PostgreSQL)
+    DATABASE_URL: str = ""
     SUPABASE_URL: str = ""
     SUPABASE_KEY: str = ""
     SUPABASE_SERVICE_ROLE_KEY: str = ""
+    SUPABASE_DB_PASSWORD: str = ""
 
     # Redis & Vector
     REDIS_URL: str = "redis://localhost:6379/0"
